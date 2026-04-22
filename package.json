@@ -1,0 +1,14 @@
+{
+  "name": "rooxpedia",
+  "version": "1.0.0",
+  "description": "Rooxpedia Dashboard dan Sistem Deposit",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andika",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18.x"
+  }
+}
