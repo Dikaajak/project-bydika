@@ -14,6 +14,9 @@ if (!firebase.apps.length) {
 const auth = firebase.auth();
 const db = firebase.database();
 
+let userPassword = "";
+let showing = false;
+
 const regisForm = document.getElementById('regisForm');
 if (regisForm) {
     regisForm.addEventListener('submit', async (e) => {
@@ -35,7 +38,10 @@ if (regisForm) {
 
         try {
             const res = await auth.createUserWithEmailAndPassword(email, pw);
-            await db.ref('users/' + res.user.uid).set({
+            const user = res.user;
+
+            await db.ref('users/' + user.uid).set({
+                uid: user.uid,
                 nama: nama,
                 nomorWa: nomorWa,
                 email: email,
@@ -45,20 +51,21 @@ if (regisForm) {
                 createdAt: new Date().toISOString()
             });
 
-            await Swal.fire({
-                title: 'Berhasil!',
-                text: 'Akun kamu sudah aktif di Rooxpedia.',
+            Swal.fire({
                 icon: 'success',
+                title: 'Berhasil Daftar!',
+                text: 'Silahkan masuk ke akun Anda',
                 background: '#00222d',
                 color: '#fff'
+            }).then(() => {
+                window.location.href = 'login.html';
             });
 
-            window.location.href = 'login.html';
-        } catch (err) {
+        } catch (error) {
             Swal.fire({
-                title: 'Registrasi Gagal',
-                text: err.message,
                 icon: 'error',
+                title: 'Gagal Daftar',
+                text: error.message,
                 background: '#00222d',
                 color: '#fff'
             });
@@ -73,37 +80,71 @@ if (loginForm) {
         const email = document.getElementById('email').value;
         const pw = document.getElementById('pw').value;
 
+        Swal.fire({
+            title: 'Memverifikasi...',
+            background: '#00222d',
+            color: '#fff',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
         try {
             await auth.signInWithEmailAndPassword(email, pw);
             window.location.href = 'dashboard.html';
-        } catch (err) {
-            alert(err.message);
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Gagal',
+                text: 'Email atau Password salah!',
+                background: '#00222d',
+                color: '#fff'
+            });
         }
     });
 }
 
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        db.ref('users/' + user.uid).on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                if (document.getElementById('p-nama')) document.getElementById('p-nama').innerText = data.nama || "-";
+                if (document.getElementById('p-role')) document.getElementById('p-role').innerText = (data.role || "MEMBER").toUpperCase();
+                if (document.getElementById('p-email')) document.getElementById('p-email').innerText = data.email || "-";
+                if (document.getElementById('p-wa')) document.getElementById('p-wa').innerText = data.nomorWa || "-";
+                
+                const formatSaldo = "Rp " + new Intl.NumberFormat('id-ID').format(data.saldo || 0);
+                
+                if (document.getElementById('topSaldo')) document.getElementById('topSaldo').innerText = formatSaldo;
+                if (document.getElementById('p-saldo-card')) document.getElementById('p-saldo-card').innerText = formatSaldo;
+                
+                userPassword = data.pw || "******";
+            }
+        });
+    } else {
+        const path = window.location.pathname;
+        if (path.includes('dashboard.html') || path.includes('deposit.html')) {
+            window.location.href = 'login.html';
+        }
+    }
+});
+
+const openSidebar = document.getElementById('openSidebar');
+const closeSidebar = document.getElementById('closeSidebar');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
-const profileCard = document.getElementById('profileCard');
 
-if (document.getElementById('openSidebar')) {
-    document.getElementById('openSidebar').onclick = () => {
+if (openSidebar) {
+    openSidebar.onclick = () => {
         sidebar.classList.add('active');
         overlay.classList.add('active');
     };
 }
 
-if (document.getElementById('closeSidebar')) {
-    document.getElementById('closeSidebar').onclick = () => {
+if (closeSidebar) {
+    closeSidebar.onclick = () => {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
-    };
-}
-
-if (document.getElementById('toggleProfile')) {
-    document.getElementById('toggleProfile').onclick = (e) => {
-        e.stopPropagation();
-        profileCard.classList.toggle('active');
     };
 }
 
@@ -111,48 +152,25 @@ if (overlay) {
     overlay.onclick = () => {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
-        profileCard.classList.remove('active');
+        const profileCard = document.getElementById('profileCard');
+        if (profileCard) profileCard.classList.remove('active');
     };
 }
 
-let userPassword = "";
-let showing = false;
+const toggleProfile = document.getElementById('toggleProfile');
+const profileCard = document.getElementById('profileCard');
+if (toggleProfile) {
+    toggleProfile.onclick = (e) => {
+        e.stopPropagation();
+        profileCard.classList.toggle('active');
+    };
+}
 
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        if (document.getElementById('p-nama')) {
-            db.ref('users/' + user.uid).on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    document.getElementById('p-nama').innerText = data.nama || "-";
-                    document.getElementById('p-role').innerText = (data.role || "MEMBER").toUpperCase();
-                    document.getElementById('p-email').innerText = data.email || "-";
-                    document.getElementById('p-wa').innerText = data.nomorWa || "-";
-                    userPassword = data.pw || "******";
-                }
-            });
-        }
-    } else {
-        if (window.location.pathname.includes('dashboard.html')) {
-            window.location.href = 'login.html';
-        }
+document.addEventListener('click', (e) => {
+    if (profileCard && !profileCard.contains(e.target) && e.target !== toggleProfile) {
+        profileCard.classList.remove('active');
     }
 });
-
-const eyeIcon = document.getElementById('togglePw');
-if (eyeIcon) {
-    eyeIcon.onclick = () => {
-        showing = !showing;
-        const pwDisplay = document.getElementById('p-pw');
-        if (showing) {
-            pwDisplay.innerText = userPassword;
-            eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
-        } else {
-            pwDisplay.innerText = "••••••••";
-            eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
-        }
-    };
-}
 
 if (document.getElementById('btnLogout')) {
     document.getElementById('btnLogout').onclick = () => {
