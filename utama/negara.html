@@ -43,7 +43,7 @@
                     const container = document.getElementById('countryList');
                     res.data.data.forEach(c => {
                         const basePrice = c.pricelist[0].price;
-                        const finalPrice = basePrice + 500; 
+                        const finalPrice = basePrice + 1500; 
                         const card = document.createElement('div');
                         card.className = 'card-country';
                         card.onclick = () => window.location.href = `order_detail.html?code=${serviceCode}&name=${encodeURIComponent(serviceName)}&iso=${c.iso_code}&country=${encodeURIComponent(c.name)}&price=${finalPrice}&provider_id=${c.pricelist[0].provider_id}&app_img=${serviceImg}`;
