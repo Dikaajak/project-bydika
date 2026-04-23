@@ -4,213 +4,195 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooxpedia - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
         body { 
-            background: #001a22;
-            background-image: radial-gradient(circle at top right, #00acc122, transparent),
-                              radial-gradient(circle at bottom left, #ff880011, transparent);
+            background: #003344;
+            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
             color: #fff;
             min-height: 100vh;
+            overflow-x: hidden;
         }
-
-        /* Navbar Modern */
+        
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 5%;
-            background: rgba(0, 34, 45, 0.8);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(0, 172, 193, 0.2);
+            padding: 10px 20px;
+            background: rgba(0, 34, 45, 0.9);
+            border-bottom: 1px solid rgba(0, 172, 193, 0.3);
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
-        .brand { font-size: 22px; font-weight: 800; color: #00acc1; letter-spacing: 2px; }
+
+        .nav-left i { font-size: 24px; cursor: pointer; color: #00acc1; }
         
-        .nav-right { display: flex; align-items: center; gap: 15px; }
-        
-        .balance-pill {
-            background: rgba(255, 136, 0, 0.1);
-            border: 1px solid #ff8800;
-            padding: 5px 15px;
-            border-radius: 50px;
+        .nav-right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+        }
+
+        .balance-nav {
+            background: rgba(0, 172, 193, 0.1);
+            border: 1px solid rgba(0, 172, 193, 0.4);
+            padding: 4px 12px;
+            border-radius: 8px;
+            text-align: right;
             cursor: pointer;
-            transition: 0.3s;
-        }
-        .balance-pill:hover { background: rgba(255, 136, 0, 0.2); transform: scale(1.05); }
-        .balance-pill i { color: #ff8800; font-size: 14px; }
-        .balance-pill span { font-weight: 700; font-size: 15px; color: #fff; }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #00acc1;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .user-avatar:hover { box-shadow: 0 0 15px #00acc1; }
-
-        /* Main Layout */
-        .container { padding: 30px 5%; max-width: 1200px; margin: 0 auto; }
-
-        .welcome-header { margin-bottom: 30px; }
-        .welcome-header h1 { font-size: 28px; color: #fff; }
-        .welcome-header span { color: #00acc1; }
-
-        /* Grid Menu */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(0, 172, 193, 0.1);
-            padding: 25px;
-            border-radius: 20px;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            text-decoration: none;
-            color: #fff;
-        }
-        .card:hover {
-            background: rgba(0, 172, 193, 0.08);
-            border-color: #00acc1;
-            transform: translateY(-5px);
-        }
-        .card i {
-            font-size: 35px;
-            color: #00acc1;
-            margin-bottom: 15px;
+        .balance-nav span {
             display: block;
-        }
-        .card h3 { font-size: 18px; margin-bottom: 8px; }
-        .card p { font-size: 14px; color: #668899; line-height: 1.4; }
-
-        /* Decorative Glow */
-        .card::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(0, 172, 193, 0.05) 0%, transparent 70%);
-            pointer-events: none;
+            font-size: 9px;
+            color: #00acc1;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
-        /* Profile Dropdown */
-        .profile-menu {
-            position: absolute;
-            top: 75px; right: 5%;
-            width: 280px;
-            background: #00222d;
-            border: 1px solid #00acc1;
-            border-radius: 20px;
-            padding: 20px;
+        .balance-nav h4 {
+            font-size: 14px;
+            color: #ff8800;
+            margin-top: -2px;
+        }
+
+        .nav-right img { 
+            width: 38px; height: 38px; 
+            border-radius: 50%; border: 2px solid #00acc1; 
+            cursor: pointer;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: -280px; top: 0; width: 280px; height: 100%;
+            background: #00222d; transition: 0.3s; z-index: 200; padding: 20px;
+            border-right: 1px solid rgba(0, 172, 193, 0.2);
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; margin-bottom: 30px; align-items: center; }
+        
+        .sidebar-menu a {
+            display: flex; align-items: center; color: #fff; text-decoration: none;
+            padding: 12px 15px; background: rgba(0, 172, 193, 0.05);
+            border-radius: 10px; margin-bottom: 10px; border: 1px solid transparent; transition: 0.3s;
+        }
+        .sidebar-menu a:hover { border-color: #00acc1; background: rgba(0, 172, 193, 0.1); }
+        .sidebar-menu i { margin-right: 15px; color: #ff8800; width: 20px; text-align: center; }
+
+        .overlay {
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        .profile-card {
             display: none;
-            z-index: 1001;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            position: absolute;
+            top: 65px; right: 20px; width: 260px;
+            background: #00222d; border: 1px solid #00acc1;
+            border-radius: 15px; padding: 20px; z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .profile-menu.active { display: block; animation: slideIn 0.3s ease; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .menu-info { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .menu-info label { font-size: 11px; color: #00acc1; font-weight: 700; text-transform: uppercase; }
-        .menu-info p { font-size: 16px; font-weight: 600; margin-top: 2px; }
+        .profile-card.active { display: block; }
+        .profile-card h3 { font-size: 14px; color: #ff8800; margin-bottom: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        
+        .info-item { margin-bottom: 12px; }
+        .info-item label { display: block; font-size: 10px; color: #00acc1; font-weight: 700; }
+        .info-item p { font-size: 14px; margin-top: 2px; }
 
         .btn-logout {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255, 68, 68, 0.1);
-            color: #ff4444;
-            border: 1px solid #ff4444;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
+            width: 100%; padding: 10px; background: #ff4444;
+            border: none; color: #fff; border-radius: 8px;
+            cursor: pointer; font-weight: 700; margin-top: 10px;
         }
-        .btn-logout:hover { background: #ff4444; color: #fff; }
 
-        @media (max-width: 600px) {
-            .brand { font-size: 18px; }
-            .welcome-header h1 { font-size: 22px; }
+        .main-content { padding: 30px 20px; max-width: 600px; margin: 0 auto; text-align: center; }
+        
+        .welcome-box {
+            background: rgba(0, 34, 45, 0.6);
+            padding: 30px; border-radius: 20px;
+            border: 1px solid rgba(0, 172, 193, 0.2);
+            backdrop-filter: blur(10px);
         }
+        .welcome-box h1 { font-size: 24px; color: #00acc1; margin-bottom: 10px; }
+        
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .menu-item {
+            background: rgba(255,255,255,0.05); padding: 15px;
+            border-radius: 12px; border: 1px solid rgba(0, 172, 193, 0.1);
+            text-decoration: none; color: #fff; transition: 0.3s;
+        }
+        .menu-item:hover { border-color: #ff8800; transform: translateY(-3px); }
+        .menu-item i { font-size: 24px; color: #ff8800; margin-bottom: 8px; display: block; }
+        .menu-item span { font-size: 13px; font-weight: 700; }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="brand">ROOXPEDIA</div>
+        <div class="nav-left" id="openSidebar"><i class="fas fa-bars"></i></div>
         <div class="nav-right">
-            <div class="balance-pill" onclick="window.location.href='./pay/deposit.html'">
-                <i class="fas fa-wallet"></i>
-                <span id="topSaldo">Rp 0</span>
+            <div class="balance-nav" onclick="window.location.href='./pay/deposit.html'">
+                <span>Saldo</span>
+                <h4 id="topSaldo">Rp 0</h4>
             </div>
-            <img src="https://i.ibb.co.com/rRYyNP25/20260420-202909.jpg" class="user-avatar" id="avatarBtn">
+            <img src="https://i.ibb.co.com/rRYyNP25/20260420-202909.jpg" alt="Profile" id="toggleProfile">
         </div>
     </nav>
 
-    <div class="profile-menu" id="profileMenu">
-        <div class="menu-info">
-            <label>User ID</label>
-            <p id="p-uid" style="font-size: 12px; opacity: 0.7;">-</p>
+    <div class="overlay" id="overlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3 style="color: #00acc1;">ROOXPEDIA</h3>
+            <i class="fas fa-times" id="closeSidebar" style="cursor:pointer"></i>
         </div>
-        <div class="menu-info">
-            <label>Nama Lengkap</label>
-            <p id="p-nama">-</p>
+        <div class="sidebar-menu">
+            <a href="dashboard.html"><i class="fas fa-home"></i> <span>DASHBOARD</span></a>
+            <a href="./pay/deposit.html"><i class="fas fa-wallet"></i> <span>DEPOSIT</span></a>
+            <a href="#"><i class="fas fa-shopping-cart"></i> <span>BELI NOKOS</span></a>
+            <a href="#"><i class="fas fa-history"></i> <span>RIWAYAT</span></a>
         </div>
-        <div class="menu-info">
-            <label>Role Status</label>
-            <p id="p-role" style="color: #ff8800;">-</p>
-        </div>
-        <button class="btn-logout" id="btnLogout">KELUAR AKUN</button>
     </div>
 
-    <div class="container">
-        <div class="welcome-header">
-            <h1>Halo, <span id="p-nama-greet">User</span> 👋</h1>
-            <p style="color: #668899;">Selamat datang kembali di pusat layanan Rooxpedia.</p>
+    <div class="profile-card" id="profileCard">
+        <h3>MY PROFILE</h3>
+        <div class="info-item">
+            <label>NAMA</label>
+            <p id="p-nama">-</p>
         </div>
-
-        <div class="menu-grid">
-            <a href="./pay/deposit.html" class="card">
-                <i class="fas fa-money-bill-wave"></i>
-                <h3>Isi Saldo</h3>
-                <p>Top up saldo otomatis via QRIS 24 jam non-stop.</p>
-            </a>
-            <div class="card">
-                <i class="fas fa-mobile-alt"></i>
-                <h3>Beli Nokos</h3>
-                <p>Layanan OTP nomor luar & lokal untuk berbagai aplikasi.</p>
-            </div>
-            <div class="card">
-                <i class="fas fa-history"></i>
-                <h3>Riwayat</h3>
-                <p>Cek semua data transaksi dan pembelian kamu.</p>
-            </div>
-            <div class="card">
-                <i class="fas fa-comment-dots"></i>
-                <h3>Bantuan CS</h3>
-                <p>Hubungi admin jika mengalami kendala transaksi.</p>
-            </div>
+        <div class="info-item">
+            <label>ROLE</label>
+            <p id="p-role" style="color: #ff8800; font-weight: 700;">-</p>
         </div>
+        <div class="info-item">
+            <label>SALDO</label>
+            <p id="p-saldo-card">Rp 0</p>
+        </div>
+        <button class="btn-logout" id="btnLogout">LOGOUT</button>
+    </div>
 
-        <div style="margin-top: 40px; padding: 20px; background: rgba(0, 172, 193, 0.05); border-radius: 15px; border: 1px dashed rgba(0, 172, 193, 0.2); text-align: center;">
-            <p style="font-size: 14px; color: #00acc1;">Informasi: Sistem kami sedang dioptimasi untuk kecepatan OTP yang lebih baik.</p>
+    <div class="main-content">
+        <div class="welcome-box">
+            <i class="fas fa-user-circle" style="font-size: 40px; color: #ff8800; margin-bottom: 15px;"></i>
+            <h1>Halo, <span id="p-nama-greet">User</span></h1>
+            <p style="font-size: 14px; opacity: 0.8;">Selamat datang di dashboard Rooxpedia. Pilih layanan yang ingin kamu gunakan.</p>
+            
+            <div class="menu-grid">
+                <a href="./pay/deposit.html" class="menu-item">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Top Up</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-store"></i>
+                    <span>Produk</span>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -218,20 +200,5 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="script.js"></script>
-    <script>
-        const avatarBtn = document.getElementById('avatarBtn');
-        const profileMenu = document.getElementById('profileMenu');
-
-        avatarBtn.onclick = (e) => {
-            e.stopPropagation();
-            profileMenu.classList.toggle('active');
-        };
-
-        document.onclick = (e) => {
-            if (!profileMenu.contains(e.target) && e.target !== avatarBtn) {
-                profileMenu.classList.remove('active');
-            }
-        };
-    </script>
 </body>
 </html>
