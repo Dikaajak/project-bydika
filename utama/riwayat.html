@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooxpedia - Riwayat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        body { 
+            background: #003344;
+            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
+            color: #fff; min-height: 100vh; padding: 20px;
+        }
+        .header { display: flex; align-items: center; margin-bottom: 25px; }
+        .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
+        
+        h2 { font-size: 18px; color: #ff8800; margin: 20px 0 10px 0; text-transform: uppercase; border-left: 3px solid #00acc1; padding-left: 10px; }
+        
+        .list-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+        
+        /* Card Riwayat Deposit */
+        .card-depo {
+            background: rgba(0, 172, 193, 0.1);
+            border: 1px solid rgba(0, 172, 193, 0.3);
+            border-radius: 12px; padding: 15px;
+        }
+        .card-depo h4 { color: #00ff88; font-size: 14px; margin-bottom: 5px; }
+        .card-depo p { font-size: 13px; color: #ccc; }
+
+        /* Card Riwayat Pembelian */
+        .card-order {
+            background: rgba(0, 34, 45, 0.8);
+            border: 1px solid rgba(255, 136, 0, 0.2);
+            border-radius: 12px; padding: 15px;
+        }
+        .order-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .item { display: flex; flex-direction: column; }
+        .item label { font-size: 10px; color: #00acc1; font-weight: 700; }
+        .item span { font-size: 13px; font-weight: 700; }
+        
+        .status-badge {
+            padding: 2px 8px; border-radius: 4px; font-size: 10px; text-transform: uppercase;
+        }
+        .status-sukses { background: #00ff8822; color: #00ff88; border: 1px solid #00ff88; }
+        .status-pending { background: #ff880022; color: #ff8800; border: 1px solid #ff8800; }
+        .status-gagal { background: #ff444422; color: #ff4444; border: 1px solid #ff4444; }
+
+        .empty-state { text-align: center; padding: 20px; color: #668899; font-style: italic; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
+        <h3>Riwayat Transaksi</h3>
+    </div>
+
+    <section>
+        <h2>Riwayat Deposit</h2>
+        <div id="depositList" class="list-container">
+            <div class="empty-state">Memuat data...</div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Riwayat Pembelian Nomor</h2>
+        <div id="orderList" class="list-container">
+            <div class="empty-state">Memuat data...</div>
+        </div>
+    </section>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_5LQ6U3DtMf4STbDjLymazm8I_zySbSw",
+            authDomain: "myproject-485415.firebaseapp.com",
+            databaseURL: "https://myproject-485415-default-rtdb.firebaseio.com",
+            projectId: "myproject-485415",
+            storageBucket: "myproject-485415.firebasestorage.app",
+            messagingSenderId: "450623193142",
+            appId: "1:450623193142:web:d7a9caf66e1dff8d495897"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loadDeposits(user.uid);
+                loadOrders(user.uid);
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        function loadDeposits(uid) {
+            const depRef = db.ref('deposits/' + uid);
+            depRef.on('value', (snapshot) => {
+                const container = document.getElementById('depositList');
+                container.innerHTML = '';
+                
+                if (!snapshot.exists()) {
+                    container.innerHTML = '<div class="empty-state">Belum ada riwayat deposit.</div>';
+                    return;
+                }
+
+                snapshot.forEach((child) => {
+                    const data = child.val();
+                    const html = `
+                        <div class="card-depo">
+                            <h4>DEPOSIT SUKSES</h4>
+                            <p>saldo anda bertambah Rp ${parseInt(data.amount).toLocaleString()} pakai untuk membeli nokos 😉</p>
+                            <small style="font-size:10px; color: #668899;">Ref: ${data.ref || child.key}</small>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('afterbegin', html);
+                });
+            });
+        }
+
+        function loadOrders(uid) {
+            const orderRef = db.ref('orders/' + uid);
+            orderRef.on('value', (snapshot) => {
+                const container = document.getElementById('orderList');
+                container.innerHTML = '';
+
+                if (!snapshot.exists()) {
+                    container.innerHTML = '<div class="empty-state">Belum ada pembelian nomor.</div>';
+                    return;
+                }
+
+                snapshot.forEach((child) => {
+                    const data = child.val();
+                    const statusClass = 'status-' + (data.status || 'pending').toLowerCase();
+                    
+                    const html = `
+                        <div class="card-order">
+                            <div class="order-grid">
+                                <div class="item"><label>APLIKASI</label><span>${data.aplikasi || '-'}</span></div>
+                                <div class="item"><label>HARGA</label><span style="color: #ff8800;">Rp ${parseInt(data.harga || 0).toLocaleString()}</span></div>
+                                <div class="item"><label>NOMOR</label><span>${data.nomor || 'Menunggu...'}</span></div>
+                                <div class="item"><label>OTP</label><span style="color: #00ff88;">${data.otp || '-'}</span></div>
+                                <div class="item"><label>STATUS</label><div><span class="status-badge ${statusClass}">${data.status || 'PENDING'}</span></div></div>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('afterbegin', html);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
