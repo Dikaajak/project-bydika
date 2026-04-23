@@ -3,276 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rooxpedia - Detail Order</title>
+    <title>Rooxpedia - Pilih Aplikasi</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
-        body { 
-            background: #003344;
-            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
-            color: #fff; min-height: 100vh; padding: 20px;
-        }
-        .header { display: flex; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(0, 172, 193, 0.2); }
+        body { background: #003344; color: #fff; padding: 20px; }
+        .header { display: flex; align-items: center; margin-bottom: 25px; }
         .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
-        .header h3 { text-transform: uppercase; letter-spacing: 1px; font-size: 16px; }
-
-        h2 { font-size: 14px; color: #ff8800; margin: 15px 0; text-transform: uppercase; letter-spacing: 1px; }
-
-        .list-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-
-        .card-item {
+        
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
+        .card {
             background: rgba(0, 34, 45, 0.7);
             border: 1px solid rgba(0, 172, 193, 0.2);
-            border-radius: 12px; padding: 12px 15px;
-            display: flex; align-items: center; justify-content: space-between;
-            transition: 0.3s; cursor: pointer;
+            border-radius: 15px; padding: 20px; text-align: center; cursor: pointer;
         }
-        .card-item:hover { border-color: #00acc1; background: rgba(0, 172, 193, 0.1); }
-        .card-info { display: flex; align-items: center; gap: 12px; }
-        .card-info img { width: 35px; height: 25px; border-radius: 4px; object-fit: cover; }
-        .card-info .name { font-weight: 700; font-size: 15px; }
-        .card-info .sub { font-size: 11px; color: #00acc1; display: block; }
-
-        .price-tag { text-align: right; }
-        .price-tag .amount { color: #ff8800; font-weight: 700; font-size: 15px; display: block; }
-        .price-tag .stock { font-size: 10px; color: #00ff88; }
-
-        .operator-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .op-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 136, 0, 0.2);
-            border-radius: 10px; padding: 10px; text-align: center; cursor: pointer;
-            transition: 0.3s;
-        }
-        .op-card.active { border-color: #ff8800; background: rgba(255, 136, 0, 0.1); }
-        .op-card img { width: 30px; height: 30px; border-radius: 50%; margin-bottom: 5px; }
-        .op-card span { display: block; font-size: 11px; text-transform: uppercase; font-weight: 700; }
-
-        .btn-buy {
-            width: 100%; padding: 15px; background: #ff8800; border: none; border-radius: 12px;
-            color: #fff; font-weight: 700; font-size: 16px; margin-top: 20px; display: none;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(255, 136, 0, 0.3);
-            text-transform: uppercase;
-        }
-
-        #loader { text-align: center; padding: 50px; color: #00acc1; }
+        .card:hover { border-color: #ff8800; transform: translateY(-3px); }
+        .card img { width: 50px; height: 50px; border-radius: 10px; margin-bottom: 12px; }
+        .card span { display: block; font-weight: 700; font-size: 14px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <i class="fas fa-arrow-left" onclick="window.location.href='produk.html'"></i>
-        <h3 id="appTitle">LIST NEGARA & OPERATOR</h3>
+        <i class="fas fa-chevron-left" onclick="window.location.href='produk.html'"></i>
+        <h3 id="titleName">APLIKASI</h3>
     </div>
 
-    <div id="loader">
-        <i class="fas fa-spinner fa-spin fa-2x"></i>
-        <p style="margin-top:10px">Mencari Jalur Koneksi...</p>
-    </div>
-
-    <div id="content" style="display: none;">
-        <h2>Pilih Negara</h2>
-        <div id="countryList" class="list-container"></div>
-
-        <div id="operatorSection" style="display: none; margin-top: 20px;">
-            <h2>Pilih Operator</h2>
-            <div id="operatorList" class="operator-grid"></div>
-            <button class="btn-buy" id="btnBuyNow">BELI SEKARANG</button>
-        </div>
-    </div>
+    <div id="appList" class="grid-container"></div>
 
     <script src="config.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyC_5LQ6U3DtMf4STbDjLymazm8I_zySbSw",
-            authDomain: "myproject-485415.firebaseapp.com",
-            databaseURL: "https://myproject-485415-default-rtdb.firebaseio.com",
-            projectId: "myproject-485415",
-            storageBucket: "myproject-485415.firebasestorage.app",
-            messagingSenderId: "450623193142",
-            appId: "1:450623193142:web:d7a9caf66e1dff8d495897"
-        };
-
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
-
         const urlParams = new URLSearchParams(window.location.search);
-        const serviceCode = urlParams.get('code');
-        const serviceName = decodeURIComponent(urlParams.get('name') || '');
+        const iso = urlParams.get('iso');
+        const countryName = urlParams.get('name');
+        document.getElementById('titleName').innerText = `APLIKASI DI ${countryName}`;
 
-        let selectedCountry = null;
-        let selectedOperator = null;
-        let selectedPrice = 0;
-
-        document.getElementById('appTitle').innerText = `LIST NEGARA & OPERATOR ${serviceName}`;
-
-        async function loadCountries() {
+        async function fetchApps() {
             try {
-                const res = await axios.get(`https://www.rumahotp.io/api/v2/countries?service_id=${serviceCode}`, {
-                    headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP, 'Accept': 'application/json' }
+                const response = await axios.get('https://www.rumahotp.io/api/v2/services', {
+                    headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
                 });
-
-                if (res.data.success) {
-                    displayCountries(res.data.data);
-                }
-            } catch (err) {
-                console.error(err);
-            } finally {
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-            }
-        }
-
-        function displayCountries(countries) {
-            const container = document.getElementById('countryList');
-            container.innerHTML = '';
-
-            countries.forEach(c => {
-                const bestPrice = c.pricelist[0];
-                const card = document.createElement('div');
-                card.className = 'card-item';
-                card.id = `country-${c.iso_code}`;
-                card.onclick = () => selectCountry(c, bestPrice);
-
-                card.innerHTML = `
-                    <div class="card-info">
-                        <img src="${c.img}" alt="${c.name}">
-                        <div>
-                            <span class="name">${c.name}</span>
-                            <span class="sub">${c.prefix} | ID: ${c.number_id}</span>
-                        </div>
-                    </div>
-                    <div class="price-tag">
-                        <span class="amount">${bestPrice.price_format}</span>
-                        <span class="stock">Stok: ${bestPrice.stock}</span>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        async function selectCountry(country, priceData) {
-            selectedCountry = country;
-            selectedPrice = priceData.price;
-            
-            document.querySelectorAll('.card-item').forEach(el => el.style.borderColor = 'rgba(0, 172, 193, 0.2)');
-            document.getElementById(`country-${country.iso_code}`).style.borderColor = '#ff8800';
-
-            const opSection = document.getElementById('operatorSection');
-            const opList = document.getElementById('operatorList');
-            opSection.style.display = 'block';
-            opList.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Memuat Operator...</p>';
-
-            try {
-                const res = await axios.get(`https://www.rumahotp.io/api/v2/operators?country=${country.name}&provider_id=${priceData.provider_id}`, {
-                    headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP, 'Accept': 'application/json' }
-                });
-
-                if (res.data.success) {
-                    displayOperators(res.data.data);
-                }
-            } catch (err) {
-                opList.innerHTML = '<p style="color:red">Gagal memuat operator</p>';
-            }
-        }
-
-        function displayOperators(operators) {
-            const container = document.getElementById('operatorList');
-            container.innerHTML = '';
-            
-            operators.forEach(op => {
-                const card = document.createElement('div');
-                card.className = 'op-card';
-                card.onclick = () => {
-                    selectedOperator = op;
-                    document.querySelectorAll('.op-card').forEach(el => el.classList.remove('active'));
-                    card.classList.add('active');
-                    document.getElementById('btnBuyNow').style.display = 'block';
-                };
-                card.innerHTML = `
-                    <img src="${op.image}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
-                    <span>${op.name}</span>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        document.getElementById('btnBuyNow').onclick = async () => {
-            const user = auth.currentUser;
-            if (!user) return Swal.fire({ icon: 'error', title: 'Error', text: 'Sesi berakhir, silahkan login kembali', background: '#00222d', color: '#fff' });
-
-            const result = await Swal.fire({
-                title: 'Konfirmasi',
-                html: `Aplikasi: ${serviceName}<br>Negara: ${selectedCountry.name}<br>Operator: ${selectedOperator.name}<br><br><b style="color:#ff8800">Total: Rp ${selectedPrice.toLocaleString()}</b>`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Beli Sekarang',
-                background: '#00222d',
-                color: '#fff'
-            });
-
-            if (result.isConfirmed) {
-                Swal.fire({ title: 'Memproses...', didOpen: () => Swal.showLoading(), background: '#00222d', color: '#fff' });
-
-                const userRef = db.ref('users/' + user.uid);
-                const snapshot = await userRef.once('value');
-                const userData = snapshot.val();
-                const currentSaldo = parseInt(userData.saldo || 0);
-
-                if (currentSaldo < selectedPrice) {
-                    return Swal.fire({ icon: 'error', title: 'Saldo Kurang', text: 'Saldo anda tidak cukup.', background: '#00222d', color: '#fff' });
-                }
-
-                try {
-                    const orderRes = await axios.get(`https://www.rumahotp.io/api/v2/order?service_id=${serviceCode}&country=${selectedCountry.iso_code}&operator=${selectedOperator.id}`, {
-                        headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP, 'Accept': 'application/json' }
+                if (response.data.success) {
+                    const container = document.getElementById('appList');
+                    response.data.data.forEach(app => {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.onclick = () => {
+                            window.location.href = `order_detail.html?code=${app.service_code}&name=${app.service_name}&iso=${iso}&country=${countryName}`;
+                        };
+                        card.innerHTML = `
+                            <img src="${app.service_img}">
+                            <span>${app.service_name}</span>
+                        `;
+                        container.appendChild(card);
                     });
-
-                    if (orderRes.data.success) {
-                        const orderData = orderRes.data.data;
-
-                        await userRef.update({
-                            saldo: currentSaldo - selectedPrice,
-                            jumlahPesanan: (userData.jumlahPesanan || 0) + 1
-                        });
-
-                        await db.ref('orders/' + user.uid).push({
-                            order_id: orderData.order_id,
-                            aplikasi: serviceName,
-                            nomor: orderData.number,
-                            harga: selectedPrice,
-                            status: 'PENDING',
-                            otp: '-',
-                            timestamp: firebase.database.ServerValue.TIMESTAMP
-                        });
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: 'Nomor: ' + orderData.number,
-                            background: '#00222d',
-                            color: '#fff'
-                        }).then(() => {
-                            window.location.href = 'riwayat.html';
-                        });
-                    } else {
-                        Swal.fire({ icon: 'error', title: 'Gagal', text: orderRes.data.message || 'Stok habis', background: '#00222d', color: '#fff' });
-                    }
-                } catch (err) {
-                    Swal.fire({ icon: 'error', title: 'Error', text: 'Gagal menghubungi server.', background: '#00222d', color: '#fff' });
                 }
-            }
-        };
-
-        loadCountries();
+            } catch (e) { console.error(e); }
+        }
+        fetchApps();
     </script>
 </body>
 </html>
