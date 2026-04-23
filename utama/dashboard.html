@@ -71,6 +71,7 @@
             left: -280px; top: 0; width: 280px; height: 100%;
             background: #00222d; transition: 0.3s; z-index: 200; padding: 20px;
             border-right: 1px solid rgba(0, 172, 193, 0.2);
+            overflow-y: auto;
         }
         .sidebar.active { left: 0; }
         .sidebar-header { display: flex; justify-content: space-between; margin-bottom: 30px; align-items: center; }
@@ -82,6 +83,11 @@
         }
         .sidebar-menu a:hover { border-color: #00acc1; background: rgba(0, 172, 193, 0.1); }
         .sidebar-menu i { margin-right: 15px; color: #ff8800; width: 20px; text-align: center; }
+
+        .sidebar-menu hr { border: 0; border-top: 1px solid rgba(0, 172, 193, 0.2); margin: 15px 0; }
+        .cs-label { font-size: 10px; color: #00acc1; font-weight: 700; margin-left: 10px; margin-bottom: 8px; display: block; opacity: 0.7; letter-spacing: 1px; }
+        .sidebar-menu a i.fa-whatsapp { color: #25d366; }
+        .sidebar-menu a i.fa-telegram { color: #0088cc; }
 
         .overlay {
             display: none; position: fixed;
@@ -237,7 +243,7 @@
 
     <div class="overlay" id="overlay"></div>
 
-        <div class="sidebar" id="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h3 style="color: #00acc1;">ROOXPEDIA</h3>
             <i class="fas fa-times" id="closeSidebar" style="cursor:pointer"></i>
@@ -247,12 +253,24 @@
             <a href="./pay/deposit.html"><i class="fas fa-wallet"></i> <span>DEPOSIT</span></a>
             <a href="produk.html"><i class="fas fa-shopping-cart"></i> <span>BELI NOKOS</span></a>
             <a href="riwayat.html"><i class="fas fa-history"></i> <span>RIWAYAT</span></a>
-        </div>
-    </div> <div class="profile-card" id="profileCard">
-        <h3>MY PROFILE</h3>
-        <button class="btn-logout" id="btnLogout">LOGOUT</button>
-    </div>
 
+            <hr>
+            <span class="cs-label">CUSTOMER SERVICE</span>
+
+            <a href="https://wa.me/6281818934870" target="_blank">
+                <i class="fab fa-whatsapp"></i> <span>CS 1 (WA)</span>
+            </a>
+            <a href="https://wa.me/628XXXXXXXXXX" target="_blank">
+                <i class="fab fa-whatsapp"></i> <span>CS 2 (WA)</span>
+            </a>
+            <a href="https://t.me/username1" target="_blank">
+                <i class="fab fa-telegram"></i> <span>CS 1 (TELE)</span>
+            </a>
+            <a href="https://t.me/username2" target="_blank">
+                <i class="fab fa-telegram"></i> <span>CS 2 (TELE)</span>
+            </a>
+        </div>
+    </div>
 
     <div class="profile-card" id="profileCard">
         <h3>MY PROFILE</h3>
@@ -308,7 +326,7 @@
                 <i class="fas fa-plus-circle"></i>
                 <span>Top Up</span>
             </a>
-            <a href="#" class="menu-item">
+            <a href="produk.html" class="menu-item">
                 <i class="fas fa-store"></i>
                 <span>Produk</span>
             </a>
@@ -326,7 +344,7 @@
                     <p>buka menu produk, pilih aplikasi yang ingin digunakan, lalu klik beli. tunggu sistem memberikan nomor dan kode otp akan muncul di riwayat pesanan anda.</p>
                 </div>
                 <div class="guide-item">
-                    <label>PANDUAN BAGAIMANA JIKA DEPOSIT ERROR</label>
+                    <label>PANDUAN JIKA DEPOSIT ERROR</label>
                     <p>jika saldo tidak masuk lebih dari 5 menit, segera hubungi admin melalui whatsapp dengan melampirkan bukti transfer dan email akun anda untuk pengecekan manual.</p>
                 </div>
                 <div class="guide-item">
