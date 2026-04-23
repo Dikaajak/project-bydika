@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooxpedia - Pilih Negara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        body { background: #003344; color: #fff; padding: 20px; }
+        .header { display: flex; align-items: center; margin-bottom: 20px; }
+        .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
+        .country-list { display: flex; flex-direction: column; gap: 10px; }
+        .card-country { background: rgba(0, 34, 45, 0.7); border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .c-info { display: flex; align-items: center; gap: 12px; }
+        .c-info img { width: 30px; height: 20px; border-radius: 3px; }
+        .amount { color: #00ff88; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <i class="fas fa-chevron-left" onclick="window.history.back()"></i>
+        <h3 id="appTitle">NEGARA</h3>
+    </div>
+    <div id="countryList" class="country-list"></div>
+
+    <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceCode = urlParams.get('code');
+        const serviceName = urlParams.get('name');
+        const serviceImg = urlParams.get('img');
+        document.getElementById('appTitle').innerText = serviceName;
+
+        async function loadCountries() {
+            try {
+                const res = await axios.get(`https://www.rumahotp.io/api/v2/countries?service_id=${serviceCode}`, {
+                    headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
+                });
+                if (res.data.success) {
+                    const container = document.getElementById('countryList');
+                    res.data.data.forEach(c => {
+                        const basePrice = c.pricelist[0].price;
+                        const finalPrice = basePrice + 500; 
+                        const card = document.createElement('div');
+                        card.className = 'card-country';
+                        card.onclick = () => window.location.href = `order_detail.html?code=${serviceCode}&name=${encodeURIComponent(serviceName)}&iso=${c.iso_code}&country=${encodeURIComponent(c.name)}&price=${finalPrice}&provider_id=${c.pricelist[0].provider_id}&app_img=${serviceImg}`;
+                        card.innerHTML = `
+                            <div class="c-info"><img src="${c.img}"><span>${c.name}</span></div>
+                            <span class="amount">Rp ${finalPrice.toLocaleString()}</span>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
+            } catch (e) { console.error(e); }
+        }
+        loadCountries();
+    </script>
+</body>
+</html>
