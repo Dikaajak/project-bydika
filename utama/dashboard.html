@@ -4,241 +4,234 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooxpedia - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
         body { 
-            background: #003344;
-            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
+            background: #001a22;
+            background-image: radial-gradient(circle at top right, #00acc122, transparent),
+                              radial-gradient(circle at bottom left, #ff880011, transparent);
             color: #fff;
             min-height: 100vh;
-            overflow-x: hidden;
         }
-        
+
+        /* Navbar Modern */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            background: rgba(0, 34, 45, 0.9);
-            border-bottom: 1px solid rgba(0, 172, 193, 0.3);
+            padding: 15px 5%;
+            background: rgba(0, 34, 45, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0, 172, 193, 0.2);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
         }
-        .nav-left i { font-size: 24px; cursor: pointer; color: #00acc1; }
-        .nav-right img { 
-            width: 40px; height: 40px; 
-            border-radius: 50%; border: 2px solid #00acc1; 
-            cursor: pointer;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: -280px; top: 0; width: 280px; height: 100%;
-            background: #00222d; transition: 0.3s; z-index: 200; padding: 20px;
-        }
-        .sidebar.active { left: 0; }
-        .sidebar-header { display: flex; justify-content: space-between; margin-bottom: 30px; align-items: center; }
-        .sidebar-menu a {
+        .brand { font-size: 22px; font-weight: 800; color: #00acc1; letter-spacing: 2px; }
+        
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        
+        .balance-pill {
+            background: rgba(255, 136, 0, 0.1);
+            border: 1px solid #ff8800;
+            padding: 5px 15px;
+            border-radius: 50px;
             display: flex;
             align-items: center;
-            color: #fff;
-            text-decoration: none;
-            padding: 12px 15px;
-            background: rgba(0, 172, 193, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(0, 172, 193, 0.2);
+            gap: 8px;
+            cursor: pointer;
             transition: 0.3s;
         }
-        .sidebar-menu a:hover { border-color: #ff8800; }
+        .balance-pill:hover { background: rgba(255, 136, 0, 0.2); transform: scale(1.05); }
+        .balance-pill i { color: #ff8800; font-size: 14px; }
+        .balance-pill span { font-weight: 700; font-size: 15px; color: #fff; }
 
-        .overlay {
-            display: none; position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 150;
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #00acc1;
+            cursor: pointer;
+            transition: 0.3s;
         }
-        .overlay.active { display: block; }
+        .user-avatar:hover { box-shadow: 0 0 15px #00acc1; }
 
-        .profile-card {
-            display: none;
-            position: absolute;
-            top: 70px; right: 20px; width: 300px;
-            background: #00222d; border: 1px solid #00acc1;
-            border-radius: 15px; padding: 20px; z-index: 100;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .profile-card.active { display: block; }
-        .profile-card h3 { 
-            font-size: 14px; color: #ff8800; text-align: center; 
-            margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
-        }
-        .info-item { margin-bottom: 12px; }
-        .info-item label { display: block; font-size: 11px; color: #00acc1; font-weight: 700; }
-        .info-item p { font-size: 15px; margin-top: 2px; }
-        .pw-box { display: flex; align-items: center; justify-content: space-between; }
-        .btn-logout {
-            width: 100%; padding: 10px; background: #ff4444;
-            border: none; color: #fff; border-radius: 8px;
-            cursor: pointer; font-weight: 700; margin-top: 10px;
-        }
+        /* Main Layout */
+        .container { padding: 30px 5%; max-width: 1200px; margin: 0 auto; }
 
-        .main-container {
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: calc(100vh - 80px);
-        }
+        .welcome-header { margin-bottom: 30px; }
+        .welcome-header h1 { font-size: 28px; color: #fff; }
+        .welcome-header span { color: #00acc1; }
 
-        .welcome-section {
-            text-align: center;
-            max-width: 600px;
-            background: rgba(0, 34, 45, 0.6);
-            padding: 35px 25px;
-            border-radius: 30px;
-            border: 1px solid rgba(0, 172, 193, 0.2);
-            backdrop-filter: blur(15px);
-        }
-        .welcome-section i.hero-icon {
-            font-size: 50px;
-            color: #ff8800;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px rgba(255, 136, 0, 0.3));
-        }
-        .welcome-section h1 {
-            font-size: 26px;
-            color: #00acc1;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-        .welcome-section p {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #e0e0e0;
-            margin-bottom: 20px;
-        }
-        .highlight { color: #ff8800; font-weight: 700; }
-
-        .feature-grid {
+        /* Grid Menu */
+        .menu-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .feature-item {
-            font-size: 12px;
-            background: rgba(255,255,255,0.05);
-            padding: 8px;
-            border-radius: 10px;
-            color: #00acc1;
-            font-weight: 700;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
 
-        .stats-placeholder {
-            margin-top: 30px;
-            width: 100%;
-            max-width: 500px;
-            height: 100px;
-            border: 2px dashed rgba(0, 172, 193, 0.2);
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 172, 193, 0.1);
+            padding: 25px;
             border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255,255,255,0.2);
-            font-size: 14px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: #fff;
         }
-        
-    .stats-placeholder {
-    text-align: center;
-    padding: 20px;
-    color: #ccc;
-   }
+        .card:hover {
+            background: rgba(0, 172, 193, 0.08);
+            border-color: #00acc1;
+            transform: translateY(-5px);
+        }
+        .card i {
+            font-size: 35px;
+            color: #00acc1;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .card h3 { font-size: 18px; margin-bottom: 8px; }
+        .card p { font-size: 14px; color: #668899; line-height: 1.4; }
+
+        /* Decorative Glow */
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0, 172, 193, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Profile Dropdown */
+        .profile-menu {
+            position: absolute;
+            top: 75px; right: 5%;
+            width: 280px;
+            background: #00222d;
+            border: 1px solid #00acc1;
+            border-radius: 20px;
+            padding: 20px;
+            display: none;
+            z-index: 1001;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+        .profile-menu.active { display: block; animation: slideIn 0.3s ease; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-info { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .menu-info label { font-size: 11px; color: #00acc1; font-weight: 700; text-transform: uppercase; }
+        .menu-info p { font-size: 16px; font-weight: 600; margin-top: 2px; }
+
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+            border: 1px solid #ff4444;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-logout:hover { background: #ff4444; color: #fff; }
+
+        @media (max-width: 600px) {
+            .brand { font-size: 18px; }
+            .welcome-header h1 { font-size: 22px; }
+        }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="nav-left" id="openSidebar"><i class="fas fa-bars"></i></div>
-        <div class="nav-right" id="toggleProfile">
-            <img src="https://i.ibb.co.com/rRYyNP25/20260420-202909.jpg" alt="Profile">
+        <div class="brand">ROOXPEDIA</div>
+        <div class="nav-right">
+            <div class="balance-pill" onclick="window.location.href='./pay/deposit.html'">
+                <i class="fas fa-wallet"></i>
+                <span id="topSaldo">Rp 0</span>
+            </div>
+            <img src="https://i.ibb.co.com/rRYyNP25/20260420-202909.jpg" class="user-avatar" id="avatarBtn">
         </div>
     </nav>
 
-    <div class="overlay" id="overlay"></div>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3 style="letter-spacing: 2px; color: #00acc1;">ROOXPEDIA</h3>
-            <i class="fas fa-times" id="closeSidebar" style="cursor:pointer"></i>
+    <div class="profile-menu" id="profileMenu">
+        <div class="menu-info">
+            <label>User ID</label>
+            <p id="p-uid" style="font-size: 12px; opacity: 0.7;">-</p>
         </div>
-        <div class="sidebar-menu">
-            <p style="color: #668899; font-size: 11px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Menu Utama</p>
-            <a href="./pay/deposit.html">
-                <i class="fas fa-wallet" style="margin-right: 15px; color: #ff8800; width: 20px;"></i>
-                <span style="font-weight: 700; font-size: 16px;">DEPOSIT</span>
-            </a>
-        </div>
-    </div>
-
-    <div class="profile-card" id="profileCard">
-        <h3>INFORMASI DAN ROLE KAMU DI ROOXPEDIA</h3>
-        <div class="info-item">
-            <label>ROLE</label>
-            <p id="p-role" style="color: #ff8800; font-weight: 700;">-</p>
-        </div>
-        <div class="info-item">
-            <label>NAMA</label>
+        <div class="menu-info">
+            <label>Nama Lengkap</label>
             <p id="p-nama">-</p>
         </div>
-        <div class="info-item">
-            <label>EMAIL</label>
-            <p id="p-email">-</p>
+        <div class="menu-info">
+            <label>Role Status</label>
+            <p id="p-role" style="color: #ff8800;">-</p>
         </div>
-        <div class="info-item">
-            <label>WA</label>
-            <p id="p-wa">-</p>
-        </div>
-        <div class="info-item">
-            <label>PW</label>
-            <div class="pw-box">
-                <p id="p-pw">••••••••</p>
-                <i class="fas fa-eye" id="togglePw" style="color:#00acc1; cursor:pointer;"></i>
-            </div>
-        </div>
-        <button class="btn-logout" id="btnLogout">LOGOUT</button>
+        <button class="btn-logout" id="btnLogout">KELUAR AKUN</button>
     </div>
 
-    <div class="main-container">
-        <div class="welcome-section">
-            <i class="fas fa-shield-alt hero-icon"></i>
-            <h1>Selamat Datang di Rooxpedia</h1>
-            <p>
-                Rooxpedia adalah platform penyedia <span class="highlight">Nokos</span> terbaik dengan harga terjangkau. 
-                Nikmati layanan OTP cepat, bantuan CS Online 24 jam, dan seluruh proses transaksi yang berjalan secara <span class="highlight">Otomatis</span>.
-            </p>
-            <div class="feature-grid">
-                <div class="feature-item"><i class="fas fa-bolt"></i> OTP CEPAT</div>
-                <div class="feature-item"><i class="fas fa-tags"></i> HARGA MURAH</div>
-                <div class="feature-item"><i class="fas fa-headset"></i> CS 24 JAM</div>
-                <div class="feature-item"><i class="fas fa-robot"></i> FULL OTOMATIS</div>
+    <div class="container">
+        <div class="welcome-header">
+            <h1>Halo, <span id="p-nama-greet">User</span> 👋</h1>
+            <p style="color: #668899;">Selamat datang kembali di pusat layanan Rooxpedia.</p>
+        </div>
+
+        <div class="menu-grid">
+            <a href="./pay/deposit.html" class="card">
+                <i class="fas fa-money-bill-wave"></i>
+                <h3>Isi Saldo</h3>
+                <p>Top up saldo otomatis via QRIS 24 jam non-stop.</p>
+            </a>
+            <div class="card">
+                <i class="fas fa-mobile-alt"></i>
+                <h3>Beli Nokos</h3>
+                <p>Layanan OTP nomor luar & lokal untuk berbagai aplikasi.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-history"></i>
+                <h3>Riwayat</h3>
+                <p>Cek semua data transaksi dan pembelian kamu.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-comment-dots"></i>
+                <h3>Bantuan CS</h3>
+                <p>Hubungi admin jika mengalami kendala transaksi.</p>
             </div>
         </div>
 
-   <div class="stats-placeholder">
-    <i class="fas fa-chart-bar" style="margin-right: 10px;"></i> 
-    <strong>WEB DALAM PENGEMBANGAN</strong>
-    <p style="margin-top: 8px; font-size: 14px; opacity: 0.8;">
-        "Belum siap sekarang, sama kayak aku yang belum siap liat kamu sama dia 🥀."
-    </p>
+        <div style="margin-top: 40px; padding: 20px; background: rgba(0, 172, 193, 0.05); border-radius: 15px; border: 1px dashed rgba(0, 172, 193, 0.2); text-align: center;">
+            <p style="font-size: 14px; color: #00acc1;">Informasi: Sistem kami sedang dioptimasi untuk kecepatan OTP yang lebih baik.</p>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="script.js"></script>
+    <script>
+        const avatarBtn = document.getElementById('avatarBtn');
+        const profileMenu = document.getElementById('profileMenu');
+
+        avatarBtn.onclick = (e) => {
+            e.stopPropagation();
+            profileMenu.classList.toggle('active');
+        };
+
+        document.onclick = (e) => {
+            if (!profileMenu.contains(e.target) && e.target !== avatarBtn) {
+                profileMenu.classList.remove('active');
+            }
+        };
+    </script>
 </body>
 </html>
