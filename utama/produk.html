@@ -3,118 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rooxpedia - Pilih Negara</title>
+    <title>Rooxpedia - Pilih Aplikasi</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
-        body { 
-            background: #003344;
-            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
-            color: #fff; min-height: 100vh; padding: 20px;
-        }
+        body { background: #003344; background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent); color: #fff; min-height: 100vh; padding: 20px; }
         .header { display: flex; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(0, 172, 193, 0.2); }
         .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
-
-        .search-box {
-            background: rgba(0, 34, 45, 0.8);
-            border: 1px solid rgba(0, 172, 193, 0.3);
-            border-radius: 12px; padding: 12px 15px;
-            display: flex; align-items: center; margin-bottom: 20px;
-        }
-        .search-box input {
-            background: none; border: none; color: #fff; width: 100%;
-            margin-left: 10px; outline: none; font-size: 16px;
-        }
-
-        .grid-container {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px;
-        }
-
-        .card {
-            background: rgba(0, 34, 45, 0.7);
-            border: 1px solid rgba(0, 172, 193, 0.2);
-            border-radius: 15px; padding: 15px 10px;
-            text-align: center; transition: 0.3s; cursor: pointer;
-        }
-        .card:hover { border-color: #ff8800; transform: translateY(-3px); background: rgba(0, 172, 193, 0.1); }
-        .card img { width: 40px; height: 30px; border-radius: 4px; margin-bottom: 10px; object-fit: cover; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
-        .card span { display: block; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .card .prefix { font-size: 10px; color: #00acc1; margin-top: 2px; }
-
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
+        .card { background: rgba(0, 34, 45, 0.7); border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .card:hover { border-color: #ff8800; transform: translateY(-3px); }
+        .card img { width: 50px; height: 50px; border-radius: 10px; margin-bottom: 12px; }
+        .card span { display: block; font-weight: 700; font-size: 14px; text-transform: uppercase; }
         #loader { text-align: center; padding: 50px; color: #00acc1; }
     </style>
 </head>
 <body>
-
     <div class="header">
         <i class="fas fa-chevron-left" onclick="window.location.href='dashboard.html'"></i>
-        <h3 style="letter-spacing: 2px;">PILIH NEGARA</h3>
+        <h3 style="letter-spacing: 2px;">PILIH APLIKASI</h3>
     </div>
-
-    <div class="search-box">
-        <i class="fas fa-search" style="color: #00acc1;"></i>
-        <input type="text" id="searchCountry" placeholder="Cari Negara...">
-    </div>
-
-    <div id="loader">
-        <i class="fas fa-atom fa-spin fa-2x"></i>
-        <p style="margin-top:10px">MENGAMBIL DATA NEGARA...</p>
-    </div>
-
-    <div id="countryList" class="grid-container"></div>
+    <div id="loader"><i class="fas fa-atom fa-spin fa-2x"></i></div>
+    <div id="appList" class="grid-container"></div>
 
     <script src="config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
     <script>
-        let allCountries = [];
-
-        async function fetchCountries() {
+        async function fetchApps() {
             try {
-                const response = await axios.get('https://www.rumahotp.io/api/v2/countries?service_id=13', {
-                    headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP, 'Accept': 'application/json' }
+                const res = await axios.get('https://www.rumahotp.io/api/v2/services', {
+                    headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
                 });
-
-                if (response.data.success) {
-                    allCountries = response.data.data;
-                    displayCountries(allCountries);
+                if (res.data.success) {
+                    const container = document.getElementById('appList');
+                    res.data.data.forEach(app => {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.onclick = () => window.location.href = `negara.html?code=${app.service_code}&name=${encodeURIComponent(app.service_name)}&img=${encodeURIComponent(app.service_img)}`;
+                        card.innerHTML = `<img src="${app.service_img}"><span>${app.service_name}</span>`;
+                        container.appendChild(card);
+                    });
                 }
-            } catch (error) {
-                console.error(error);
-                document.getElementById('loader').innerHTML = `<p style="color:red">Gagal memuat negara</p>`;
-            } finally {
-                document.getElementById('loader').style.display = 'none';
-            }
+            } catch (e) { console.error(e); }
+            finally { document.getElementById('loader').style.display = 'none'; }
         }
-
-        function displayCountries(countries) {
-            const container = document.getElementById('countryList');
-            container.innerHTML = '';
-
-            countries.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.onclick = () => {
-                    window.location.href = `order_detail.html?iso=${item.iso_code}&name=${item.name}`;
-                };
-                
-                card.innerHTML = `
-                    <img src="${item.img}" alt="${item.name}">
-                    <span>${item.name}</span>
-                    <span class="prefix">${item.prefix}</span>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        document.getElementById('searchCountry').oninput = (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtered = allCountries.filter(c => c.name.toLowerCase().includes(val));
-            displayCountries(filtered);
-        };
-
-        fetchCountries();
+        fetchApps();
     </script>
 </body>
 </html>
