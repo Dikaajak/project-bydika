@@ -111,25 +111,69 @@
             cursor: pointer; font-weight: 700; margin-top: 10px;
         }
 
-        .main-content { padding: 30px 20px; max-width: 600px; margin: 0 auto; text-align: center; }
-        
-        .welcome-box {
-            background: rgba(0, 34, 45, 0.6);
-            padding: 30px; border-radius: 20px;
-            border: 1px solid rgba(0, 172, 193, 0.2);
-            backdrop-filter: blur(10px);
+        .main-content { padding: 20px; max-width: 800px; margin: 0 auto; }
+
+        .status-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
         }
-        .welcome-box h1 { font-size: 24px; color: #00acc1; margin-bottom: 10px; }
-        
+
+        .status-box {
+            background: rgba(0, 34, 45, 0.7);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 172, 193, 0.2);
+            text-align: center;
+        }
+
+        .status-box span { display: block; font-size: 10px; color: #00acc1; font-weight: 700; margin-bottom: 5px; }
+        .status-box p { font-size: 14px; font-weight: 700; color: #00ff88; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: rgba(0, 34, 45, 0.7);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 172, 193, 0.2);
+        }
+
+        .stat-card label { display: block; font-size: 10px; color: #ff8800; font-weight: 700; margin-bottom: 5px; }
+        .stat-card h5 { font-size: 16px; color: #fff; }
+
+        .rank-card {
+            background: linear-gradient(45deg, rgba(255, 136, 0, 0.2), rgba(0, 172, 193, 0.2));
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 136, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .rank-card i { font-size: 24px; color: #ff8800; }
+        .rank-info { text-align: right; }
+        .rank-info label { display: block; font-size: 10px; color: #fff; font-weight: 700; }
+        .rank-info p { font-size: 18px; font-weight: 700; color: #ff8800; }
+
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
         .menu-item {
-            background: rgba(255,255,255,0.05); padding: 15px;
+            background: rgba(255,255,255,0.05); padding: 20px;
             border-radius: 12px; border: 1px solid rgba(0, 172, 193, 0.1);
             text-decoration: none; color: #fff; transition: 0.3s;
+            text-align: center;
         }
         .menu-item:hover { border-color: #ff8800; transform: translateY(-3px); }
-        .menu-item i { font-size: 24px; color: #ff8800; margin-bottom: 8px; display: block; }
-        .menu-item span { font-size: 13px; font-weight: 700; }
+        .menu-item i { font-size: 28px; color: #ff8800; margin-bottom: 10px; display: block; }
+        .menu-item span { font-size: 14px; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -178,22 +222,48 @@
     </div>
 
     <div class="main-content">
-        <div class="welcome-box">
-            <i class="fas fa-user-circle" style="font-size: 40px; color: #ff8800; margin-bottom: 15px;"></i>
-            <h1>Halo, <span id="p-nama-greet">User</span></h1>
-            <p style="font-size: 14px; opacity: 0.8;">Selamat datang di dashboard Rooxpedia. Pilih layanan yang ingin kamu gunakan.</p>
-            
-            <div class="menu-grid">
-                <a href="./pay/deposit.html" class="menu-item">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Top Up</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-store"></i>
-                    <span>Produk</span>
-                </a>
+        
+        <div class="status-container">
+            <div class="status-box">
+                <span>Status Layanan</span>
+                <p>NORMAL</p>
+            </div>
+            <div class="status-box">
+                <span>Status Server</span>
+                <p>AKTIF</p>
             </div>
         </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <label>Pesanan Sukses</label>
+                <h5 id="p-pesanan">0 / Rp 0</h5>
+            </div>
+            <div class="stat-card">
+                <label>Total Deposit</label>
+                <h5 id="p-deposit">Rp 0 / 0</h5>
+            </div>
+        </div>
+
+        <div class="rank-card">
+            <i class="fas fa-trophy"></i>
+            <div class="rank-info">
+                <label>PERINGKAT TOP DEPOSIT</label>
+                <p id="p-rank">#1 (Rp 0)</p>
+            </div>
+        </div>
+
+        <div class="menu-grid">
+            <a href="./pay/deposit.html" class="menu-item">
+                <i class="fas fa-plus-circle"></i>
+                <span>Top Up</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-store"></i>
+                <span>Produk</span>
+            </a>
+        </div>
+
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
