@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rooxpedia - Pilih Aplikasi</title>
+    <title>Rooxpedia - Final Order</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -11,58 +11,104 @@
         body { background: #003344; color: #fff; padding: 20px; }
         .header { display: flex; align-items: center; margin-bottom: 25px; }
         .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
-        
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
-        .card {
-            background: rgba(0, 34, 45, 0.7);
-            border: 1px solid rgba(0, 172, 193, 0.2);
-            border-radius: 15px; padding: 20px; text-align: center; cursor: pointer;
-        }
-        .card:hover { border-color: #ff8800; transform: translateY(-3px); }
-        .card img { width: 50px; height: 50px; border-radius: 10px; margin-bottom: 12px; }
-        .card span { display: block; font-weight: 700; font-size: 14px; text-transform: uppercase; }
+        .summary-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid #00acc1; margin-bottom: 20px; }
+        .operator-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .op-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; }
+        .op-card.active { border-color: #ff8800; background: rgba(255, 136, 0, 0.1); }
+        .op-card img { width: 30px; height: 30px; border-radius: 50%; margin-bottom: 5px; }
+        .btn-cart { width: 100%; padding: 15px; background: #ff8800; border: none; border-radius: 12px; color: #fff; font-weight: 700; margin-top: 30px; display: none; cursor: pointer; }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <i class="fas fa-chevron-left" onclick="window.location.href='produk.html'"></i>
-        <h3 id="titleName">APLIKASI</h3>
+    <div class="header"><i class="fas fa-chevron-left" onclick="window.history.back()"></i><h3>ORDER DETAIL</h3></div>
+    <div class="summary-card">
+        <h2 id="summaryApp">-</h2>
+        <p id="summaryCountry">-</p>
+        <p id="summaryPrice" style="color:#00ff88; font-weight:700; margin-top:10px">-</p>
     </div>
+    <div id="operatorList" class="operator-grid"></div>
+    <button id="btnCart" class="btn-cart">MASUKIN KE KERANJANG</button>
 
-    <div id="appList" class="grid-container"></div>
-
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const iso = urlParams.get('iso');
-        const countryName = urlParams.get('name');
-        document.getElementById('titleName').innerText = `APLIKASI DI ${countryName}`;
+        const firebaseConfig = { /* Pakai config kamu */ };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
 
-        async function fetchApps() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceCode = urlParams.get('code');
+        const serviceName = decodeURIComponent(urlParams.get('name'));
+        const countryName = decodeURIComponent(urlParams.get('country'));
+        const price = parseInt(urlParams.get('price'));
+        const providerId = urlParams.get('provider_id');
+
+        document.getElementById('summaryApp').innerText = serviceName;
+        document.getElementById('summaryCountry').innerText = countryName;
+        document.getElementById('summaryPrice').innerText = `Rp ${price.toLocaleString()}`;
+
+        let selectedOp = null;
+
+        async function loadOps() {
+            const res = await axios.get(`https://www.rumahotp.io/api/v2/operators?country=${countryName}&provider_id=${providerId}`, {
+                headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
+            });
+            if (res.data.success) {
+                const container = document.getElementById('operatorList');
+                res.data.data.forEach(op => {
+                    const card = document.createElement('div');
+                    card.className = 'op-card';
+                    card.onclick = () => {
+                        selectedOp = op;
+                        document.querySelectorAll('.op-card').forEach(e => e.classList.remove('active'));
+                        card.classList.add('active');
+                        document.getElementById('btnCart').style.display = 'block';
+                    };
+                    card.innerHTML = `<img src="${op.image}"><span>${op.name}</span>`;
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        document.getElementById('btnCart').onclick = async () => {
+            const user = auth.currentUser;
+            const userRef = db.ref(`users/${user.uid}`);
+            const userSnap = await userRef.once('value');
+            const saldo = userSnap.val().saldo || 0;
+
+            if (saldo < price) {
+                return Swal.fire({ icon: 'error', title: 'Saldo Kurang', background: '#00222d', color: '#fff' });
+            }
+
+            Swal.fire({ title: 'Memproses...', didOpen: () => Swal.showLoading() });
+
             try {
-                const response = await axios.get('https://www.rumahotp.io/api/v2/services', {
+                const res = await axios.get(`https://www.rumahotp.io/api/v2/orders?service_id=${serviceCode}&country=${countryName}&operator_id=${selectedOp.id}`, {
                     headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
                 });
-                if (response.data.success) {
-                    const container = document.getElementById('appList');
-                    response.data.data.forEach(app => {
-                        const card = document.createElement('div');
-                        card.className = 'card';
-                        card.onclick = () => {
-                            window.location.href = `order_detail.html?code=${app.service_code}&name=${app.service_name}&iso=${iso}&country=${countryName}`;
-                        };
-                        card.innerHTML = `
-                            <img src="${app.service_img}">
-                            <span>${app.service_name}</span>
-                        `;
-                        container.appendChild(card);
+
+                if (res.data.success) {
+                    await userRef.update({ saldo: saldo - price });
+                    await db.ref(`orders/${user.uid}`).push({
+                        order_id: res.data.data.order_id,
+                        nomor: res.data.data.phone_number,
+                        aplikasi: serviceName,
+                        negara: countryName,
+                        operator: selectedOp.name,
+                        harga: price,
+                        status: 'PENDING',
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
                     });
+                    Swal.fire({ icon: 'success', title: 'Berhasil' }).then(() => window.location.href = 'riwayat.html');
                 }
-            } catch (e) { console.error(e); }
-        }
-        fetchApps();
+            } catch (e) { Swal.fire({ icon: 'error', title: 'Gagal' }); }
+        };
+        loadOps();
     </script>
 </body>
 </html>
