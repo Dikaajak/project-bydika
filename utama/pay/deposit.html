@@ -189,10 +189,16 @@
             }
         };
 
-        async function checkStatus(statusUrl) {
+        async function checkStatus(ref) {
             try {
-                const res = await fetch(statusUrl);
-                const data = await res.json();
+                const apiReq = await fetch('/api/deposit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ action: 'status', ref: ref })
+                });
+                const data = await apiReq.json();
 
                 if (data.paid === true || (data.status && data.status.toLowerCase() === 'paid')) {
                     clearInterval(checkInterval);
@@ -209,7 +215,7 @@
                     });
                 }
             } catch (e) {
-                console.log("Error cek status");
+                console.log(e);
             }
         }
 
@@ -235,7 +241,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ amount: amount })
+                    body: JSON.stringify({ action: 'create', amount: amount })
                 });
                 const res = await apiReq.json();
 
@@ -250,11 +256,11 @@
                     document.getElementById('detailRef').innerText = res.reference;
 
                     checkInterval = setInterval(() => {
-                        checkStatus(res.statusUrl);
+                        checkStatus(res.reference);
                     }, 5000);
 
                     btnCekManual.onclick = () => {
-                        checkStatus(res.statusUrl);
+                        checkStatus(res.reference);
                         Swal.fire({ title: 'Mengecek...', timer: 1000, showConfirmButton: false, background: '#00222d', color: '#fff' });
                     };
                 } else {
