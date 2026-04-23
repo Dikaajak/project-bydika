@@ -150,7 +150,7 @@
         btnProses.onclick = async () => {
             const amount = document.getElementById('amount').value;
             
-            if (amount < 5000) {
+            if (amount < 1) {
                 return Swal.fire({ icon: 'warning', title: 'Minimal Rp 5.000', background: '#00222d', color: '#fff' });
             }
 
