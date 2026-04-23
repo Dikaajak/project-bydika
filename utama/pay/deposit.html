@@ -17,7 +17,6 @@
         }
         .header { display: flex; align-items: center; margin-bottom: 30px; }
         .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
-        
         .card {
             background: rgba(0, 34, 45, 0.8);
             border: 1px solid rgba(0, 172, 193, 0.3);
@@ -29,7 +28,6 @@
             margin: 0 auto;
         }
         h2 { font-size: 22px; color: #ff8800; margin-bottom: 25px; letter-spacing: 1px; text-transform: uppercase; }
-        
         .input-group { text-align: left; margin-bottom: 20px; }
         .input-group label { display: block; font-size: 13px; color: #00acc1; margin-bottom: 8px; font-weight: 700; }
         .input-group input {
@@ -42,7 +40,6 @@
             font-size: 18px;
             outline: none;
         }
-        
         .btn-pay {
             width: 100%;
             padding: 15px;
@@ -54,11 +51,7 @@
             cursor: pointer;
             font-size: 16px;
         }
-
-        #qrContainer {
-            display: none;
-            margin-top: 10px;
-        }
+        #qrContainer { display: none; margin-top: 10px; }
         .qr-details {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(0, 172, 193, 0.2);
@@ -67,23 +60,14 @@
             margin-bottom: 15px;
             text-align: left;
         }
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
         .detail-label { color: #668899; }
         .detail-value { color: #fff; font-weight: 700; }
         .highlight-value { color: #ff8800; font-size: 16px; }
-
         #qrImage {
-            width: 240px;
-            height: 240px;
-            background: #fff;
-            padding: 10px;
-            border-radius: 15px;
-            margin: 0 auto 15px auto;
+            width: 240px; height: 240px;
+            background: #fff; padding: 10px;
+            border-radius: 15px; margin: 0 auto 15px auto;
             display: block;
         }
         .status-box {
@@ -94,14 +78,10 @@
         }
         #statusText { font-size: 14px; color: #00acc1; font-weight: 700; margin-bottom: 10px; }
         .btn-check {
-            background: none;
-            border: 1px solid #ff8800;
-            color: #ff8800;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: 700;
+            background: none; border: 1px solid #ff8800;
+            color: #ff8800; padding: 8px 20px;
+            border-radius: 8px; font-size: 12px;
+            cursor: pointer; font-weight: 700;
         }
     </style>
 </head>
@@ -138,10 +118,8 @@
                     <span class="detail-value" id="detailRef" style="font-size: 12px;">-</span>
                 </div>
             </div>
-
             <p style="font-size: 13px; color: #668899; margin-bottom: 10px;">Silahkan Scan Qris Di Bawah Ini</p>
             <img src="" id="qrImage" alt="QRIS">
-            
             <div class="status-box">
                 <p id="statusText"><i class="fas fa-spinner fa-spin"></i> Menunggu Pembayaran...</p>
                 <button class="btn-check" id="btnCekManual">Cek Status Manual</button>
@@ -149,53 +127,74 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_5LQ6U3DtMf4STbDjLymazm8I_zySbSw",
+            authDomain: "myproject-485415.firebaseapp.com",
+            databaseURL: "https://myproject-485415-default-rtdb.firebaseio.com",
+            projectId: "myproject-485415",
+            storageBucket: "myproject-485415.firebasestorage.app",
+            messagingSenderId: "450623193142",
+            appId: "1:450623193142:web:d7a9caf66e1dff8d495897"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        const auth = firebase.auth();
+        const db = firebase.database();
+
         let checkInterval;
         let isQrActive = false;
         const btnProses = document.getElementById('btnProses');
-        const statusText = document.getElementById('statusText');
         const btnCekManual = document.getElementById('btnCekManual');
         const btnBack = document.getElementById('btnBack');
 
-        window.addEventListener('beforeunload', (e) => {
-            if (isQrActive) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
+        async function updateSaldoUser(amount) {
+            const user = auth.currentUser;
+            if (!user) return;
 
-        btnBack.onclick = () => {
-            if (isQrActive) {
+            const userRef = db.ref('users/' + user.uid);
+            try {
+                const snapshot = await userRef.once('value');
+                const data = snapshot.val() || {};
+                
+                const currentSaldo = parseInt(data.saldo || 0);
+                const currentTotalDepo = parseInt(data.totalDeposit || 0);
+                const currentCountDepo = parseInt(data.jumlahDeposit || 0);
+                const addedAmount = parseInt(amount);
+
+                await userRef.update({
+                    saldo: currentSaldo + addedAmount,
+                    totalDeposit: currentTotalDepo + addedAmount,
+                    jumlahDeposit: currentCountDepo + 1
+                });
+
                 Swal.fire({
-                    title: 'Batalkan Pembayaran?',
-                    text: 'Anda memiliki transaksi yang belum dibayar.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ff4444',
-                    cancelButtonColor: '#668899',
-                    confirmButtonText: 'Ya, Batalkan',
-                    cancelButtonText: 'Tutup',
+                    icon: 'success',
+                    title: 'Pembayaran Berhasil',
+                    text: 'Saldo Rp ' + addedAmount.toLocaleString() + ' telah ditambahkan.',
                     background: '#00222d',
                     color: '#fff'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        isQrActive = false;
-                        window.location.href = '../dashboard.html';
-                    }
+                }).then(() => {
+                    window.location.href = '../dashboard.html';
                 });
-            } else {
-                window.location.href = '../dashboard.html';
+            } catch (err) {
+                console.error("Gagal update saldo:", err);
             }
-        };
+        }
 
-        async function checkStatus(ref) {
+        async function checkStatus(ref, amount) {
             try {
                 const apiReq = await fetch('/api/deposit', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: 'status', ref: ref })
                 });
                 const data = await apiReq.json();
@@ -203,44 +202,30 @@
                 if (data.paid === true || (data.status && data.status.toLowerCase() === 'paid')) {
                     clearInterval(checkInterval);
                     isQrActive = false;
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Pembayaran Berhasil',
-                        text: 'Saldo Anda telah ditambahkan secara otomatis.',
-                        background: '#00222d',
-                        color: '#fff',
-                        allowOutsideClick: false
-                    }).then(() => {
-                        window.location.href = '../dashboard.html';
-                    });
+                    await updateSaldoUser(amount);
                 }
             } catch (e) {
-                console.log(e);
+                console.error("Gagal cek status:", e);
             }
         }
 
         btnProses.onclick = async () => {
             const amount = document.getElementById('amount').value;
-            
-            if (amount < 1) {
+            if (amount < 10000) {
                 return Swal.fire({ icon: 'warning', title: 'Minimal Rp 10.000', background: '#00222d', color: '#fff' });
             }
 
             Swal.fire({
-                title: 'Sedang Memproses',
-                text: 'Mohon tunggu sebentar...',
+                title: 'Memproses QRIS',
                 background: '#00222d',
                 color: '#fff',
-                allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); }
             });
 
             try {
                 const apiReq = await fetch('/api/deposit', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: 'create', amount: amount })
                 });
                 const res = await apiReq.json();
@@ -250,24 +235,37 @@
                     isQrActive = true;
                     document.getElementById('orderForm').style.display = 'none';
                     document.getElementById('qrContainer').style.display = 'block';
-                    
                     document.getElementById('qrImage').src = res.qrImage;
                     document.getElementById('detailAmount').innerText = "Rp " + new Intl.NumberFormat('id-ID').format(amount);
                     document.getElementById('detailRef').innerText = res.reference;
 
                     checkInterval = setInterval(() => {
-                        checkStatus(res.reference);
+                        checkStatus(res.reference, amount);
                     }, 5000);
 
                     btnCekManual.onclick = () => {
-                        checkStatus(res.reference);
+                        checkStatus(res.reference, amount);
                         Swal.fire({ title: 'Mengecek...', timer: 1000, showConfirmButton: false, background: '#00222d', color: '#fff' });
                     };
-                } else {
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan sistem', background: '#00222d', color: '#fff' });
                 }
             } catch (err) {
                 Swal.fire({ icon: 'error', title: 'Error', text: err.message, background: '#00222d', color: '#fff' });
+            }
+        };
+
+        btnBack.onclick = () => {
+            if (isQrActive) {
+                Swal.fire({
+                    title: 'Batal?',
+                    text: 'Transaksi belum selesai.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Keluar',
+                    background: '#00222d',
+                    color: '#fff'
+                }).then((r) => { if (r.isConfirmed) window.location.href = '../dashboard.html'; });
+            } else {
+                window.location.href = '../dashboard.html';
             }
         };
     </script>
