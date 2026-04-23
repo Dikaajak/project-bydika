@@ -156,7 +156,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .rank-card i { font-size: 24px; color: #ff8800; }
@@ -164,7 +164,7 @@
         .rank-info label { display: block; font-size: 10px; color: #fff; font-weight: 700; }
         .rank-info p { font-size: 18px; font-weight: 700; color: #ff8800; }
 
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .menu-item {
             background: rgba(255,255,255,0.05); padding: 20px;
             border-radius: 12px; border: 1px solid rgba(0, 172, 193, 0.1);
@@ -174,6 +174,52 @@
         .menu-item:hover { border-color: #ff8800; transform: translateY(-3px); }
         .menu-item i { font-size: 28px; color: #ff8800; margin-bottom: 10px; display: block; }
         .menu-item span { font-size: 14px; font-weight: 700; }
+
+        .guide-box {
+            background: rgba(0, 34, 45, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 172, 193, 0.2);
+            width: 100%;
+        }
+
+        .guide-box h3 {
+            font-size: 16px;
+            color: #00acc1;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 1px;
+            border-bottom: 1px dashed rgba(0, 172, 193, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .guide-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .guide-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
+        }
+
+        .guide-item:last-child { border-bottom: none; }
+
+        .guide-item label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #ff8800;
+            margin-bottom: 5px;
+        }
+
+        .guide-item p {
+            font-size: 13px;
+            color: #ccc;
+            line-height: 1.5;
+            text-transform: lowercase;
+        }
     </style>
 </head>
 <body>
@@ -262,6 +308,32 @@
                 <i class="fas fa-store"></i>
                 <span>Produk</span>
             </a>
+        </div>
+
+        <div class="guide-box">
+            <h3>PANDUAN LENGKAP PENGGUNAAN</h3>
+            <div class="guide-list">
+                <div class="guide-item">
+                    <label>PANDUAN DEPOSIT</label>
+                    <p>pilih menu deposit, masukkan nominal yang diinginkan, lalu bayar menggunakan qris yang muncul. saldo akan masuk otomatis dalam hitungan detik setelah pembayaran berhasil.</p>
+                </div>
+                <div class="guide-item">
+                    <label>PANDUAN CARA ORDER NOMOR</label>
+                    <p>buka menu produk, pilih aplikasi yang ingin digunakan, lalu klik beli. tunggu sistem memberikan nomor dan kode otp akan muncul di riwayat pesanan anda.</p>
+                </div>
+                <div class="guide-item">
+                    <label>PANDUAN BAGAIMANA JIKA DEPOSIT ERROR</label>
+                    <p>jika saldo tidak masuk lebih dari 5 menit, segera hubungi admin melalui whatsapp dengan melampirkan bukti transfer dan email akun anda untuk pengecekan manual.</p>
+                </div>
+                <div class="guide-item">
+                    <label>PANDUAN JIKA OTP TIDAK MASUK</label>
+                    <p>pastikan aplikasi yang anda gunakan sudah versi terbaru. jika dalam 5 menit otp belum masuk, anda bisa menekan tombol pembatalan dan saldo akan kembali ke akun secara otomatis.</p>
+                </div>
+                <div class="guide-item">
+                    <label>PANDUAN KEAMANAN AKUN</label>
+                    <p>jangan pernah memberikan password atau akses akun kepada siapapun termasuk pihak yang mengaku admin rooxpedia. selalu ganti password secara berkala untuk keamanan.</p>
+                </div>
+            </div>
         </div>
 
     </div>
