@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooxpedia - Beli Nokos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        
+        body { 
+            background: #003344;
+            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .header { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 172, 193, 0.2);
+        }
+
+        .header i { 
+            font-size: 20px; 
+            margin-right: 15px; 
+            cursor: pointer; 
+            color: #00acc1;
+            transition: 0.3s;
+        }
+        
+        .header i:hover { transform: scale(1.2); color: #ff8800; }
+
+        .search-container {
+            position: sticky;
+            top: 10px;
+            z-index: 10;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            background: rgba(0, 34, 45, 0.9);
+            border: 1px solid rgba(0, 172, 193, 0.4);
+            border-radius: 15px; 
+            padding: 12px 20px;
+            display: flex; 
+            align-items: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .search-box input {
+            background: none; 
+            border: none; 
+            color: #fff; 
+            width: 100%;
+            margin-left: 15px; 
+            outline: none; 
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .search-box input::placeholder { color: rgba(255,255,255,0.3); }
+
+        .services-grid {
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            gap: 15px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .service-card {
+            background: rgba(0, 34, 45, 0.6);
+            border: 1px solid rgba(0, 172, 193, 0.2);
+            border-radius: 20px; 
+            padding: 20px 10px;
+            text-align: center; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .service-card:hover { 
+            border-color: #ff8800; 
+            transform: translateY(-5px);
+            background: rgba(0, 172, 193, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 172, 193, 0.2);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,136,0,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .service-card:hover::before { opacity: 1; }
+
+        .service-card img { 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 15px; 
+            margin-bottom: 12px;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+        }
+
+        .service-card h4 { 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .service-card .status-tag {
+            font-size: 10px;
+            color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 8px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .loading-state { 
+            grid-column: 1 / -1;
+            text-align: center; 
+            padding: 100px 20px; 
+            color: #00acc1; 
+        }
+
+        .loading-state i { font-size: 40px; margin-bottom: 15px; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #00222d; }
+        ::-webkit-scrollbar-thumb { background: #00acc1; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <i class="fas fa-chevron-left" onclick="window.location.href='dashboard.html'"></i>
+        <h3 style="letter-spacing: 2px; font-weight: 700;">PRODUK NOKOS</h3>
+    </div>
+
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search" style="color: #00acc1;"></i>
+            <input type="text" id="searchApp" placeholder="Cari Aplikasi (Contoh: WhatsApp)...">
+        </div>
+    </div>
+
+    <div id="servicesContainer" class="services-grid">
+        <div class="loading-state">
+            <i class="fas fa-atom fa-spin"></i>
+            <p style="font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Sinkronisasi API...</p>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        let allServices = [];
+
+        async function fetchServices() {
+            try {
+                const response = await axios.get('https://www.rumahotp.io/api/v2/services', {
+                    headers: { 
+                        'x-apikey': CONFIG_OTP.API_KEY_OTP, 
+                        'Accept': 'application/json' 
+                    }
+                });
+
+                if (response.data.success) {
+                    allServices = response.data.data;
+                    displayServices(allServices);
+                } else {
+                    showError("Gagal mengambil data dari server.");
+                }
+            } catch (error) {
+                console.error(error);
+                showError("Koneksi API terputus atau API Key salah.");
+            }
+        }
+
+        function displayServices(services) {
+            const container = document.getElementById('servicesContainer');
+            container.innerHTML = '';
+
+            if (services.length === 0) {
+                container.innerHTML = `<div class="loading-state"><p>Aplikasi tidak ditemukan.</p></div>`;
+                return;
+            }
+
+            services.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'service-card';
+                card.onclick = () => selectService(item.service_code, item.service_name);
+                
+                card.innerHTML = `
+                    <img src="${item.service_img}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/254/254638.png'">
+                    <h4>${item.service_name}</h4>
+                    <span class="status-tag">Tersedia</span>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function selectService(code, name) {
+            Swal.fire({
+                title: 'Konfirmasi Order',
+                html: `Anda memilih aplikasi <b>${name}</b>.<br>Lanjutkan untuk memilih negara?`,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Lanjut',
+                cancelButtonText: 'Batal',
+                background: '#00222d',
+                color: '#fff',
+                confirmButtonColor: '#00acc1',
+                cancelButtonColor: '#ff4444',
+                customClass: {
+                    popup: 'swal-cyber'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `order_detail.html?code=${code}&name=${encodeURIComponent(name)}`;
+                }
+            });
+        }
+
+        function showError(msg) {
+            document.getElementById('servicesContainer').innerHTML = `
+                <div class="loading-state" style="color: #ff4444;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>${msg}</p>
+                    <button onclick="fetchServices()" style="margin-top:15px; padding:8px 20px; background:#00acc1; border:none; color:#fff; border-radius:5px; cursor:pointer;">Coba Lagi</button>
+                </div>
+            `;
+        }
+
+        document.getElementById('searchApp').oninput = (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = allServices.filter(s => s.service_name.toLowerCase().includes(val));
+            displayServices(filtered);
+        };
+
+        fetchServices();
+    </script>
+</body>
+</html>
