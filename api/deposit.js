@@ -22,7 +22,7 @@ export default async function handler(req, res) {
                 },
                 body: JSON.stringify({
                     amount: parseInt(amount),
-                    order_id: "ROOX-" + Date.now(),
+                    order_id: "DIKA-" + Date.now(),
                     QRIS_CUSTOM: true
                 })
             });
