@@ -1,274 +1,314 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rooxpedia - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <title>DIKA PEDIA - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
         body { 
-            background: #003344;
-            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
+            background: #001a22;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 172, 193, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 136, 0, 0.1) 0%, transparent 40%);
             color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
         }
-        
+
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
-            background: rgba(0, 34, 45, 0.9);
-            border-bottom: 1px solid rgba(0, 172, 193, 0.3);
+            padding: 15px 25px;
+            background: rgba(0, 26, 34, 0.8);
+            border-bottom: 1px solid rgba(0, 172, 193, 0.2);
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
         }
 
-        .nav-left i { font-size: 24px; cursor: pointer; color: #00acc1; }
+        .nav-left i { 
+            font-size: 22px; 
+            cursor: pointer; 
+            color: #00acc1;
+            transition: 0.3s;
+        }
+
+        .nav-left i:hover { transform: scale(1.1); color: #ff8800; }
         
         .nav-right {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
         }
 
         .balance-nav {
-            background: rgba(0, 172, 193, 0.1);
-            border: 1px solid rgba(0, 172, 193, 0.4);
-            padding: 4px 12px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(0, 172, 193, 0.1), rgba(0, 172, 193, 0.05));
+            border: 1px solid rgba(0, 172, 193, 0.3);
+            padding: 6px 16px;
+            border-radius: 12px;
             text-align: right;
             cursor: pointer;
+            transition: 0.3s;
         }
+
+        .balance-nav:hover { background: rgba(0, 172, 193, 0.2); border-color: #00acc1; }
 
         .balance-nav span {
             display: block;
             font-size: 9px;
             color: #00acc1;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .balance-nav h4 {
-            font-size: 14px;
+            font-size: 15px;
             color: #ff8800;
-            margin-top: -2px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
         }
 
         .nav-right img { 
-            width: 38px; height: 38px; 
-            border-radius: 50%; border: 2px solid #00acc1; 
+            width: 42px; height: 42px; 
+            border-radius: 12px; 
+            border: 2px solid #00acc1; 
             cursor: pointer;
+            object-fit: cover;
+            box-shadow: 0 0 15px rgba(0, 172, 193, 0.3);
         }
 
         .sidebar {
             position: fixed;
-            left: -280px; top: 0; width: 280px; height: 100%;
-            background: #00222d; transition: 0.3s; z-index: 200; padding: 20px;
+            left: -300px; top: 0; width: 280px; height: 100%;
+            background: #001a22; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 200; padding: 25px;
             border-right: 1px solid rgba(0, 172, 193, 0.2);
-            overflow-y: auto;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
         }
+        
         .sidebar.active { left: 0; }
-        .sidebar-header { display: flex; justify-content: space-between; margin-bottom: 30px; align-items: center; }
+
+        .sidebar-header { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 35px; 
+            align-items: center; 
+        }
+
+        .sidebar-header h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 800;
+            letter-spacing: 2px;
+            font-size: 22px;
+        }
         
         .sidebar-menu a {
-            display: flex; align-items: center; color: #fff; text-decoration: none;
-            padding: 12px 15px; background: rgba(0, 172, 193, 0.05);
-            border-radius: 10px; margin-bottom: 10px; border: 1px solid transparent; transition: 0.3s;
+            display: flex; align-items: center; color: rgba(255,255,255,0.8); text-decoration: none;
+            padding: 14px 18px; background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px; margin-bottom: 12px; border: 1px solid transparent; transition: 0.3s;
+            font-size: 14px; font-weight: 600;
         }
-        .sidebar-menu a:hover { border-color: #00acc1; background: rgba(0, 172, 193, 0.1); }
-        .sidebar-menu i { margin-right: 15px; color: #ff8800; width: 20px; text-align: center; }
 
-        .sidebar-menu hr { border: 0; border-top: 1px solid rgba(0, 172, 193, 0.2); margin: 15px 0; }
-        .cs-label { font-size: 10px; color: #00acc1; font-weight: 700; margin-left: 10px; margin-bottom: 8px; display: block; opacity: 0.7; letter-spacing: 1px; }
-        .sidebar-menu a i.fa-whatsapp { color: #25d366; }
-        .sidebar-menu a i.fa-telegram { color: #0088cc; }
+        .sidebar-menu a:hover { 
+            color: #fff;
+            border-color: rgba(0, 172, 193, 0.5); 
+            background: rgba(0, 172, 193, 0.1); 
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu i { margin-right: 15px; color: #ff8800; width: 20px; font-size: 18px; }
+
+        .sidebar-menu hr { border: 0; border-top: 1px solid rgba(0, 172, 193, 0.1); margin: 20px 0; }
+        
+        .cs-label { 
+            font-size: 11px; color: #00acc1; font-weight: 800; 
+            margin: 0 0 15px 10px; display: block; opacity: 0.6; letter-spacing: 1.5px; 
+        }
 
         .overlay {
             display: none; position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 150;
+            background: rgba(0,0,0,0.7); z-index: 150;
+            backdrop-filter: blur(4px);
         }
         .overlay.active { display: block; }
 
         .profile-card {
             display: none;
             position: absolute;
-            top: 65px; right: 20px; width: 260px;
-            background: #00222d; border: 1px solid #00acc1;
-            border-radius: 15px; padding: 20px; z-index: 100;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            top: 75px; right: 20px; width: 280px;
+            background: #00222d; border: 1px solid rgba(0, 172, 193, 0.5);
+            border-radius: 20px; padding: 25px; z-index: 100;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            animation: slideDown 0.3s ease-out;
         }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .profile-card.active { display: block; }
-        .profile-card h3 { font-size: 14px; color: #ff8800; margin-bottom: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
         
-        .info-item { margin-bottom: 12px; }
-        .info-item label { display: block; font-size: 10px; color: #00acc1; font-weight: 700; }
-        .info-item p { font-size: 14px; margin-top: 2px; }
+        .profile-card h3 { 
+            font-size: 14px; color: #ff8800; margin-bottom: 20px; 
+            text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); 
+            padding-bottom: 12px; letter-spacing: 2px;
+        }
+        
+        .info-item { margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; }
+        .info-item label { display: block; font-size: 10px; color: #00acc1; font-weight: 800; margin-bottom: 4px; }
+        .info-item p { font-size: 14px; font-weight: 600; color: #eee; }
 
         .btn-logout {
-            width: 100%; padding: 10px; background: #ff4444;
-            border: none; color: #fff; border-radius: 8px;
-            cursor: pointer; font-weight: 700; margin-top: 10px;
+            width: 100%; padding: 12px; background: linear-gradient(45deg, #ff4444, #cc0000);
+            border: none; color: #fff; border-radius: 12px;
+            cursor: pointer; font-weight: 800; margin-top: 10px; transition: 0.3s;
         }
+        .btn-logout:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-        .main-content { padding: 20px; max-width: 800px; margin: 0 auto; }
+        .main-content { padding: 25px 20px; max-width: 600px; margin: 0 auto; }
 
         .status-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .status-box {
-            background: rgba(0, 34, 45, 0.7);
-            padding: 12px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0, 34, 45, 0.8), rgba(0, 172, 193, 0.05));
+            padding: 15px;
+            border-radius: 16px;
             border: 1px solid rgba(0, 172, 193, 0.2);
             text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .status-box span { display: block; font-size: 10px; color: #00acc1; font-weight: 700; margin-bottom: 5px; }
-        .status-box p { font-size: 14px; font-weight: 700; color: #00ff88; }
+        .status-box span { display: block; font-size: 10px; color: #00acc1; font-weight: 800; margin-bottom: 6px; text-transform: uppercase; }
+        .status-box p { font-size: 14px; font-weight: 800; color: #00ff88; letter-spacing: 1px; }
 
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .stat-card {
-            background: rgba(0, 34, 45, 0.7);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 172, 193, 0.2);
+            background: rgba(0, 34, 45, 0.6);
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 172, 193, 0.15);
         }
 
-        .stat-card label { display: block; font-size: 10px; color: #ff8800; font-weight: 700; margin-bottom: 5px; }
-        .stat-card h5 { font-size: 16px; color: #fff; }
+        .stat-card label { display: block; font-size: 10px; color: #ff8800; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
+        .stat-card h5 { font-size: 16px; color: #fff; font-family: 'Rajdhani', sans-serif; font-weight: 700; }
 
         .rank-card {
-            background: linear-gradient(45deg, rgba(255, 136, 0, 0.2), rgba(0, 172, 193, 0.2));
-            padding: 15px;
-            border-radius: 12px;
+            background: linear-gradient(90deg, rgba(255, 136, 0, 0.15), rgba(0, 172, 193, 0.15));
+            padding: 20px;
+            border-radius: 16px;
             border: 1px solid rgba(255, 136, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .rank-card i { font-size: 24px; color: #ff8800; }
-        .rank-info { text-align: right; }
-        .rank-info label { display: block; font-size: 10px; color: #fff; font-weight: 700; }
-        .rank-info p { font-size: 18px; font-weight: 700; color: #ff8800; }
+        .rank-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transition: 0.5s; animation: shine 3s infinite;
+        }
 
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        @keyframes shine { 100% { left: 100%; } }
+
+        .rank-card i { font-size: 28px; color: #ff8800; filter: drop-shadow(0 0 5px #ff8800); }
+        .rank-info { text-align: right; }
+        .rank-info label { display: block; font-size: 11px; color: #fff; font-weight: 800; margin-bottom: 4px; opacity: 0.8; }
+        .rank-info p { font-size: 20px; font-weight: 800; color: #ff8800; font-family: 'Rajdhani', sans-serif; }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .menu-item {
-            background: rgba(255,255,255,0.05); padding: 20px;
-            border-radius: 12px; border: 1px solid rgba(0, 172, 193, 0.1);
+            background: rgba(255, 255, 255, 0.03); padding: 25px 15px;
+            border-radius: 18px; border: 1px solid rgba(0, 172, 193, 0.15);
             text-decoration: none; color: #fff; transition: 0.3s;
             text-align: center;
+            display: flex; flex-direction: column; align-items: center;
         }
-        .menu-item:hover { border-color: #ff8800; transform: translateY(-3px); }
-        .menu-item i { font-size: 28px; color: #ff8800; margin-bottom: 10px; display: block; }
-        .menu-item span { font-size: 14px; font-weight: 700; }
+        .menu-item:hover { 
+            border-color: #ff8800; 
+            background: rgba(255, 136, 0, 0.05);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .menu-item i { font-size: 32px; color: #ff8800; margin-bottom: 12px; }
+        .menu-item span { font-size: 15px; font-weight: 800; letter-spacing: 1px; }
 
         .guide-box {
-            background: rgba(0, 34, 45, 0.7);
-            padding: 20px;
-            border-radius: 15px;
+            background: rgba(0, 26, 34, 0.6);
+            padding: 25px;
+            border-radius: 20px;
             border: 1px solid rgba(0, 172, 193, 0.2);
             width: 100%;
+            backdrop-filter: blur(10px);
         }
 
         .guide-box h3 {
             font-size: 16px;
+            font-weight: 800;
             color: #00acc1;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
-            letter-spacing: 1px;
-            border-bottom: 1px dashed rgba(0, 172, 193, 0.3);
-            padding-bottom: 10px;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(0, 172, 193, 0.1);
+            padding-bottom: 15px;
         }
 
-        .guide-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        .guide-list { display: flex; flex-direction: column; gap: 20px; }
 
         .guide-item {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 10px;
+            border-left: 3px solid rgba(255, 136, 0, 0.5);
+            padding-left: 15px;
+            transition: 0.3s;
         }
-
-        .guide-item:last-child { border-bottom: none; }
+        
+        .guide-item:hover { border-left-color: #ff8800; transform: translateX(5px); }
 
         .guide-item label {
             display: block;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 800;
             color: #ff8800;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
         }
 
         .guide-item p {
             font-size: 13px;
-            color: #ccc;
-            line-height: 1.5;
-            text-transform: lowercase;
-        }
-
-        .recent-activity {
-            margin-top: 20px;
-            background: rgba(0, 34, 45, 0.4);
-            border-radius: 15px;
-            padding: 15px;
-            border: 1px solid rgba(0, 172, 193, 0.1);
-        }
-        .recent-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .recent-header h4 { font-size: 12px; color: #00acc1; letter-spacing: 1px; }
-        .live-dot {
-            width: 8px; height: 8px; background: #00ff88;
-            border-radius: 50%; display: inline-block;
-            margin-right: 5px; box-shadow: 0 0 8px #00ff88;
-        }
-        .activity-list { display: flex; flex-direction: column; gap: 10px; }
-        .activity-item {
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 12px; padding: 5px 0;
-        }
-        .user-tag { color: #ff8800; font-weight: 700; }
-        .action-tag { color: #ccc; margin-left: 5px; }
-        .time-tag { opacity: 0.4; font-size: 10px; }
-        .footer-copy {
-            text-align: center; margin-top: 30px; padding: 20px;
-            font-size: 11px; color: rgba(0, 172, 193, 0.4); letter-spacing: 3px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="nav-left" id="openSidebar"><i class="fas fa-bars"></i></div>
+        <div class="nav-left" id="openSidebar"><i class="fas fa-align-left"></i></div>
         <div class="nav-right">
             <div class="balance-nav" onclick="window.location.href='./pay/deposit.html'">
-                <span>Saldo</span>
+                <span>Saldo Anda</span>
                 <h4 id="topSaldo">Rp 0</h4>
             </div>
             <img src="https://i.ibb.co.com/rRYyNP25/20260420-202909.jpg" alt="Profile" id="toggleProfile">
@@ -279,142 +319,117 @@
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h3 style="color: #00acc1;">ROOXPEDIA</h3>
-            <i class="fas fa-times" id="closeSidebar" style="cursor:pointer"></i>
+            <h3 style="color: #00acc1;">DIKA PEDIA</h3>
+            <i class="fas fa-arrow-left" id="closeSidebar" style="cursor:pointer; color: #ff8800;"></i>
         </div>
         <div class="sidebar-menu">
-            <a href="dashboard.html"><i class="fas fa-home"></i> <span>DASHBOARD</span></a>
-            <a href="./pay/deposit.html"><i class="fas fa-wallet"></i> <span>DEPOSIT</span></a>
-            <a href="produk.html"><i class="fas fa-shopping-cart"></i> <span>BELI NOKOS</span></a>
-            <a href="riwayat.html"><i class="fas fa-history"></i> <span>RIWAYAT</span></a>
+            <a href="dashboard.html"><i class="fas fa-th-large"></i> <span>DASHBOARD</span></a>
+            <a href="./pay/deposit.html"><i class="fas fa-wallet"></i> <span>TOP UP SALDO</span></a>
+            <a href="produk.html"><i class="fas fa-shopping-bag"></i> <span>BELI NOKOS</span></a>
+            <a href="riwayat.html"><i class="fas fa-receipt"></i> <span>RIWAYAT TRANSAKSI</span></a>
 
             <hr>
-            <span class="cs-label">CUSTOMER SERVICE</span>
+            <span class="cs-label">BANTUAN ADMIN</span>
 
             <a href="https://wa.me/6281818934870" target="_blank">
-                <i class="fab fa-whatsapp"></i> <span>CS 1 (WA)</span>
+                <i class="fab fa-whatsapp"></i> <span>CS 1 (WHATSAPP)</span>
             </a>
             <a href="https://wa.me/628XXXXXXXXXX" target="_blank">
-                <i class="fab fa-whatsapp"></i> <span>CS 2 (WA)</span>
+                <i class="fab fa-whatsapp"></i> <span>CS 2 (WHATSAPP)</span>
             </a>
             <a href="https://t.me/username1" target="_blank">
-                <i class="fab fa-telegram"></i> <span>CS 1 (TELE)</span>
+                <i class="fab fa-telegram-plane"></i> <span>CS 1 (TELEGRAM)</span>
             </a>
             <a href="https://t.me/username2" target="_blank">
-                <i class="fab fa-telegram"></i> <span>CS 2 (TELE)</span>
+                <i class="fab fa-telegram-plane"></i> <span>CS 2 (TELEGRAM)</span>
             </a>
         </div>
     </div>
 
     <div class="profile-card" id="profileCard">
-        <h3>MY PROFILE</h3>
+        <h3>PENGATURAN AKUN</h3>
         <div class="info-item">
-            <label>NAMA</label>
+            <label>NAMA PENGGUNA</label>
             <p id="p-nama">-</p>
         </div>
         <div class="info-item">
-            <label>ROLE</label>
-            <p id="p-role" style="color: #ff8800; font-weight: 700;">-</p>
+            <label>STATUS MEMBER</label>
+            <p id="p-role" style="color: #ff8800; font-weight: 800;">-</p>
         </div>
         <div class="info-item">
-            <label>SALDO</label>
-            <p id="p-saldo-card">Rp 0</p>
+            <label>TOTAL SALDO</label>
+            <p id="p-saldo-card" style="font-family: 'Rajdhani', sans-serif; font-size: 18px; color: #00ff88;">Rp 0</p>
         </div>
-        <button class="btn-logout" id="btnLogout">LOGOUT</button>
+        <button class="btn-logout" id="btnLogout">KELUAR AKUN</button>
     </div>
 
     <div class="main-content">
         
         <div class="status-container">
             <div class="status-box">
-                <span>Status Layanan</span>
-                <p>NORMAL</p>
+                <span>Layanan</span>
+                <p>● NORMAL</p>
             </div>
             <div class="status-box">
-                <span>Status Server</span>
-                <p>AKTIF</p>
+                <span>Server</span>
+                <p>● ONLINE</p>
             </div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <label>Pesanan Sukses</label>
+                <label>Pesanan Berhasil</label>
                 <h5 id="p-pesanan">0 / Rp 0</h5>
             </div>
             <div class="stat-card">
-                <label>Total Deposit</label>
+                <label>Total Isi Saldo</label>
                 <h5 id="p-deposit">Rp 0 / 0</h5>
             </div>
         </div>
 
         <div class="rank-card">
-            <i class="fas fa-trophy"></i>
+            <i class="fas fa-crown"></i>
             <div class="rank-info">
-                <label>PERINGKAT TOP DEPOSIT</label>
+                <label>TOP DEPOSITOR BULAN INI</label>
                 <p id="p-rank">#1 (Rp 0)</p>
             </div>
         </div>
 
         <div class="menu-grid">
             <a href="./pay/deposit.html" class="menu-item">
-                <i class="fas fa-plus-circle"></i>
-                <span>Top Up</span>
+                <i class="fas fa-add"></i>
+                <span>Isi Saldo</span>
             </a>
             <a href="produk.html" class="menu-item">
-                <i class="fas fa-store"></i>
-                <span>Produk</span>
+                <i class="fas fa-boxes-stacked"></i>
+                <span>Daftar Produk</span>
             </a>
         </div>
 
         <div class="guide-box">
-            <h3>PANDUAN LENGKAP PENGGUNAAN</h3>
+            <h3>PANDUAN PENGGUNA</h3>
             <div class="guide-list">
                 <div class="guide-item">
-                    <label>PANDUAN DEPOSIT</label>
-                    <p>pilih menu deposit, masukkan nominal yang diinginkan, lalu bayar menggunakan qris yang muncul. saldo akan masuk otomatis dalam hitungan detik setelah pembayaran berhasil.</p>
+                    <label>BAGAIMANA CARA DEPOSIT?</label>
+                    <p>Buka menu deposit, masukkan nominal, dan scan QRIS yang tersedia. Sistem akan memproses saldo secara otomatis.</p>
                 </div>
                 <div class="guide-item">
-                    <label>PANDUAN CARA ORDER NOMOR</label>
-                    <p>buka menu produk, pilih aplikasi yang ingin digunakan, lalu klik beli. tunggu sistem memberikan nomor dan kode otp akan muncul di riwayat pesanan anda.</p>
+                    <label>CARA ORDER NOMOR (NOKOS)</label>
+                    <p>Pilih produk yang diinginkan, tekan beli. Tunggu hingga nomor muncul dan cek kode OTP pada menu riwayat.</p>
                 </div>
                 <div class="guide-item">
-                    <label>PANDUAN JIKA DEPOSIT ERROR</label>
-                    <p>jika saldo tidak masuk lebih dari 5 menit, segera hubungi admin melalui whatsapp dengan melampirkan bukti transfer dan email akun anda untuk pengecekan manual.</p>
+                    <label>KENDALA SALDO / PEMBAYARAN</label>
+                    <p>Jika saldo belum masuk dalam 5 menit, kirimkan bukti transfer ke Admin via WhatsApp untuk proses manual.</p>
                 </div>
                 <div class="guide-item">
-                    <label>PANDUAN JIKA OTP TIDAK MASUK</label>
-                    <p>pastikan aplikasi yang anda gunakan sudah versi terbaru. jika dalam 5 menit otp belum masuk, anda bisa menekan tombol pembatalan dan saldo akan kembali ke akun secara otomatis.</p>
+                    <label>OTP TIDAK KUNJUNG MASUK?</label>
+                    <p>Gunakan aplikasi terbaru. Jika tetap gagal dalam 5 menit, batalkan pesanan dan saldo akan kembali instan.</p>
                 </div>
                 <div class="guide-item">
-                    <label>PANDUAN KEAMANAN AKUN</label>
-                    <p>jangan pernah memberikan password atau akses akun kepada siapapun termasuk pihak yang mengaku admin rooxpedia. selalu ganti password secara berkala untuk keamanan.</p>
+                    <label>KEAMANAN DATA</label>
+                    <p>Dilarang keras membagikan kredensial akun kepada siapapun. Admin tidak pernah meminta password Anda.</p>
                 </div>
             </div>
-        </div>
-
-        <div class="recent-activity">
-            <div class="recent-header">
-                <h4><span class="live-dot"></span> AKTIVITAS LAYANAN</h4>
-                <span style="font-size: 10px; opacity: 0.5;">TERBARU</span>
-            </div>
-            <div class="activity-list">
-                <div class="activity-item">
-                    <div><span class="user-tag">And***</span><span class="action-tag">berhasil beli nomor WhatsApp</span></div>
-                    <span class="time-tag">1m ago</span>
-                </div>
-                <div class="activity-item">
-                    <div><span class="user-tag">Dika**</span><span class="action-tag">deposit saldo Rp 50.000</span></div>
-                    <span class="time-tag">3m ago</span>
-                </div>
-                <div class="activity-item">
-                    <div><span class="user-tag">Riz***</span><span class="action-tag">berhasil beli nomor Telegram</span></div>
-                    <span class="time-tag">5m ago</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-copy">
-            ROOXPEDIA &bull; V.2.0
         </div>
 
     </div>
