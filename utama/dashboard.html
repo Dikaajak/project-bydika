@@ -8,114 +8,227 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
         body { 
             background: #001a22;
-            background-image: radial-gradient(circle at 10% 20%, rgba(0, 172, 193, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(255, 136, 0, 0.1) 0%, transparent 40%);
+            background-image: radial-gradient(circle at 50% -20%, #00acc133, transparent);
             color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
         }
+
         .navbar {
-            display: flex; justify-content: space-between; align-items: center; padding: 15px 25px;
-            background: rgba(0, 26, 34, 0.8); border-bottom: 1px solid rgba(0, 172, 193, 0.2);
-            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: rgba(0, 26, 34, 0.9);
+            border-bottom: 1px solid rgba(0, 172, 193, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
-        .nav-left i { font-size: 22px; cursor: pointer; color: #00acc1; transition: 0.3s; }
+
+        .nav-left i { font-size: 22px; cursor: pointer; color: #00acc1; }
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
         .balance-nav {
-            background: linear-gradient(135deg, rgba(0, 172, 193, 0.1), rgba(0, 172, 193, 0.05));
-            border: 1px solid rgba(0, 172, 193, 0.3); padding: 6px 16px; border-radius: 12px; text-align: right; cursor: pointer;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 172, 193, 0.3);
+            padding: 5px 15px;
+            border-radius: 10px;
+            text-align: right;
+            cursor: pointer;
         }
-        .balance-nav span { display: block; font-size: 9px; color: #00acc1; font-weight: 800; text-transform: uppercase; }
-        .balance-nav h4 { font-size: 15px; color: #ff8800; font-family: 'Rajdhani', sans-serif; }
-        .nav-right img { width: 42px; height: 42px; border-radius: 12px; border: 2px solid #00acc1; cursor: pointer; object-fit: cover; }
+
+        .balance-nav span { display: block; font-size: 9px; color: #00acc1; font-weight: 800; }
+        .balance-nav h4 { font-size: 15px; color: #ff8800; font-family: 'Rajdhani'; }
+
+        .nav-right img { 
+            width: 40px; height: 40px; 
+            border-radius: 10px; 
+            border: 2px solid #00acc1; 
+            cursor: pointer;
+        }
+
         .sidebar {
-            position: fixed; left: -300px; top: 0; width: 280px; height: 100%;
-            background: #001a22; transition: 0.4s; z-index: 200; padding: 25px;
+            position: fixed;
+            left: -300px; top: 0; width: 280px; height: 100%;
+            background: #001a22; transition: 0.4s; 
+            z-index: 200; padding: 25px;
             border-right: 1px solid rgba(0, 172, 193, 0.2);
         }
+        
         .sidebar.active { left: 0; }
+
+        .sidebar-header { display: flex; justify-content: space-between; margin-bottom: 30px; align-items: center; }
+        
         .sidebar-menu a {
-            display: flex; align-items: center; color: rgba(255,255,255,0.8); text-decoration: none;
-            padding: 14px 18px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; margin-bottom: 12px; transition: 0.3s;
+            display: flex; align-items: center; color: #eee; text-decoration: none;
+            padding: 12px 15px; background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px; margin-bottom: 10px; font-size: 14px; transition: 0.3s;
         }
-        .sidebar-menu i { margin-right: 15px; color: #ff8800; width: 20px; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 150; }
+
+        .sidebar-menu a:hover { background: rgba(0, 172, 193, 0.1); color: #00acc1; }
+        .sidebar-menu i { margin-right: 12px; color: #ff8800; width: 20px; }
+
+        .overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 150;
+        }
         .overlay.active { display: block; }
+
         .profile-card {
-            display: none; position: absolute; top: 75px; right: 20px; width: 280px;
-            background: #00222d; border: 1px solid rgba(0, 172, 193, 0.5); border-radius: 20px; padding: 25px; z-index: 100;
+            display: none;
+            position: absolute;
+            top: 70px; right: 20px; width: 260px;
+            background: #00222d; border: 1px solid #00acc1;
+            border-radius: 15px; padding: 20px; z-index: 100;
         }
+
         .profile-card.active { display: block; }
-        .info-item { margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; }
-        .info-item label { display: block; font-size: 10px; color: #00acc1; font-weight: 800; margin-bottom: 4px; }
+        .info-item { margin-bottom: 12px; }
+        .info-item label { display: block; font-size: 10px; color: #00acc1; font-weight: 800; }
         .info-item p { font-size: 14px; font-weight: 600; }
-        .btn-logout { width: 100%; padding: 12px; background: linear-gradient(45deg, #ff4444, #cc0000); border: none; color: #fff; border-radius: 12px; cursor: pointer; font-weight: 800; }
-        .main-content { padding: 25px 20px; max-width: 600px; margin: 0 auto; }
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .menu-item {
-            background: rgba(255, 255, 255, 0.03); padding: 25px 15px; border-radius: 18px; border: 1px solid rgba(0, 172, 193, 0.15);
-            text-decoration: none; color: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; transition: 0.3s;
+
+        .btn-logout {
+            width: 100%; padding: 10px; background: #ff4444;
+            border: none; color: #fff; border-radius: 8px;
+            cursor: pointer; font-weight: 800; margin-top: 10px;
         }
-        .menu-item:hover { border-color: #ff8800; transform: translateY(-5px); }
-        .menu-item i { font-size: 32px; color: #ff8800; margin-bottom: 12px; }
+
+        .main-content { padding: 20px; max-width: 600px; margin: 0 auto; }
+
+        .status-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .status-box { background: rgba(0, 34, 45, 0.7); padding: 12px; border-radius: 12px; border: 1px solid rgba(0, 172, 193, 0.2); text-align: center; }
+        .status-box span { display: block; font-size: 10px; color: #00acc1; }
+        .status-box p { font-size: 13px; font-weight: 800; color: #00ff88; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: rgba(0, 34, 45, 0.5); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-card label { display: block; font-size: 10px; color: #ff8800; margin-bottom: 5px; }
+        .stat-card h5 { font-size: 14px; font-family: 'Rajdhani'; }
+
+        .rank-card {
+            background: linear-gradient(90deg, rgba(255, 136, 0, 0.1), rgba(0, 172, 193, 0.1));
+            padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 136, 0, 0.3);
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+        }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .menu-item {
+            background: rgba(255, 255, 255, 0.03); padding: 20px 10px;
+            border-radius: 15px; border: 1px solid rgba(0, 172, 193, 0.1);
+            text-decoration: none; color: #fff; text-align: center;
+            display: flex; flex-direction: column; align-items: center; transition: 0.3s;
+        }
+        .menu-item:hover { border-color: #ff8800; transform: translateY(-3px); }
+        .menu-item i { font-size: 28px; color: #ff8800; margin-bottom: 8px; }
+
+        .guide-box { background: rgba(0, 26, 34, 0.5); padding: 20px; border-radius: 15px; border: 1px solid rgba(0, 172, 193, 0.1); }
+        .guide-box h3 { font-size: 14px; color: #00acc1; margin-bottom: 15px; text-align: center; font-family: 'Rajdhani'; }
+        .guide-item { margin-bottom: 15px; border-left: 2px solid #ff8800; padding-left: 10px; }
+        .guide-item label { display: block; font-size: 11px; color: #ff8800; font-weight: 800; margin-bottom: 3px; }
+        .guide-item p { font-size: 12px; opacity: 0.7; line-height: 1.4; }
     </style>
 </head>
 <body>
+
     <nav class="navbar">
-        <div class="nav-left" id="openSidebar"><i class="fas fa-align-left"></i></div>
+        <div class="nav-left" id="openSidebar"><i class="fas fa-bars"></i></div>
         <div class="nav-right">
             <div class="balance-nav" onclick="window.location.href='./pay/deposit.html'">
-                <span>Saldo Anda</span>
+                <span>SALDO</span>
                 <h4 id="topSaldo">Rp 0</h4>
             </div>
             <img src="https://i.ibb.co.com/rRYyNP25/20260420-202909.jpg" alt="Profile" id="toggleProfile">
         </div>
     </nav>
+
     <div class="overlay" id="overlay"></div>
+
     <div class="sidebar" id="sidebar">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 35px; align-items: center;">
+        <div class="sidebar-header">
             <h3 style="color: #00acc1; font-family: 'Rajdhani';">DIKA PEDIA</h3>
-            <i class="fas fa-arrow-left" id="closeSidebar" style="cursor:pointer; color: #ff8800;"></i>
+            <i class="fas fa-times" id="closeSidebar" style="cursor:pointer;"></i>
         </div>
         <div class="sidebar-menu">
-            <a href="dashboard.html"><i class="fas fa-th-large"></i> <span>DASHBOARD</span></a>
+            <a href="dashboard.html"><i class="fas fa-home"></i> <span>DASHBOARD</span></a>
             <a href="./pay/deposit.html"><i class="fas fa-wallet"></i> <span>TOP UP SALDO</span></a>
-            <a href="produk.html"><i class="fas fa-shopping-bag"></i> <span>BELI NOKOS</span></a>
-            <a href="riwayat.html"><i class="fas fa-receipt"></i> <span>RIWAYAT</span></a>
+            <a href="produk.html"><i class="fas fa-shopping-cart"></i> <span>BELI NOKOS</span></a>
+            <a href="riwayat.html"><i class="fas fa-history"></i> <span>RIWAYAT</span></a>
+            <hr style="opacity:0.1; margin: 15px 0;">
+            <a href="https://wa.me/6281818934870" target="_blank"><i class="fab fa-whatsapp"></i> <span>HUBUNGI ADMIN</span></a>
         </div>
     </div>
+
     <div class="profile-card" id="profileCard">
-        <h3 style="font-size: 14px; color: #ff8800; margin-bottom: 20px; text-align: center;">PROFIL USER</h3>
         <div class="info-item">
-            <label>NAMA</label>
+            <label>NAMA PENGGUNA</label>
             <p id="p-nama">-</p>
         </div>
         <div class="info-item">
-            <label>API KEY</label>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <p id="p-api-key" style="font-family: monospace; font-size: 11px; color: #00acc1; overflow: hidden;">-</p>
-                <i class="fas fa-copy" onclick="copyKey()" style="color: #ff8800; cursor: pointer;"></i>
-            </div>
+            <label>STATUS</label>
+            <p id="p-role">-</p>
         </div>
         <div class="info-item">
-            <label>SALDO</label>
-            <p id="p-saldo-card" style="color: #00ff88;">Rp 0</p>
+            <label>API KEY</label>
+            <p id="p-api-key" style="font-family:monospace; font-size:11px; color:#00acc1;">-</p>
         </div>
         <button class="btn-logout" id="btnLogout">KELUAR</button>
     </div>
+
     <div class="main-content">
-        <div class="menu-grid">
-            <a href="./pay/deposit.html" class="menu-item"><i class="fas fa-plus"></i><span>Isi Saldo</span></a>
-            <a href="produk.html" class="menu-item"><i class="fas fa-shopping-cart"></i><span>Beli Produk</span></a>
+        
+        <div class="status-container">
+            <div class="status-box"><span>LAYANAN</span><p>● NORMAL</p></div>
+            <div class="status-box"><span>SERVER</span><p>● ONLINE</p></div>
         </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <label>Pesanan Berhasil</label>
+                <h5 id="p-pesanan">0 / Rp 0</h5>
+            </div>
+            <div class="stat-card">
+                <label>Total Top Up</label>
+                <h5 id="p-deposit">Rp 0</h5>
+            </div>
+        </div>
+
+        <div class="rank-card">
+            <i class="fas fa-medal" style="color:#ff8800; font-size:20px;"></i>
+            <div style="text-align: right;">
+                <span style="font-size:10px; font-weight:800;">TOP DEPOSITOR</span>
+                <p id="p-rank" style="font-family:'Rajdhani'; color:#ff8800;">#1 (Rp 0)</p>
+            </div>
+        </div>
+
+        <div class="menu-grid">
+            <a href="./pay/deposit.html" class="menu-item"><i class="fas fa-plus-circle"></i><span>Top Up</span></a>
+            <a href="produk.html" class="menu-item"><i class="fas fa-box-open"></i><span>Produk</span></a>
+        </div>
+
+        <div class="guide-box">
+            <h3>PANDUAN PENGGUNA</h3>
+            <div class="guide-item">
+                <label>CARA PEMBELIAN</label>
+                <p>Pilih produk, klik beli, dan tunggu kode OTP muncul di halaman riwayat.</p>
+            </div>
+            <div class="guide-item">
+                <label>SALDO BELUM MASUK?</label>
+                <p>Jika dalam 5 menit belum masuk, hubungi admin via WhatsApp dengan bukti transfer.</p>
+            </div>
+        </div>
+
     </div>
-    <script>
-        function copyKey() {
-            const key = document.getElementById('p-api-key').innerText;
-            navigator.clipboard.writeText(key);
-            alert("API Key disalin!");
-        }
-    </script>
+
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
