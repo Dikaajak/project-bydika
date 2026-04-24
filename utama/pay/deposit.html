@@ -17,112 +17,183 @@
         }
         .header { display: flex; align-items: center; margin-bottom: 30px; }
         .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
-        .card {
-            background: rgba(0, 34, 45, 0.8);
-            border: 1px solid rgba(0, 172, 193, 0.3);
-            border-radius: 25px;
-            padding: 30px;
-            text-align: center;
-            backdrop-filter: blur(10px);
+        
+        .deposit-container {
             max-width: 500px;
             margin: 0 auto;
         }
-        h2 { font-size: 22px; color: #ff8800; margin-bottom: 25px; letter-spacing: 1px; text-transform: uppercase; }
+
+        .card {
+            background: rgba(0, 34, 45, 0.8);
+            border: 1px solid rgba(0, 172, 193, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, #00acc1, #ff8800);
+        }
+
+        h2 { font-size: 18px; color: #ff8800; margin-bottom: 20px; letter-spacing: 1px; text-transform: uppercase; text-align: center; }
+
+        .method-info {
+            background: rgba(0, 172, 193, 0.1);
+            border: 1px solid rgba(0, 172, 193, 0.2);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .method-info i { font-size: 24px; color: #00acc1; }
+        .method-text span { display: block; font-size: 10px; color: #00acc1; font-weight: 700; }
+        .method-text p { font-size: 14px; font-weight: 700; }
+
         .input-group { text-align: left; margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 13px; color: #00acc1; margin-bottom: 8px; font-weight: 700; }
+        .input-group label { display: block; font-size: 11px; color: #00acc1; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #ff8800; }
         .input-group input {
             width: 100%;
-            padding: 15px;
+            padding: 15px 15px 15px 45px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(0, 172, 193, 0.2);
             border-radius: 12px;
             color: #fff;
-            font-size: 18px;
+            font-size: 16px;
             outline: none;
+            transition: 0.3s;
         }
+        .input-group input:focus { border-color: #00acc1; background: rgba(0, 0, 0, 0.5); }
+
         .btn-pay {
             width: 100%;
             padding: 15px;
-            background: #00acc1;
+            background: linear-gradient(45deg, #00acc1, #007c91);
             border: none;
             border-radius: 12px;
             color: #fff;
             font-weight: 700;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 172, 193, 0.3);
         }
+
         #qrContainer { display: none; margin-top: 10px; }
-        .qr-details {
+        
+        .qr-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #qrImage { width: 100%; max-width: 250px; display: block; margin: 0 auto; }
+
+        .payment-details {
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 172, 193, 0.2);
             border-radius: 12px;
             padding: 15px;
-            margin-bottom: 15px;
-            text-align: left;
+            margin-bottom: 20px;
         }
-        .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
-        .detail-label { color: #668899; }
-        .detail-value { color: #fff; font-weight: 700; }
-        .highlight-value { color: #ff8800; font-size: 16px; }
-        #qrImage {
-            width: 240px; height: 240px;
-            background: #fff; padding: 10px;
-            border-radius: 15px; margin: 0 auto 15px auto;
-            display: block;
-        }
-        .status-box {
+        .detail-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; }
+        .detail-item:last-child { margin-bottom: 0; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); }
+        .label { color: #00acc1; font-weight: 700; font-size: 10px; text-transform: uppercase; }
+        .value { font-weight: 700; }
+        .val-amount { color: #ff8800; font-size: 16px; }
+
+        .status-area {
+            text-align: center;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            border: 1px dashed rgba(0, 172, 193, 0.3);
+            border: 1px solid rgba(0, 172, 193, 0.2);
+            border-radius: 12px;
+            background: rgba(0, 172, 193, 0.05);
         }
-        #statusText { font-size: 14px; color: #00acc1; font-weight: 700; margin-bottom: 10px; }
+        #statusText { font-size: 12px; margin-bottom: 10px; color: #00ff88; }
         .btn-check {
-            background: none; border: 1px solid #ff8800;
-            color: #ff8800; padding: 8px 20px;
-            border-radius: 8px; font-size: 12px;
-            cursor: pointer; font-weight: 700;
+            background: transparent;
+            border: 1px solid #ff8800;
+            color: #ff8800;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .notice {
+            margin-top: 20px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.6;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <i class="fas fa-arrow-left" id="btnBack"></i>
-        <h3>Top Up Saldo</h3>
-    </div>
-
-    <div class="card">
-        <h2>Pembayaran Qris</h2>
-        
-        <div id="orderForm">
-            <div class="input-group">
-                <label>Nominal Deposit (Min. 10.000)</label>
-                <input type="number" id="amount" placeholder="Masukkan jumlah nominal" required>
-            </div>
-            <button class="btn-pay" id="btnProses">Buat Pembayaran</button>
+    <div class="deposit-container">
+        <div class="header">
+            <i class="fas fa-chevron-left" id="btnBack"></i>
+            <h3 style="font-size: 16px; letter-spacing: 1px;">DEPOSIT SALDO</h3>
         </div>
 
-        <div id="qrContainer">
-            <div class="qr-details">
-                <div class="detail-row">
-                    <span class="detail-label">Metode Pembayaran</span>
-                    <span class="detail-value">QRIS All Payment</span>
+        <div class="card">
+            <h2>QRIS All Payment</h2>
+
+            <div id="orderForm">
+                <div class="method-info">
+                    <i class="fas fa-qrcode"></i>
+                    <div class="method-text">
+                        <span>Metode Pembayaran</span>
+                        <p>QRIS Realtime (Otomatis)</p>
+                    </div>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Nominal</span>
-                    <span class="detail-value highlight-value" id="detailAmount">Rp 0</span>
+
+                <div class="input-group">
+                    <label>Nominal Top Up</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-wallet"></i>
+                        <input type="number" id="amount" placeholder="Min. 10.000" required>
+                    </div>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Referensi</span>
-                    <span class="detail-value" id="detailRef" style="font-size: 12px;">-</span>
+
+                <button class="btn-pay" id="btnProses">Konfirmasi Top Up</button>
+                
+                <div class="notice">
+                    Pastikan nominal sudah benar. Saldo akan masuk otomatis setelah status pembayaran berubah menjadi sukses.
                 </div>
             </div>
-            <p style="font-size: 13px; color: #668899; margin-bottom: 10px;">Silahkan Scan Qris Di Bawah Ini</p>
-            <img src="" id="qrImage" alt="QRIS">
-            <div class="status-box">
-                <p id="statusText"><i class="fas fa-spinner fa-spin"></i> Menunggu Pembayaran...</p>
-                <button class="btn-check" id="btnCekManual">Cek Status Manual</button>
+
+            <div id="qrContainer">
+                <div class="payment-details">
+                    <div class="detail-item">
+                        <span class="label">Order ID</span>
+                        <span class="value" id="detailRef">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Total Bayar</span>
+                        <span class="value val-amount" id="detailAmount">Rp 0</span>
+                    </div>
+                </div>
+
+                <div class="qr-card">
+                    <img src="" id="qrImage" alt="QRIS">
+                </div>
+
+                <div class="status-area">
+                    <p id="statusText"><i class="fas fa-circle-notch fa-spin"></i> Menunggu pembayaran...</p>
+                    <button class="btn-check" id="btnCekManual">Cek Status</button>
+                </div>
             </div>
         </div>
     </div>
@@ -178,88 +249,86 @@
 
                 Swal.fire({
                     icon: 'success',
-                    title: 'Pembayaran Berhasil',
-                    text: 'Saldo Rp ' + addedAmount.toLocaleString() + ' telah ditambahkan.',
+                    title: 'Berhasil',
+                    text: 'Deposit Rp ' + addedAmount.toLocaleString() + ' sukses!',
                     background: '#00222d',
                     color: '#fff'
                 }).then(() => {
                     window.location.href = '../dashboard.html';
                 });
             } catch (err) {
-                console.error("Gagal update saldo:", err);
+                console.error(err);
             }
         }
 
- async function checkStatus(orderId, amount) {
-    try {
-        const apiReq = await fetch('/api/deposit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'status', orderId: orderId })
-        });
-        const data = await apiReq.json();
+        async function checkStatus(orderId, amount) {
+            try {
+                const apiReq = await fetch('/api/deposit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'status', orderId: orderId })
+                });
+                const data = await apiReq.json();
 
-        if (data.success && data.status === 'SETTLED') {
-            clearInterval(checkInterval);
-            isQrActive = false;
-            await updateSaldoUser(amount);
+                if (data.success && data.status === 'SETTLED') {
+                    clearInterval(checkInterval);
+                    isQrActive = false;
+                    await updateSaldoUser(amount);
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }
-    } catch (e) {
-        console.error("Gagal cek status:", e);
-    }
-}
 
-btnProses.onclick = async () => {
-    const amount = document.getElementById('amount').value;
-    if (amount < 10000) {
-        return Swal.fire({ icon: 'warning', title: 'Minimal Rp 10.000', background: '#00222d', color: '#fff' });
-    }
+        btnProses.onclick = async () => {
+            const amount = document.getElementById('amount').value;
+            if (amount < 10000) {
+                return Swal.fire({ icon: 'warning', title: 'Minimal Rp 10.000', background: '#00222d', color: '#fff' });
+            }
 
-    Swal.fire({
-        title: 'Memproses QRIS',
-        background: '#00222d',
-        color: '#fff',
-        didOpen: () => { Swal.showLoading(); }
-    });
+            Swal.fire({
+                title: 'Menyiapkan QRIS',
+                background: '#00222d',
+                color: '#fff',
+                didOpen: () => { Swal.showLoading(); }
+            });
 
-    try {
-        const apiReq = await fetch('/api/deposit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'create', amount: amount })
-        });
-        const res = await apiReq.json();
+            try {
+                const apiReq = await fetch('/api/deposit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'create', amount: amount })
+                });
+                const res = await apiReq.json();
 
-        if (res.success) {
-            Swal.close();
-            isQrActive = true;
-            document.getElementById('orderForm').style.display = 'none';
-            document.getElementById('qrContainer').style.display = 'block';
-            document.getElementById('qrImage').src = res.qrUrl;
-            document.getElementById('detailAmount').innerText = "Rp " + new Intl.NumberFormat('id-ID').format(res.amount);
-            document.getElementById('detailRef').innerText = res.orderId;
+                if (res.success) {
+                    Swal.close();
+                    isQrActive = true;
+                    document.getElementById('orderForm').style.display = 'none';
+                    document.getElementById('qrContainer').style.display = 'block';
+                    document.getElementById('qrImage').src = res.qrUrl;
+                    document.getElementById('detailAmount').innerText = "Rp " + new Intl.NumberFormat('id-ID').format(res.amount);
+                    document.getElementById('detailRef').innerText = res.orderId;
 
-            checkInterval = setInterval(() => {
-                checkStatus(res.orderId, res.amount);
-            }, 5000);
+                    checkInterval = setInterval(() => {
+                        checkStatus(res.orderId, res.amount);
+                    }, 5000);
 
-            btnCekManual.onclick = () => {
-                checkStatus(res.orderId, res.amount);
-                Swal.fire({ title: 'Mengecek...', timer: 1000, showConfirmButton: false, background: '#00222d', color: '#fff' });
-            };
-        } else {
-            Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal membuat pesanan', background: '#00222d', color: '#fff' });
-        }
-    } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Error', text: err.message, background: '#00222d', color: '#fff' });
-    }
-};
+                    btnCekManual.onclick = () => {
+                        checkStatus(res.orderId, res.amount);
+                        Swal.fire({ title: 'Mengecek...', timer: 1000, showConfirmButton: false, background: '#00222d', color: '#fff' });
+                    };
+                }
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Error', text: err.message, background: '#00222d', color: '#fff' });
+            }
+        };
 
         btnBack.onclick = () => {
             if (isQrActive) {
                 Swal.fire({
-                    title: 'Batal?',
-                    text: 'Transaksi belum selesai.',
+                    title: 'Batalkan?',
+                    text: 'Transaksi yang sedang berjalan akan hilang.',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Ya, Keluar',
@@ -273,4 +342,3 @@ btnProses.onclick = async () => {
     </script>
 </body>
 </html>
-
