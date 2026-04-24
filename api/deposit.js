@@ -5,6 +5,7 @@ export default async function handler(req, res) {
 
     const body = req.body;
     const action = body.action;
+    const apiKey = "CASHI-B4DCKNJASIU";
 
     if (action === 'create') {
         const amount = body.amount;
@@ -12,28 +13,39 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Amount is required' });
         }
 
-        const apiKey = "CPK-0507E449092804325F2E01ADC0C74BEF";
-        const url = `https://api.claidexpayment.host/create-qr.php?api_key=${apiKey}&amount=${amount}`;
-
         try {
-            const response = await fetch(url);
+            const response = await fetch('https://cashi.id/api/create-order', {
+                method: 'POST',
+                headers: {
+                    'x-api-key': apiKey,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    amount: parseInt(amount),
+                    order_id: "ROOX-" + Date.now(),
+                    QRIS_CUSTOM: true
+                })
+            });
             const data = await response.json();
             return res.status(200).json(data);
         } catch (error) {
-            return res.status(500).json({ success: false, error: "Gagal terhubung" });
+            return res.status(500).json({ success: false, error: "Gagal terhubung ke Cashi" });
         }
     }
 
     if (action === 'status') {
-        const ref = body.ref;
-        if (!ref) {
-            return res.status(400).json({ error: 'Reference is required' });
+        const orderId = body.orderId;
+        if (!orderId) {
+            return res.status(400).json({ error: 'Order ID is required' });
         }
 
-        const statusUrl = `https://claidexpayment.host/check-status.php?ref=${ref}`;
-
         try {
-            const response = await fetch(statusUrl);
+            const response = await fetch(`https://cashi.id/api/check-status/${orderId}`, {
+                method: 'GET',
+                headers: {
+                    'x-api-key': apiKey
+                }
+            });
             const data = await response.json();
             return res.status(200).json(data);
         } catch (error) {
