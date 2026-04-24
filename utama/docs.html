@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIKA PEDIA - API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        body { 
+            background: #003344;
+            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header { display: flex; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(0, 172, 193, 0.2); }
+        .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        .doc-card {
+            background: rgba(0, 34, 45, 0.8);
+            border: 1px solid rgba(0, 172, 193, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        h2 { color: #00acc1; margin-bottom: 15px; letter-spacing: 2px; text-transform: uppercase; }
+        p { color: #b0c4de; line-height: 1.6; margin-bottom: 15px; font-size: 15px; }
+        
+        .method-badge {
+            background: #ff8800;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .code-block {
+            background: #001a22;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #00acc1;
+            font-family: monospace;
+            font-size: 13px;
+            color: #00ffcc;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th { text-align: left; color: #ff8800; padding: 10px; border-bottom: 1px solid rgba(255,136,0,0.3); font-size: 14px; }
+        td { padding: 10px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+
+        .status-error { color: #ff4444; }
+
+        .note {
+            background: rgba(255, 136, 0, 0.1);
+            border-left: 4px solid #ff8800;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            color: #ffaa44;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
+            <h3 style="letter-spacing: 2px; text-transform: uppercase;">DOKUMENTASI API</h3>
+        </div>
+
+        <div class="doc-card">
+            <h2>PENGANTAR</h2>
+            <p>Selamat datang di API DIKA PEDIA. API ini memungkinkan pengembang untuk mengintegrasikan layanan penyedia nomor (OTP) kami ke dalam aplikasi mereka sendiri secara otomatis.</p>
+            <div class="note">
+                <strong>Penting:</strong> Jangan pernah membagikan API Key Anda kepada siapapun. API Key digunakan untuk autentikasi dan memotong saldo akun Anda saat melakukan transaksi.
+            </div>
+        </div>
+
+        <div class="doc-card">
+            <h2>AUTENTIKASI</h2>
+            <p>Gunakan Header berikut pada setiap permintaan API Anda:</p>
+            <div class="code-block">
+                x-api-key: YOUR_API_KEY_HERE
+            </div>
+        </div>
+
+        <div class="doc-card">
+            <h2>1. CEK PROFIL & SALDO</h2>
+            <p><span class="method-badge">GET</span> <code id="api-url-profile">https://api.domain.com/v1/profile</code></p>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Tipe</th>
+                    <th>Keterangan</th>
+                </tr>
+                <tr>
+                    <td>api_key</td>
+                    <td>String</td>
+                    <td>Wajib diisi</td>
+                </tr>
+            </table>
+            <p>Contoh Response Sukses:</p>
+            <div class="code-block">
+{
+  "status": true,
+  "data": {
+    "nama": "Dika",
+    "saldo": 50000,
+    "role": "MEMBER"
+  }
+}
+            </div>
+        </div>
+
+        <div class="doc-card">
+            <h2>2. AMBIL NOMOR (ORDER)</h2>
+            <p><span class="method-badge">POST</span> <code id="api-url-order">https://api.domain.com/v1/order</code></p>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Tipe</th>
+                    <th>Keterangan</th>
+                </tr>
+                <tr>
+                    <td>service_code</td>
+                    <td>String</td>
+                    <td>Kode aplikasi (ex: wa, tg)</td>
+                </tr>
+                <tr>
+                    <td>country_id</td>
+                    <td>Int</td>
+                    <td>ID Negara</td>
+                </tr>
+            </table>
+            <p>Contoh Response Sukses:</p>
+            <div class="code-block">
+{
+  "status": true,
+  "order_id": "99281",
+  "number": "6281818934870",
+  "price": 2500
+}
+            </div>
+        </div>
+
+        <div class="doc-card">
+            <h2>DAFTAR ERROR</h2>
+            <table>
+                <tr>
+                    <th>Kode</th>
+                    <th>Arti</th>
+                </tr>
+                <tr>
+                    <td class="status-error">INVALID_KEY</td>
+                    <td>API Key salah atau tidak ditemukan.</td>
+                </tr>
+                <tr>
+                    <td class="status-error">LOW_BALANCE</td>
+                    <td>Saldo akun tidak mencukupi.</td>
+                </tr>
+                <tr>
+                    <td class="status-error">SERVICE_OFF</td>
+                    <td>Layanan sedang gangguan/maintenance.</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentDomain = window.location.origin;
+            const endpoints = {
+                'api-url-profile': '/v1/profile',
+                'api-url-order': '/v1/order'
+            };
+
+            for (const [id, path] of Object.entries(endpoints)) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.innerText = currentDomain + path;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
