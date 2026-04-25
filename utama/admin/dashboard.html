@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rooxpedia - admin panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        body { 
+            background: #001a22;
+            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
+            color: #fff; min-height: 100vh; padding: 20px; text-transform: lowercase;
+        }
+
+        .admin-container { max-width: 900px; margin: 0 auto; }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; padding: 20px;
+            background: rgba(0, 172, 193, 0.1); border-radius: 20px;
+            border: 1px solid rgba(0, 172, 193, 0.3); backdrop-filter: blur(10px);
+        }
+        .header h1 { font-size: 22px; text-transform: uppercase; letter-spacing: 2px; color: #00acc1; }
+        .header h1 span { color: #ff8800; }
+
+        .grid-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
+
+        .card {
+            background: rgba(0, 34, 45, 0.8); border: 1px solid rgba(0, 172, 193, 0.2);
+            border-radius: 24px; padding: 25px; position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, #00acc1, #ff8800);
+        }
+
+        h2 { font-size: 16px; text-transform: uppercase; color: #ff8800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 11px; color: #00acc1; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
+        .input-group input {
+            width: 100%; padding: 12px 15px; background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 12px;
+            color: #fff; font-size: 15px; outline: none; transition: 0.3s;
+        }
+        .input-group input:focus { border-color: #00acc1; box-shadow: 0 0 10px rgba(0, 172, 193, 0.2); }
+
+        .btn-create {
+            width: 100%; padding: 15px; background: linear-gradient(45deg, #00acc1, #007c91);
+            border: none; border-radius: 12px; color: #fff; font-weight: 700;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+        }
+        .btn-create:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 172, 193, 0.4); }
+
+        .voucher-list { max-height: 400px; overflow-y: auto; padding-right: 5px; }
+        .voucher-list::-webkit-scrollbar { width: 5px; }
+        .voucher-list::-webkit-scrollbar-thumb { background: #00acc1; border-radius: 10px; }
+
+        .v-item {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px; border-radius: 15px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .v-info p { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+        .v-info span { font-size: 11px; color: #ff8800; font-weight: 700; }
+        .btn-delete { background: rgba(255, 68, 68, 0.1); color: #ff4444; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .btn-delete:hover { background: #ff4444; color: #fff; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-box {
+            background: rgba(0, 172, 193, 0.05); border: 1px solid rgba(0, 172, 193, 0.1);
+            padding: 15px; border-radius: 15px; text-align: center;
+        }
+        .stat-box i { font-size: 20px; color: #00acc1; margin-bottom: 5px; }
+        .stat-box p { font-size: 18px; font-weight: 700; }
+        .stat-box span { font-size: 9px; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <div class="header">
+            <h1>admin <span>panel</span></h1>
+            <button onclick="logout()" style="background:none; border:none; color:#ff4444; cursor:pointer; font-weight:700; text-transform:uppercase; font-size:12px;">
+                <i class="fas fa-sign-out-alt"></i> keluar
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <i class="fas fa-ticket-alt"></i>
+                <p id="totalVouchers">0</p>
+                <span>voucher aktif</span>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-users"></i>
+                <p id="totalUsers">0</p>
+                <span>total member</span>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            <div class="card">
+                <h2><i class="fas fa-plus-circle"></i> buat voucher</h2>
+                <div class="input-group">
+                    <label>kode voucher</label>
+                    <input type="text" id="vCode" placeholder="contoh: KLM-99K">
+                </div>
+                <div class="input-group">
+                    <label>nominal saldo (angka)</label>
+                    <input type="number" id="vNominal" placeholder="contoh: 10000">
+                </div>
+                <button class="btn-create" id="btnGenerate">buat & simpan</button>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-list"></i> daftar voucher aktif</h2>
+                <div class="voucher-list" id="listContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_5LQ6U3DtMf4STbDjLymazm8I_zySbSw",
+            authDomain: "myproject-485415.firebaseapp.com",
+            databaseURL: "https://myproject-485415-default-rtdb.firebaseio.com",
+            projectId: "myproject-485415",
+            storageBucket: "myproject-485415.firebasestorage.app",
+            messagingSenderId: "450623193142",
+            appId: "1:450623193142:web:d7a9caf66e1dff8d495897"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        auth.onAuthStateChanged(user => {
+            if (!user || user.email !== "dikaadmin@gmail.com") {
+                window.location.href = "../login.html";
+            }
+            loadStats();
+            loadVouchers();
+        });
+
+        function loadStats() {
+            db.ref('users').on('value', snap => {
+                document.getElementById('totalUsers').innerText = snap.numChildren();
+            });
+        }
+
+        function loadVouchers() {
+            db.ref('vouchers').on('value', snap => {
+                const container = document.getElementById('listContainer');
+                container.innerHTML = "";
+                let count = 0;
+                
+                snap.forEach(child => {
+                    count++;
+                    const data = child.val();
+                    const item = `
+                        <div class="v-item">
+                            <div class="v-info">
+                                <p>${child.key}</p>
+                                <span>rp ${parseInt(data.nominal).toLocaleString()}</span>
+                            </div>
+                            <button class="btn-delete" onclick="deleteVoucher('${child.key}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.innerHTML += item;
+                });
+                document.getElementById('totalVouchers').innerText = count;
+            });
+        }
+
+        document.getElementById('btnGenerate').onclick = async () => {
+            const code = document.getElementById('vCode').value.trim().toUpperCase();
+            const nominal = document.getElementById('vNominal').value;
+
+            if(!code || !nominal) return Swal.fire('isi semua field', '', 'warning');
+
+            try {
+                await db.ref(`vouchers/${code}`).set({
+                    nominal: parseInt(nominal),
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                });
+                Swal.fire({ icon: 'success', title: 'voucher dibuat', background: '#00222d', color: '#fff' });
+                document.getElementById('vCode').value = "";
+                document.getElementById('vNominal').value = "";
+            } catch (e) {
+                Swal.fire('gagal', e.message, 'error');
+            }
+        };
+
+        function deleteVoucher(key) {
+            Swal.fire({
+                title: 'hapus voucher?',
+                text: "kode ini tidak akan bisa digunakan lagi",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff4444',
+                background: '#00222d', color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    db.ref(`vouchers/${key}`).remove();
+                }
+            });
+        }
+
+        function logout() {
+            auth.signOut().then(() => window.location.href = "../login.html");
+        }
+    </script>
+</body>
+</html>
