@@ -60,6 +60,7 @@
         .status-pending { background: rgba(255, 136, 0, 0.2); color: #ff8800; border: 1px solid #ff8800; }
         .status-success { background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 1px solid #00ff88; }
         .status-canceled { background: rgba(255, 68, 68, 0.2); color: #ff4444; border: 1px solid #ff4444; }
+        .status-batal { background: rgba(255, 68, 68, 0.2); color: #ff4444; border: 1px solid #ff4444; }
 
         .depo-body { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .info-box label { display: block; font-size: 10px; color: #00acc1; font-weight: 700; text-transform: uppercase; }
@@ -71,18 +72,31 @@
             border: 1px dashed rgba(0, 172, 193, 0.5);
         }
         .number-box span { font-size: 18px; font-weight: 700; color: #00acc1; }
+        
         .otp-box {
             background: linear-gradient(45deg, rgba(255, 136, 0, 0.1), transparent);
             padding: 10px; border-radius: 8px; text-align: center; border: 1px solid rgba(255, 136, 0, 0.2);
         }
         .otp-code { font-size: 24px; font-weight: 700; letter-spacing: 5px; color: #fff; }
 
-        .galau-box {
-            grid-column: 1 / -1; background: rgba(0,0,0,0.2);
-            padding: 10px; border-radius: 8px; text-align: left;
-            border-left: 3px solid #00acc1; margin-top: 10px;
+        .btn-cancel {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-size: 11px;
         }
-        .galau-text { font-size: 11px; color: #aaa; font-style: italic; }
+        .btn-cancel:hover {
+            background: #ff4444;
+            color: #fff;
+        }
 
         .empty-state { text-align: center; margin-top: 50px; opacity: 0.5; font-weight: 500; }
     </style>
@@ -152,7 +166,7 @@
                 const container = document.getElementById('depositList');
                 container.innerHTML = '';
                 if (!snapshot.exists()) {
-                    container.innerHTML = '<div class="empty-state">belum ada deposit, sama kaya hati yang masih kosong ini.</div>';
+                    container.innerHTML = '<div class="empty-state">belum ada deposit.</div>';
                     return;
                 }
                 let items = [];
@@ -199,14 +213,23 @@
             const container = document.getElementById('orderList');
             const card = document.createElement('div');
             card.className = 'deposit-card';
-            const status = (order.status || 'pending').toLowerCase();
+            
+            let displayStatus = (order.status || 'pending').toLowerCase();
+            if (order.otp && order.otp !== 'menunggu...') {
+                displayStatus = 'success';
+            }
+
+            let cancelButton = '';
+            if ((!order.otp || order.otp === 'menunggu...') && displayStatus === 'pending') {
+                cancelButton = `<button class="btn-cancel" onclick="cancelOrder('${order.key}', ${order.harga})">batalkan pesanan</button>`;
+            }
             
             card.innerHTML = `
                 <div class="depo-header">
                     <span class="method-name" style="color:#ff8800">${order.aplikasi}</span>
-                    <span class="status-badge status-${status}">${status}</span>
+                    <span class="status-badge status-${displayStatus}">${displayStatus}</span>
                 </div>
-                <div style="font-size:11px; margin-bottom:8px; opacity:0.6;">${order.negara} | ${order.operator}</div>
+                <div style="font-size:11px; margin-bottom:8px; opacity:0.6;">${order.negara} | ${order.operator} | rp ${order.harga}</div>
                 <div class="number-box">
                     <span>${order.nomor}</span>
                     <button onclick="copyText('${order.nomor}')" style="background:#00acc1; border:none; color:#fff; padding:5px 10px; border-radius:5px; font-size:10px;">copy</button>
@@ -215,8 +238,52 @@
                     <label style="font-size:10px; color:#ff8800; font-weight:700; display:block; margin-bottom:5px;">kode otp</label>
                     <div class="otp-code">${order.otp || 'menunggu...'}</div>
                 </div>
+                ${cancelButton}
             `;
             container.appendChild(card);
+        }
+
+        async function cancelOrder(orderKey, harga) {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const result = await Swal.fire({
+                title: 'batalkan pesanan?',
+                text: "saldo akan dikembalikan secara otomatis.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#00acc1',
+                cancelButtonColor: '#ff4444',
+                confirmButtonText: 'ya, batalkan!',
+                background: '#00222d',
+                color: '#fff'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    await db.ref(`orders/${user.uid}/${orderKey}`).update({
+                        status: 'batal'
+                    });
+
+                    const userRef = db.ref(`users/${user.uid}`);
+                    const snapshot = await userRef.once('value');
+                    const currentSaldo = snapshot.val().saldo || 0;
+
+                    await userRef.update({
+                        saldo: currentSaldo + harga
+                    });
+
+                    Swal.fire({
+                        title: 'berhasil',
+                        text: 'pesanan dibatalkan & saldo dikembalikan.',
+                        icon: 'success',
+                        background: '#00222d',
+                        color: '#fff'
+                    });
+                } catch (error) {
+                    Swal.fire('error', error.message, 'error');
+                }
+            }
         }
 
         function copyText(text) {
