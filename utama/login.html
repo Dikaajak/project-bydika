@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rooxpedia - Masuk Akun</title>
+    <title>DikaPedia- Masuk Akun</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
@@ -20,6 +20,7 @@
             align-items: center; 
             min-height: 100vh; 
             padding: 20px; 
+            text-transform: lowercase;
         }
         .container { 
             width: 100%; 
@@ -90,28 +91,91 @@
         <img src="https://i.ibb.co.com/rRYyNP25/20260420-202909.jpg" alt="Logo" class="logo-big">
         <div class="form-card">
             <h2>LOGIN</h2>
-            <p class="desc">Masuk ke Dashboard Rooxpedia</p>
+            <p class="desc">masuk ke dashboard rooxpedia</p>
             <form id="loginForm">
                 <div class="input-box">
-                    <label>Email Address</label>
+                    <label>email address</label>
                     <input type="email" id="email" placeholder="email@gmail.com" required>
                 </div>
                 <div class="input-box">
-                    <label>Password</label>
+                    <label>password</label>
                     <input type="password" id="pw" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn-auth">MASUK SEKARANG</button>
+                <button type="submit" class="btn-auth">masuk sekarang</button>
             </form>
             <div class="footer">
-                BELUM PUNYA AKUN? <a href="regis.html">DAFTAR</a>
+                belum punya akun? <a href="regis.html">daftar</a>
             </div>
         </div>
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
-<script src="script.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC_5LQ6U3DtMf4STbDjLymazm8I_zySbSw",
+        authDomain: "myproject-485415.firebaseapp.com",
+        databaseURL: "https://myproject-485415-default-rtdb.firebaseio.com",
+        projectId: "myproject-485415",
+        storageBucket: "myproject-485415.firebasestorage.app",
+        messagingSenderId: "450623193142",
+        appId: "1:450623193142:web:d7a9caf66e1dff8d495897"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    document.getElementById('loginForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('pw').value;
+
+        Swal.fire({
+            title: 'mohon tunggu...',
+            background: '#00222d',
+            color: '#fff',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        try {
+            const userCredential = await auth.signInWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+
+            if (email === "dikaadmin@gmail.com") {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'halo admin!',
+                    text: 'mengarahkan ke dashboard admin...',
+                    background: '#00222d',
+                    color: '#fff',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = 'admin/dashboard.html';
+                });
+            } else {
+                window.location.href = 'dashboard.html';
+            }
+
+        } catch (error) {
+            let errorMsg = error.message;
+            if (error.code === 'auth/wrong-password') errorMsg = "password salah bos";
+            if (error.code === 'auth/user-not-found') errorMsg = "email tidak terdaftar";
+
+            Swal.fire({
+                icon: 'error',
+                title: 'gagal masuk',
+                text: errorMsg,
+                background: '#00222d',
+                color: '#fff'
+            });
+        }
+    };
+</script>
+</body>
+</html>
