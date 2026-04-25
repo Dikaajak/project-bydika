@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rooxpedia - Riwayat Pesanan</title>
+    <title>dika-pedia 🚀 - riwayat deposit</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -12,56 +12,54 @@
             background: #003344;
             background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
             color: #fff; min-height: 100vh; padding: 20px;
+            text-transform: lowercase;
         }
         .header { display: flex; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(0, 172, 193, 0.2); }
         .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
+        .header h3 { font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
 
-        .order-card {
+        .deposit-card {
             background: rgba(0, 34, 45, 0.8);
             border: 1px solid rgba(0, 172, 193, 0.3);
             border-radius: 15px; padding: 15px; margin-bottom: 15px;
             backdrop-filter: blur(10px);
         }
-        .order-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 10px; }
-        .app-name { font-weight: 700; color: #ff8800; text-transform: uppercase; }
+        .depo-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 10px; }
+        .method-name { font-weight: 700; color: #00ff88; text-transform: uppercase; }
         
         .status-badge { font-size: 10px; padding: 3px 8px; border-radius: 5px; font-weight: 700; text-transform: uppercase; }
         .status-pending { background: rgba(255, 136, 0, 0.2); color: #ff8800; border: 1px solid #ff8800; }
         .status-success { background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 1px solid #00ff88; }
         .status-canceled { background: rgba(255, 68, 68, 0.2); color: #ff4444; border: 1px solid #ff4444; }
 
-        .order-body { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .depo-body { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .info-box label { display: block; font-size: 10px; color: #00acc1; font-weight: 700; text-transform: uppercase; }
-        .info-box p { font-size: 13px; font-weight: 700; margin-top: 2px; }
+        .info-box p { font-size: 14px; font-weight: 700; margin-top: 2px; }
 
-        .otp-box {
-            grid-column: 1 / -1; background: rgba(0,0,0,0.3);
-            padding: 12px; border-radius: 10px; text-align: center;
-            border: 1px dashed #00acc1; margin-top: 8px;
+        .galau-box {
+            grid-column: 1 / -1; background: rgba(0,0,0,0.2);
+            padding: 10px; border-radius: 8px; text-align: left;
+            border-left: 3px solid #00acc1; margin-top: 10px;
         }
-        .otp-code { font-size: 24px; color: #00ff88; letter-spacing: 4px; font-weight: 700; }
+        .galau-text { font-size: 11px; color: #aaa; font-style: italic; }
 
-        .action-btns { display: flex; gap: 10px; margin-top: 15px; }
-        .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 12px; text-transform: uppercase; }
-        .btn-cancel { background: rgba(255, 68, 68, 0.1); color: #ff4444; border: 1px solid #ff4444; }
-        .btn-copy { background: #00acc1; color: #fff; }
+        .empty-state { text-align: center; margin-top: 50px; opacity: 0.5; font-weight: 500; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <i class="fas fa-chevron-left" onclick="window.location.href='dashboard.html'"></i>
-        <h3>RIWAYAT PESANAN</h3>
+        <h3>riwayat deposit</h3>
     </div>
 
-    <div id="orderList"></div>
+    <div id="depositList">
+        <div class="empty-state">sedang memuat kenangan lama...</div>
+    </div>
 
-    <script src="config.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         const firebaseConfig = {
@@ -78,139 +76,71 @@
         const db = firebase.database();
         const auth = firebase.auth();
 
-        let checkIntervals = {};
-
         auth.onAuthStateChanged(user => {
-            if (user) loadOrders(user.uid);
+            if (user) loadDeposits(user.uid);
             else window.location.href = 'login.html';
         });
 
-        function loadOrders(uid) {
-            db.ref('orders/' + uid).orderByChild('timestamp').on('value', snapshot => {
-                const container = document.getElementById('orderList');
+        function loadDeposits(uid) {
+            db.ref('deposits/' + uid).orderByChild('timestamp').on('value', snapshot => {
+                const container = document.getElementById('depositList');
                 container.innerHTML = '';
                 
                 if (!snapshot.exists()) {
-                    container.innerHTML = '<p style="text-align:center; opacity:0.5;">Belum ada riwayat.</p>';
+                    container.innerHTML = '<div class="empty-state">belum ada deposit, sama kaya hati yang masih kosong ini.</div>';
                     return;
                 }
 
-                let orders = [];
+                let deposits = [];
                 snapshot.forEach(child => {
-                    orders.push({ key: child.key, ...child.val() });
+                    deposits.push({ key: child.key, ...child.val() });
                 });
 
-                orders.reverse().forEach(order => {
-                    renderCard(order, uid);
-                    if (order.status === 'PENDING') startAutoCheck(uid, order.key, order.order_id);
-                    else stopAutoCheck(order.key);
+                deposits.reverse().forEach(depo => {
+                    renderCard(depo);
                 });
             });
         }
 
-        function renderCard(order, uid) {
-            const container = document.getElementById('orderList');
+        function renderCard(depo) {
+            const container = document.getElementById('depositList');
             const card = document.createElement('div');
-            card.className = 'order-card';
+            card.className = 'deposit-card';
             
-            let statusBadge = `<span class="status-badge status-pending">PENDING</span>`;
-            if (order.status === 'SUCCESS' || order.status === 'completed') statusBadge = `<span class="status-badge status-success">SUCCESS</span>`;
-            if (order.status === 'CANCELED' || order.status === 'cancel') statusBadge = `<span class="status-badge status-canceled">CANCELED</span>`;
+            let statusBadge = '';
+            let galauMsg = '';
+
+            const status = (depo.status || '').toLowerCase();
+
+            if (status === 'pending') {
+                statusBadge = '<span class="status-badge status-pending">pending</span>';
+                galauMsg = 'sabar ya, saldo lagi divalidasi, gak kaya janji dia yang nggak pernah terbukti.';
+            } else if (status === 'success' || status === 'completed') {
+                statusBadge = '<span class="status-badge status-success">success</span>';
+                galauMsg = 'deposit sukses, saldo udah masuk. semoga bahagia ya, meski bahagianya bukan sama aku.';
+            } else if (status === 'canceled' || status === 'cancel') {
+                statusBadge = '<span class="status-badge status-canceled">canceled</span>';
+                galauMsg = 'yah dibatalin, emang bener ya, yang udah didepan mata aja bisa pergi kalo emang niatnya mau udahan.';
+            } else {
+                statusBadge = '<span class="status-badge status-failed">failed</span>';
+                galauMsg = 'deposit gagal. mungkin kamu kurang teliti, atau emang kita nggak ditakdirkan buat sejalan.';
+            }
 
             card.innerHTML = `
-                <div class="order-header">
-                    <span class="app-name">${order.aplikasi}</span>
+                <div class="depo-header">
+                    <span class="method-name">${depo.metode || 'qris / manual'}</span>
                     ${statusBadge}
                 </div>
-                <div class="order-body">
-                    <div class="info-box"><label>Negara</label><p>${order.negara}</p></div>
-                    <div class="info-box"><label>Operator</label><p>${order.operator}</p></div>
-                    <div class="info-box"><label>Nomor</label><p>${order.nomor}</p></div>
-                    <div class="info-box"><label>Harga (+Untung)</label><p>Rp ${parseInt(order.harga).toLocaleString()}</p></div>
-                    <div class="otp-box">
-                        <label>OTP CODE</label>
-                        <div class="otp-code">${order.otp || 'CHECKING...'}</div>
+                <div class="depo-body">
+                    <div class="info-box"><label>jumlah</label><p>rp ${parseInt(depo.jumlah || 0).toLocaleString()}</p></div>
+                    <div class="info-box"><label>tanggal</label><p>${depo.tanggal || '-'}</p></div>
+                    <div class="info-box" style="grid-column: 1 / -1;"><label>id deposit</label><p>#${depo.key.substring(0, 12)}</p></div>
+                    <div class="galau-box">
+                        <div class="galau-text">${galauMsg}</div>
                     </div>
-                </div>
-                <div class="action-btns">
-                    <button class="btn btn-copy" onclick="copyNum('${order.nomor}')">Salin Nomor</button>
-                    ${order.status === 'PENDING' ? `<button class="btn btn-cancel" onclick="cancelOrder('${order.key}', '${order.order_id}')">Batalkan</button>` : ''}
                 </div>
             `;
             container.appendChild(card);
-        }
-
-        function startAutoCheck(uid, key, orderId) {
-            if (checkIntervals[key]) return;
-            checkIntervals[key] = setInterval(async () => {
-                try {
-                    const res = await axios.get(`https://www.rumahotp.io/api/v1/orders/get_status?order_id=${orderId}`, {
-                        headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP, 'Accept': 'application/json' }
-                    });
-
-                    if (res.data.success) {
-                        const data = res.data.data;
-                        if (data.otp_code) {
-                            await db.ref(`orders/${uid}/${key}`).update({ otp: data.otp_code, status: 'SUCCESS' });
-                            stopAutoCheck(key);
-                        } else if (data.status === 'canceled' || data.status === 'expiring') {
-                            await handleRefund(uid, key, "EXPIRED");
-                        }
-                    }
-                } catch (e) { console.error("Check status failed"); }
-            }, 5000);
-        }
-
-        function stopAutoCheck(key) {
-            if (checkIntervals[key]) {
-                clearInterval(checkIntervals[key]);
-                delete checkIntervals[key];
-            }
-        }
-
-        async function handleRefund(uid, key, targetStatus) {
-            const snap = await db.ref(`orders/${uid}/${key}`).once('value');
-            if (snap.exists() && snap.val().status === 'PENDING') {
-                const refundAmount = snap.val().harga;
-                const userRef = db.ref(`users/${uid}`);
-                const userSnap = await userRef.once('value');
-                const currentSaldo = userSnap.val().saldo || 0;
-
-                await userRef.update({ saldo: currentSaldo + refundAmount });
-                await db.ref(`orders/${uid}/${key}`).update({ status: 'CANCELED', otp: targetStatus });
-                stopAutoCheck(key);
-            }
-        }
-
-        async function cancelOrder(key, orderId) {
-            const uid = auth.currentUser.uid;
-            const res = await Swal.fire({
-                title: 'Batal Nomor?',
-                text: "Saldo akan dikembalikan utuh.",
-                icon: 'warning',
-                showCancelButton: true,
-                background: '#00222d', color: '#fff'
-            });
-
-            if (res.isConfirmed) {
-                Swal.fire({ title: 'Proses...', didOpen: () => Swal.showLoading(), background: '#00222d', color: '#fff' });
-                try {
-                    const api = await axios.get(`https://www.rumahotp.io/api/v1/orders/set_status?order_id=${orderId}&status=cancel`, {
-                        headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP, 'Accept': 'application/json' }
-                    });
-                    if (api.data.success) {
-                        await handleRefund(uid, key, "DIBATALKAN");
-                        Swal.fire({ icon: 'success', title: 'Berhasil Batal', background: '#00222d', color: '#fff' });
-                    }
-                } catch (e) {
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: "Gagal membatalkan nomor", background: '#00222d', color: '#fff' });
-                }
-            }
-        }
-
-        function copyNum(txt) {
-            navigator.clipboard.writeText(txt);
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Disalin', showConfirmButton: false, timer: 1000 });
         }
     </script>
 </body>
