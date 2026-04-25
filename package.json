@@ -1,7 +1,6 @@
 {
   "name": "dikapedia",
   "version": "1.0.0",
-  "main": "script.js",
   "dependencies": {
     "firebase-admin": "^12.0.0"
   },
