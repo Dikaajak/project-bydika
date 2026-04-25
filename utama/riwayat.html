@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dika-pedia 🚀 - riwayat deposit</title>
+    <title>dika-pedia 🚀 - riwayat</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -17,6 +17,35 @@
         .header { display: flex; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(0, 172, 193, 0.2); }
         .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
         .header h3 { font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+
+        .tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 172, 193, 0.2);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            color: rgba(255,255,255,0.5);
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: 0.3s;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        .tab-btn.active {
+            background: #00acc1;
+            color: #fff;
+        }
+
+        .content-section { display: none; }
+        .content-section.active { display: block; }
 
         .deposit-card {
             background: rgba(0, 34, 45, 0.8);
@@ -36,6 +65,18 @@
         .info-box label { display: block; font-size: 10px; color: #00acc1; font-weight: 700; text-transform: uppercase; }
         .info-box p { font-size: 14px; font-weight: 700; margin-top: 2px; }
 
+        .number-box {
+            background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px;
+            display: flex; justify-content: space-between; align-items: center; margin: 10px 0;
+            border: 1px dashed rgba(0, 172, 193, 0.5);
+        }
+        .number-box span { font-size: 18px; font-weight: 700; color: #00acc1; }
+        .otp-box {
+            background: linear-gradient(45deg, rgba(255, 136, 0, 0.1), transparent);
+            padding: 10px; border-radius: 8px; text-align: center; border: 1px solid rgba(255, 136, 0, 0.2);
+        }
+        .otp-code { font-size: 24px; font-weight: 700; letter-spacing: 5px; color: #fff; }
+
         .galau-box {
             grid-column: 1 / -1; background: rgba(0,0,0,0.2);
             padding: 10px; border-radius: 8px; text-align: left;
@@ -50,16 +91,30 @@
 
     <div class="header">
         <i class="fas fa-chevron-left" onclick="window.location.href='dashboard.html'"></i>
-        <h3>riwayat deposit</h3>
+        <h3>pusat riwayat</h3>
     </div>
 
-    <div id="depositList">
-        <div class="empty-state">sedang memuat kenangan lama...</div>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('deposit', this)">riwayat deposit</button>
+        <button class="tab-btn" onclick="openTab('nomor', this)">riwayat nomor</button>
+    </div>
+
+    <div id="deposit" class="content-section active">
+        <div id="depositList">
+            <div class="empty-state">sedang memuat kenangan lama...</div>
+        </div>
+    </div>
+
+    <div id="nomor" class="content-section">
+        <div id="orderList">
+            <div class="empty-state">mencari jejak nomor...</div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         const firebaseConfig = {
@@ -76,71 +131,97 @@
         const db = firebase.database();
         const auth = firebase.auth();
 
+        function openTab(tabName, btn) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            btn.classList.add('active');
+        }
+
         auth.onAuthStateChanged(user => {
-            if (user) loadDeposits(user.uid);
-            else window.location.href = 'login.html';
+            if (user) {
+                loadDeposits(user.uid);
+                loadOrders(user.uid);
+            } else {
+                window.location.href = 'login.html';
+            }
         });
 
         function loadDeposits(uid) {
             db.ref('deposits/' + uid).orderByChild('timestamp').on('value', snapshot => {
                 const container = document.getElementById('depositList');
                 container.innerHTML = '';
-                
                 if (!snapshot.exists()) {
                     container.innerHTML = '<div class="empty-state">belum ada deposit, sama kaya hati yang masih kosong ini.</div>';
                     return;
                 }
-
-                let deposits = [];
-                snapshot.forEach(child => {
-                    deposits.push({ key: child.key, ...child.val() });
-                });
-
-                deposits.reverse().forEach(depo => {
-                    renderCard(depo);
-                });
+                let items = [];
+                snapshot.forEach(child => { items.push({ key: child.key, ...child.val() }); });
+                items.reverse().forEach(depo => renderDepositCard(depo));
             });
         }
 
-        function renderCard(depo) {
+        function loadOrders(uid) {
+            db.ref('orders/' + uid).orderByChild('timestamp').on('value', snapshot => {
+                const container = document.getElementById('orderList');
+                container.innerHTML = '';
+                if (!snapshot.exists()) {
+                    container.innerHTML = '<div class="empty-state">belum ada nomor yang dibeli.</div>';
+                    return;
+                }
+                let items = [];
+                snapshot.forEach(child => { items.push({ key: child.key, ...child.val() }); });
+                items.reverse().forEach(order => renderOrderCard(order));
+            });
+        }
+
+        function renderDepositCard(depo) {
             const container = document.getElementById('depositList');
             const card = document.createElement('div');
             card.className = 'deposit-card';
-            
-            let statusBadge = '';
-            let galauMsg = '';
-
             const status = (depo.status || '').toLowerCase();
-
-            if (status === 'pending') {
-                statusBadge = '<span class="status-badge status-pending">pending</span>';
-                galauMsg = 'sabar ya, saldo lagi divalidasi, gak kaya janji dia yang nggak pernah terbukti.';
-            } else if (status === 'success' || status === 'completed') {
-                statusBadge = '<span class="status-badge status-success">success</span>';
-                galauMsg = 'deposit sukses, saldo udah masuk. semoga bahagia ya, meski bahagianya bukan sama aku.';
-            } else if (status === 'canceled' || status === 'cancel') {
-                statusBadge = '<span class="status-badge status-canceled">canceled</span>';
-                galauMsg = 'yah dibatalin, emang bener ya, yang udah didepan mata aja bisa pergi kalo emang niatnya mau udahan.';
-            } else {
-                statusBadge = '<span class="status-badge status-failed">failed</span>';
-                galauMsg = 'deposit gagal. mungkin kamu kurang teliti, atau emang kita nggak ditakdirkan buat sejalan.';
-            }
-
+            let statusBadge = `<span class="status-badge status-${status}">${status}</span>`;
+            
             card.innerHTML = `
                 <div class="depo-header">
-                    <span class="method-name">${depo.metode || 'qris / manual'}</span>
+                    <span class="method-name">${depo.metode || 'manual'}</span>
                     ${statusBadge}
                 </div>
                 <div class="depo-body">
                     <div class="info-box"><label>jumlah</label><p>rp ${parseInt(depo.jumlah || 0).toLocaleString()}</p></div>
                     <div class="info-box"><label>tanggal</label><p>${depo.tanggal || '-'}</p></div>
-                    <div class="info-box" style="grid-column: 1 / -1;"><label>id deposit</label><p>#${depo.key.substring(0, 12)}</p></div>
-                    <div class="galau-box">
-                        <div class="galau-text">${galauMsg}</div>
-                    </div>
                 </div>
             `;
             container.appendChild(card);
+        }
+
+        function renderOrderCard(order) {
+            const container = document.getElementById('orderList');
+            const card = document.createElement('div');
+            card.className = 'deposit-card';
+            const status = (order.status || 'pending').toLowerCase();
+            
+            card.innerHTML = `
+                <div class="depo-header">
+                    <span class="method-name" style="color:#ff8800">${order.aplikasi}</span>
+                    <span class="status-badge status-${status}">${status}</span>
+                </div>
+                <div style="font-size:11px; margin-bottom:8px; opacity:0.6;">${order.negara} | ${order.operator}</div>
+                <div class="number-box">
+                    <span>${order.nomor}</span>
+                    <button onclick="copyText('${order.nomor}')" style="background:#00acc1; border:none; color:#fff; padding:5px 10px; border-radius:5px; font-size:10px;">copy</button>
+                </div>
+                <div class="otp-box">
+                    <label style="font-size:10px; color:#ff8800; font-weight:700; display:block; margin-bottom:5px;">kode otp</label>
+                    <div class="otp-code">${order.otp || 'menunggu...'}</div>
+                </div>
+            `;
+            container.appendChild(card);
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            Swal.fire({ title: 'copy berhasil', timer: 1000, showConfirmButton: false, background: '#00222d', color: '#fff' });
         }
     </script>
 </body>
