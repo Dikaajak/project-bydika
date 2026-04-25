@@ -15,43 +15,113 @@ if (!firebase.apps.length) {
 const auth = firebase.auth();
 const db = firebase.database();
 
+function generateApiKey() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = 'DK-';
+    for (let i = 0; i < 24; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
 auth.onAuthStateChanged((user) => {
+    const currentPath = window.location.pathname;
+    const isLoginPage = currentPath.includes('login.html');
+    const isRegisPage = currentPath.includes('regis.html');
+
     if (user) {
+        if (isLoginPage || isRegisPage) {
+            window.location.replace('dashboard.html');
+            return;
+        }
+
         db.ref('users/' + user.uid).on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
+                if (!data.api_key) {
+                    const newKey = generateApiKey();
+                    db.ref('users/' + user.uid).update({
+                        api_key: newKey
+                    });
+                }
+
                 if (document.getElementById('p-nama')) document.getElementById('p-nama').innerText = data.nama || "-";
                 if (document.getElementById('p-role')) document.getElementById('p-role').innerText = (data.role || "MEMBER").toUpperCase();
+                if (document.getElementById('p-api-key')) document.getElementById('p-api-key').innerText = data.api_key || "-";
                 
                 const saldoVal = data.saldo || 0;
                 const saldoFormatted = "Rp " + new Intl.NumberFormat('id-ID').format(saldoVal);
-                
                 if (document.getElementById('topSaldo')) document.getElementById('topSaldo').innerText = saldoFormatted;
                 if (document.getElementById('p-saldo-card')) document.getElementById('p-saldo-card').innerText = saldoFormatted;
 
-                const pesananCount = data.pesananSukses || 0;
-                const pesananRp = data.totalBelanja || 0;
                 if (document.getElementById('p-pesanan')) {
-                    document.getElementById('p-pesanan').innerText = `${pesananCount} / Rp ${new Intl.NumberFormat('id-ID').format(pesananRp)}`;
+                    db.ref('orders/' + user.uid).once('value', (orderSnap) => {
+                        let count = 0;
+                        let totalSpent = 0;
+                        orderSnap.forEach((child) => {
+                            if (child.val().status === 'SUKSES') {
+                                count++;
+                                totalSpent += child.val().harga || 0;
+                            }
+                        });
+                        document.getElementById('p-pesanan').innerText = `${count} / Rp ${new Intl.NumberFormat('id-ID').format(totalSpent)}`;
+                    });
                 }
 
-                const depositRp = data.totalDeposit || 0;
-                const depositCount = data.jumlahDeposit || 0;
                 if (document.getElementById('p-deposit')) {
-                    document.getElementById('p-deposit').innerText = `Rp ${new Intl.NumberFormat('id-ID').format(depositRp)} / ${depositCount}`;
-                }
-
-                if (document.getElementById('p-rank')) {
-                    document.getElementById('p-rank').innerText = `#1 (${saldoFormatted})`;
+                    db.ref('deposits/' + user.uid).once('value', (depoSnap) => {
+                        let totalDepo = 0;
+                        let countDepo = 0;
+                        depoSnap.forEach((child) => {
+                            if (child.val().status === 'SUKSES') {
+                                totalDepo += child.val().nominal || 0;
+                                countDepo++;
+                            }
+                        });
+                        document.getElementById('p-deposit').innerText = `Rp ${new Intl.NumberFormat('id-ID').format(totalDepo)} / ${countDepo}`;
+                    });
                 }
             }
         });
+
+        db.ref('users').orderByChild('total_deposit').limitToLast(1).on('value', (snap) => {
+            snap.forEach((child) => {
+                if (document.getElementById('p-rank')) {
+                    const val = child.val().total_deposit || 0;
+                    document.getElementById('p-rank').innerText = `#1 (Rp ${new Intl.NumberFormat('id-ID').format(val)})`;
+                }
+            });
+        });
+
     } else {
-        if (window.location.pathname.includes('dashboard.html')) {
-            window.location.href = 'login.html';
+        if (!isLoginPage && !isRegisPage) {
+            window.location.replace('login.html');
         }
     }
 });
+
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+    loginForm.onsubmit = (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('pw').value;
+
+        auth.signInWithEmailAndPassword(email, password)
+            .then(() => {
+                window.location.replace('dashboard.html');
+            })
+            .catch((error) => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Gagal',
+                    text: 'Email atau password salah!',
+                    confirmButtonColor: '#00acc1'
+                });
+            });
+    };
+}
 
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
@@ -98,7 +168,16 @@ document.addEventListener('click', (e) => {
 if (document.getElementById('btnLogout')) {
     document.getElementById('btnLogout').onclick = () => {
         auth.signOut().then(() => {
-            window.location.href = 'login.html';
+            window.location.replace('login.html');
         });
     };
+}
+
+function copyApiKey() {
+    const keyElement = document.getElementById('p-api-key');
+    if (!keyElement) return;
+    const keyText = keyElement.innerText;
+    if (keyText === "-" || !keyText) return;
+    navigator.clipboard.writeText(keyText);
+    alert("API Key berhasil disalin!");
 }
