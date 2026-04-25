@@ -3,71 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIKA PEDIA - Pilih Aplikasi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <title>Rooxpedia - One Page Order</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { 
-            background: #001a22; 
-            background-image: radial-gradient(circle at 50% -20%, #00acc133, transparent); 
-            color: #fff; min-height: 100vh; padding: 25px 20px; 
-        }
-        .header { 
-            display: flex; align-items: center; margin-bottom: 30px; 
-            padding-bottom: 20px; border-bottom: 1px solid rgba(0, 172, 193, 0.2); 
-        }
-        .header i { font-size: 20px; margin-right: 20px; cursor: pointer; color: #00acc1; transition: 0.3s; }
-        .header i:hover { color: #ff8800; transform: translateX(-3px); }
-        .header h3 { font-family: 'Rajdhani', sans-serif; font-weight: 800; letter-spacing: 2px; color: #fff; }
-
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; }
-        .card { 
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 172, 193, 0.15); 
-            border-radius: 20px; padding: 20px 10px; text-align: center; cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        .card:hover { 
-            border-color: #ff8800; transform: translateY(-5px); 
-            background: rgba(255, 136, 0, 0.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        .card img { width: 55px; height: 55px; border-radius: 15px; margin-bottom: 12px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
-        .card span { display: block; font-weight: 700; font-size: 13px; text-transform: uppercase; color: #eee; letter-spacing: 0.5px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        body { background: #003344; color: #fff; padding: 15px; padding-bottom: 100px; }
+        .section-title { font-size: 14px; color: #00acc1; margin: 15px 0 10px; text-transform: uppercase; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         
-        #loader { text-align: center; padding: 60px; color: #00acc1; }
+        .scroll-x { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .scroll-x::-webkit-scrollbar { display: none; }
+
+        .card { min-width: 100px; background: rgba(0, 34, 45, 0.8); border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .card.active { border-color: #ff8800; background: rgba(255, 136, 0, 0.1); }
+        .card img { width: 40px; height: 40px; border-radius: 8px; margin-bottom: 5px; }
+        .card span { display: block; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .list-v { display: flex; flex-direction: column; gap: 8px; }
+        .item-v { background: rgba(0, 34, 45, 0.8); border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .item-v.active { border-color: #ff8800; background: rgba(255, 136, 0, 0.1); }
+        .item-v img { width: 25px; height: 18px; border-radius: 2px; margin-right: 10px; }
+
+        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0, 34, 45, 0.95); padding: 15px; border-top: 1px solid rgba(0, 172, 193, 0.3); display: none; z-index: 100; }
+        .btn-buy { width: 100%; padding: 15px; background: #ff8800; border: none; border-radius: 10px; color: #fff; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
-        <h3>DIKA PEDIA</h3>
+
+    <div class="section-title"><i class="fas fa-th-large"></i> 1. Pilih Aplikasi</div>
+    <div id="appList" class="scroll-x"></div>
+
+    <div id="sectionNegara" style="display:none;">
+        <div class="section-title"><i class="fas fa-globe"></i> 2. Pilih Negara</div>
+        <div id="countryList" class="list-v"></div>
     </div>
-    <div id="loader"><i class="fas fa-circle-notch fa-spin fa-2x"></i></div>
-    <div id="appList" class="grid-container"></div>
+
+    <div id="sectionOperator" style="display:none;">
+        <div class="section-title"><i class="fas fa-signal"></i> 3. Pilih Operator</div>
+        <div id="opList" class="scroll-x"></div>
+    </div>
+
+    <div class="bottom-bar" id="bottomBar">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:14px;">
+            <span id="txtSummary">-</span>
+            <b id="txtPrice" style="color:#00ff88;">-</b>
+        </div>
+        <button class="btn-buy" id="btnBuy">ORDER SEKARANG</button>
+    </div>
 
     <script src="config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        async function fetchApps() {
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_5LQ6U3DtMf4STbDjLymazm8I_zySbSw",
+            authDomain: "myproject-485415.firebaseapp.com",
+            databaseURL: "https://myproject-485415-default-rtdb.firebaseio.com",
+            projectId: "myproject-485415",
+            storageBucket: "myproject-485415.firebasestorage.app",
+            messagingSenderId: "450623193142",
+            appId: "1:450623193142:web:d7a9caf66e1dff8d495897"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        let selApp = null, selCountry = null, selOp = null, finalPrice = 0;
+
+        async function init() {
             try {
-                const res = await axios.get('https://www.rumahotp.io/api/v2/services', {
-                    headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
-                });
+                const res = await axios.get('https://www.rumahotp.io/api/v2/services', { headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP } });
                 if (res.data.success) {
-                    const container = document.getElementById('appList');
+                    const cont = document.getElementById('appList');
                     res.data.data.forEach(app => {
-                        const card = document.createElement('div');
-                        card.className = 'card';
-                        card.onclick = () => window.location.href = `negara.html?code=${app.service_code}&name=${encodeURIComponent(app.service_name)}&img=${encodeURIComponent(app.service_img)}`;
-                        card.innerHTML = `<img src="${app.service_img}"><span>${app.service_name}</span>`;
-                        container.appendChild(card);
+                        const div = document.createElement('div');
+                        div.className = 'card';
+                        div.onclick = () => selectApp(app, div);
+                        div.innerHTML = `<img src="${app.service_img}"><span>${app.service_name}</span>`;
+                        cont.appendChild(div);
                     });
                 }
             } catch (e) { console.error(e); }
-            finally { document.getElementById('loader').style.display = 'none'; }
         }
-        fetchApps();
+
+        async function selectApp(app, el) {
+            selApp = app; selCountry = null; selOp = null;
+            document.querySelectorAll('#appList .card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('sectionNegara').style.display = 'block';
+            document.getElementById('sectionOperator').style.display = 'none';
+            document.getElementById('bottomBar').style.display = 'none';
+            
+            const cont = document.getElementById('countryList');
+            cont.innerHTML = '<p style="font-size:12px; opacity:0.5;">Memuat negara...</p>';
+
+            try {
+                const res = await axios.get(`https://www.rumahotp.io/api/v2/countries?service_id=${app.service_code}`, { headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP } });
+                cont.innerHTML = '';
+                res.data.data.forEach(c => {
+                    if(c.stock_total > 0) {
+                        const item = document.createElement('div');
+                        item.className = 'item-v';
+                        const price = c.pricelist[0].price + 1500;
+                        item.onclick = () => selectCountry(c, item, price);
+                        item.innerHTML = `
+                            <div style="display:flex; align-items:center;"><img src="${c.img}"><span>${c.name} (Stok: ${c.stock_total})</span></div>
+                            <b style="color:#00ff88;">Rp ${price.toLocaleString()}</b>
+                        `;
+                        cont.appendChild(item);
+                    }
+                });
+            } catch (e) { cont.innerHTML = 'Gagal memuat.'; }
+        }
+
+        async function selectCountry(c, el, price) {
+            selCountry = c; finalPrice = price; selOp = null;
+            document.querySelectorAll('#countryList .item-v').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('sectionOperator').style.display = 'block';
+            document.getElementById('bottomBar').style.display = 'none';
+
+            const cont = document.getElementById('opList');
+            cont.innerHTML = '...';
+
+            try {
+                const res = await axios.get(`https://www.rumahotp.io/api/v2/operators?country=${c.name}&provider_id=${c.pricelist[0].provider_id}`, { headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP } });
+                cont.innerHTML = '';
+                res.data.data.forEach(op => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.onclick = () => {
+                        selOp = op;
+                        document.querySelectorAll('#opList .card').forEach(x => x.classList.remove('active'));
+                        div.classList.add('active');
+                        document.getElementById('bottomBar').style.display = 'block';
+                        document.getElementById('txtSummary').innerText = `${selApp.service_name} - ${selCountry.name}`;
+                        document.getElementById('txtPrice').innerText = `Rp ${finalPrice.toLocaleString()}`;
+                    };
+                    div.innerHTML = `<img src="${op.image}"><span>${op.name}</span>`;
+                    cont.appendChild(div);
+                });
+            } catch (e) { cont.innerHTML = 'Error.'; }
+        }
+
+        document.getElementById('btnBuy').onclick = async () => {
+            const u = auth.currentUser;
+            if(!u) return;
+
+            Swal.fire({ title: 'Memproses...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                const uRef = db.ref(`users/${u.uid}`);
+                const snap = await uRef.once('value');
+                const sal = snap.val().saldo || 0;
+
+                if(sal < finalPrice) return Swal.fire('Gagal', 'Saldo kurang', 'error');
+
+                const res = await axios.get(`https://www.rumahotp.io/api/v2/orders?number_id=${selCountry.number_id}&provider_id=${selCountry.pricelist[0].provider_id}&operator_id=${selOp.id}`, {
+                    headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
+                });
+
+                if(res.data.success) {
+                    await uRef.update({ saldo: sal - finalPrice });
+                    await db.ref(`orders/${u.uid}`).push({
+                        order_id: res.data.data.order_id,
+                        nomor: res.data.data.phone_number,
+                        aplikasi: selApp.service_name,
+                        negara: selCountry.name,
+                        harga: finalPrice,
+                        status: 'PENDING',
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                    Swal.fire('Berhasil', 'Nomor aktif!', 'success').then(() => window.location.href = 'riwayat.html');
+                } else {
+                    Swal.fire('Gagal', res.data.msg || 'Stok tidak valid', 'error');
+                }
+            } catch(e) { Swal.fire('Error', 'Gagal sistem', 'error'); }
+        };
+
+        init();
     </script>
 </body>
 </html>
+
