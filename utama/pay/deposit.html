@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rooxpedia - Deposit</title>
+    <title>dikapedia - deposit</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -14,6 +14,7 @@
             color: #fff;
             min-height: 100vh;
             padding: 20px;
+            text-transform: lowercase;
         }
         .header { display: flex; align-items: center; margin-bottom: 30px; }
         .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
@@ -53,7 +54,7 @@
             margin-bottom: 20px;
         }
         .method-info i { font-size: 24px; color: #00acc1; }
-        .method-text span { display: block; font-size: 10px; color: #00acc1; font-weight: 700; }
+        .method-text span { display: block; font-size: 10px; color: #00acc1; font-weight: 700; text-transform: uppercase; }
         .method-text p { font-size: 14px; font-weight: 700; }
 
         .input-group { text-align: left; margin-bottom: 20px; }
@@ -144,55 +145,55 @@
     <div class="deposit-container">
         <div class="header">
             <i class="fas fa-chevron-left" id="btnBack"></i>
-            <h3 style="font-size: 16px; letter-spacing: 1px;">DEPOSIT SALDO</h3>
+            <h3 style="font-size: 16px; letter-spacing: 1px; text-transform: uppercase;">deposit saldo</h3>
         </div>
 
         <div class="card">
-            <h2>QRIS All Payment</h2>
+            <h2>qris all payment</h2>
 
             <div id="orderForm">
                 <div class="method-info">
                     <i class="fas fa-qrcode"></i>
                     <div class="method-text">
-                        <span>Metode Pembayaran</span>
-                        <p>QRIS Realtime (Otomatis)</p>
+                        <span>metode pembayaran</span>
+                        <p>qris realtime (otomatis)</p>
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label>Nominal Top Up</label>
+                    <label>nominal top up</label>
                     <div class="input-wrapper">
                         <i class="fas fa-wallet"></i>
-                        <input type="number" id="amount" placeholder="Min. 10.000" required>
+                        <input type="number" id="amount" placeholder="min. 10.000" required>
                     </div>
                 </div>
 
-                <button class="btn-pay" id="btnProses">Konfirmasi Top Up</button>
+                <button class="btn-pay" id="btnProses">konfirmasi top up</button>
                 
                 <div class="notice">
-                    Pastikan nominal sudah benar. Saldo akan masuk otomatis setelah status pembayaran berubah menjadi sukses.
+                    pastikan nominal sudah benar. saldo akan masuk otomatis setelah status pembayaran berubah menjadi sukses.
                 </div>
             </div>
 
             <div id="qrContainer">
                 <div class="payment-details">
                     <div class="detail-item">
-                        <span class="label">Order ID</span>
+                        <span class="label">order id</span>
                         <span class="value" id="detailRef">-</span>
                     </div>
                     <div class="detail-item">
-                        <span class="label">Total Bayar</span>
-                        <span class="value val-amount" id="detailAmount">Rp 0</span>
+                        <span class="label">total bayar</span>
+                        <span class="value val-amount" id="detailAmount">rp 0</span>
                     </div>
                 </div>
 
                 <div class="qr-card">
-                    <img src="" id="qrImage" alt="QRIS">
+                    <img src="" id="qrImage" alt="qris">
                 </div>
 
                 <div class="status-area">
-                    <p id="statusText"><i class="fas fa-circle-notch fa-spin"></i> Menunggu pembayaran...</p>
-                    <button class="btn-check" id="btnCekManual">Cek Status</button>
+                    <p id="statusText"><i class="fas fa-circle-notch fa-spin"></i> menunggu pembayaran...</p>
+                    <button class="btn-check" id="btnCekManual">cek status</button>
                 </div>
             </div>
         </div>
@@ -214,32 +215,48 @@
             appId: "1:450623193142:web:d7a9caf66e1dff8d495897"
         };
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
 
         let checkInterval;
         let isQrActive = false;
+        let currentOrderId = null;
+        let currentAmount = 0;
+
         const btnProses = document.getElementById('btnProses');
         const btnCekManual = document.getElementById('btnCekManual');
         const btnBack = document.getElementById('btnBack');
 
+        async function syncToHistory(status, amountVal = 0) {
+            const user = auth.currentUser;
+            if (!user || !currentOrderId) return;
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+            
+            await db.ref(`deposits/${user.uid}/${currentOrderId}`).update({
+                order_id: currentOrderId,
+                jumlah: amountVal || currentAmount,
+                status: status,
+                metode: "qris realtime",
+                tanggal: dateStr,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+        }
+
         async function updateSaldoUser(amount) {
             const user = auth.currentUser;
             if (!user) return;
-
             const userRef = db.ref('users/' + user.uid);
             try {
                 const snapshot = await userRef.once('value');
                 const data = snapshot.val() || {};
-                
                 const currentSaldo = parseInt(data.saldo || 0);
                 const currentTotalDepo = parseInt(data.totalDeposit || 0);
                 const currentCountDepo = parseInt(data.jumlahDeposit || 0);
                 const addedAmount = parseInt(amount);
+
+                await syncToHistory('SUCCESS', addedAmount);
 
                 await userRef.update({
                     saldo: currentSaldo + addedAmount,
@@ -249,8 +266,8 @@
 
                 Swal.fire({
                     icon: 'success',
-                    title: 'Berhasil',
-                    text: 'Deposit Rp ' + addedAmount.toLocaleString() + ' sukses!',
+                    title: 'berhasil',
+                    text: 'deposit rp ' + addedAmount.toLocaleString() + ' sukses!',
                     background: '#00222d',
                     color: '#fff'
                 }).then(() => {
@@ -269,7 +286,6 @@
                     body: JSON.stringify({ action: 'status', orderId: orderId })
                 });
                 const data = await apiReq.json();
-
                 if (data.success && data.status === 'SETTLED') {
                     clearInterval(checkInterval);
                     isQrActive = false;
@@ -283,15 +299,9 @@
         btnProses.onclick = async () => {
             const amount = document.getElementById('amount').value;
             if (amount < 10000) {
-                return Swal.fire({ icon: 'warning', title: 'Minimal Rp 10.000', background: '#00222d', color: '#fff' });
+                return Swal.fire({ icon: 'warning', title: 'minimal rp 10.000', background: '#00222d', color: '#fff' });
             }
-
-            Swal.fire({
-                title: 'Menyiapkan QRIS',
-                background: '#00222d',
-                color: '#fff',
-                didOpen: () => { Swal.showLoading(); }
-            });
+            Swal.fire({ title: 'menyiapkan qris', background: '#00222d', color: '#fff', didOpen: () => Swal.showLoading() });
 
             try {
                 const apiReq = await fetch('/api/deposit', {
@@ -304,37 +314,45 @@
                 if (res.success) {
                     Swal.close();
                     isQrActive = true;
+                    currentOrderId = res.orderId;
+                    currentAmount = res.amount;
+
+                    await syncToHistory('PENDING');
+
                     document.getElementById('orderForm').style.display = 'none';
                     document.getElementById('qrContainer').style.display = 'block';
                     document.getElementById('qrImage').src = res.qrUrl;
-                    document.getElementById('detailAmount').innerText = "Rp " + new Intl.NumberFormat('id-ID').format(res.amount);
+                    document.getElementById('detailAmount').innerText = "rp " + new Intl.NumberFormat('id-ID').format(res.amount);
                     document.getElementById('detailRef').innerText = res.orderId;
 
-                    checkInterval = setInterval(() => {
-                        checkStatus(res.orderId, res.amount);
-                    }, 5000);
+                    checkInterval = setInterval(() => checkStatus(res.orderId, res.amount), 5000);
 
                     btnCekManual.onclick = () => {
                         checkStatus(res.orderId, res.amount);
-                        Swal.fire({ title: 'Mengecek...', timer: 1000, showConfirmButton: false, background: '#00222d', color: '#fff' });
+                        Swal.fire({ title: 'mengecek...', timer: 1000, showConfirmButton: false, background: '#00222d', color: '#fff' });
                     };
                 }
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'Error', text: err.message, background: '#00222d', color: '#fff' });
+                Swal.fire({ icon: 'error', title: 'error', text: err.message, background: '#00222d', color: '#fff' });
             }
         };
 
         btnBack.onclick = () => {
             if (isQrActive) {
                 Swal.fire({
-                    title: 'Batalkan?',
-                    text: 'Transaksi yang sedang berjalan akan hilang.',
+                    title: 'batalkan?',
+                    text: 'transaksi yang sedang berjalan akan dicatat sebagai dibatalkan.',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Ya, Keluar',
+                    confirmButtonText: 'ya, batal',
                     background: '#00222d',
                     color: '#fff'
-                }).then((r) => { if (r.isConfirmed) window.location.href = '../dashboard.html'; });
+                }).then(async (r) => { 
+                    if (r.isConfirmed) {
+                        await syncToHistory('CANCELED');
+                        window.location.href = '../dashboard.html'; 
+                    }
+                });
             } else {
                 window.location.href = '../dashboard.html';
             }
