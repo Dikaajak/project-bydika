@@ -530,47 +530,50 @@
 
     </div>
 
-    <script>
-        function closeBC() {
-    document.getElementById('bcOverlay').style.display = 'none';
-}
-
-db.ref('broadcast').on('value', snap => {
-    if (snap.exists()) {
-        const data = snap.val();
-        const msg = data.message;
-        const bcContent = document.getElementById('bcContent');
-        const overlay = document.getElementById('bcOverlay');
-
-        if (msg.length > 150) {
-            bcContent.innerHTML = msg.substring(0, 150) + "...";
-            const btnMore = document.createElement('p');
-            btnMore.innerHTML = "baca selengkapnya";
-            btnMore.style = "color:#ff8800; cursor:pointer; font-weight:700; margin-top:10px;";
-            btnMore.onclick = () => { 
-                bcContent.innerHTML = msg; 
-                btnMore.remove(); 
-            };
-            bcContent.appendChild(btnMore);
-        } else {
-            bcContent.innerHTML = msg;
-        }
-        overlay.style.display = 'flex';
-    } else {
-        document.getElementById('bcOverlay').style.display = 'none';
-    }
-});
-        
-        function copyApiKey() {
-            const keyText = document.getElementById('p-api-key').innerText;
-            if (keyText === "-") return;
-            navigator.clipboard.writeText(keyText);
-            alert("API Key berhasil disalin!");
-        }
-    </script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="script.js"></script>
+
+    <script>
+        function closeBC() {
+            document.getElementById('bcOverlay').style.display = 'none';
+        }
+
+        db.ref('broadcast').on('value', snap => {
+            if (snap.exists()) {
+                const data = snap.val();
+                const msg = data.message;
+                const bcContent = document.getElementById('bcContent');
+                const overlay = document.getElementById('bcOverlay');
+
+                if (msg.length > 150) {
+                    bcContent.innerHTML = msg.substring(0, 150) + "...";
+                    const btnMore = document.createElement('p');
+                    btnMore.innerHTML = "baca selengkapnya";
+                    btnMore.style = "color:#ff8800; cursor:pointer; font-weight:700; margin-top:10px;";
+                    btnMore.onclick = () => { 
+                        bcContent.innerHTML = msg; 
+                        btnMore.remove(); 
+                    };
+                    bcContent.appendChild(btnMore);
+                } else {
+                    bcContent.innerHTML = msg;
+                }
+                overlay.style.display = 'flex';
+            } else {
+                document.getElementById('bcOverlay').style.display = 'none';
+            }
+        });
+
+        function copyApiKey() {
+            const keyElement = document.getElementById('p-api-key');
+            if (!keyElement) return;
+            const keyText = keyElement.innerText;
+            if (keyText === "-" || !keyText) return;
+            navigator.clipboard.writeText(keyText);
+            alert("api key berhasil disalin!");
+        }
+    </script>
 </body>
 </html>
