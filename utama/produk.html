@@ -14,7 +14,7 @@
         .scroll-x { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
         .scroll-x::-webkit-scrollbar { display: none; }
 
-        .card { min-width: 100px; background: rgba(0, 34, 45, 0.8); border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .card { min-width: 100px; background: rgba(0, 34, 45, 0.8); border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; }
         .card.active { border-color: #ff8800; background: rgba(255, 136, 0, 0.1); }
         .card img { width: 40px; height: 40px; border-radius: 8px; margin-bottom: 5px; }
         .card span { display: block; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -30,16 +30,16 @@
 </head>
 <body>
 
-    <div class="section-title"><i class="fas fa-th-large"></i> 1. Pilih Aplikasi</div>
+    <div class="section-title"><i class="fas fa-th-large"></i> 1. pilih aplikasi</div>
     <div id="appList" class="scroll-x"></div>
 
     <div id="sectionNegara" style="display:none;">
-        <div class="section-title"><i class="fas fa-globe"></i> 2. Pilih Negara</div>
+        <div class="section-title"><i class="fas fa-globe"></i> 2. pilih negara</div>
         <div id="countryList" class="list-v"></div>
     </div>
 
     <div id="sectionOperator" style="display:none;">
-        <div class="section-title"><i class="fas fa-signal"></i> 3. Pilih Operator</div>
+        <div class="section-title"><i class="fas fa-signal"></i> 3. pilih operator</div>
         <div id="opList" class="scroll-x"></div>
     </div>
 
@@ -48,7 +48,7 @@
             <span id="txtSummary">-</span>
             <b id="txtPrice" style="color:#00ff88;">-</b>
         </div>
-        <button class="btn-buy" id="btnBuy">ORDER SEKARANG</button>
+        <button class="btn-buy" id="btnBuy">order sekarang</button>
     </div>
 
     <script src="config.js"></script>
@@ -99,7 +99,7 @@
             document.getElementById('bottomBar').style.display = 'none';
             
             const cont = document.getElementById('countryList');
-            cont.innerHTML = '<p style="font-size:12px; opacity:0.5;">Memuat negara...</p>';
+            cont.innerHTML = '<p style="font-size:12px; opacity:0.5;">memuat negara...</p>';
 
             try {
                 const res = await axios.get(`https://www.rumahotp.io/api/v2/countries?service_id=${app.service_code}`, { headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP } });
@@ -111,13 +111,13 @@
                         const price = c.pricelist[0].price + 1500;
                         item.onclick = () => selectCountry(c, item, price);
                         item.innerHTML = `
-                            <div style="display:flex; align-items:center;"><img src="${c.img}"><span>${c.name} (Stok: ${c.stock_total})</span></div>
-                            <b style="color:#00ff88;">Rp ${price.toLocaleString()}</b>
+                            <div style="display:flex; align-items:center;"><img src="${c.img}"><span>${c.name} (stok: ${c.stock_total})</span></div>
+                            <b style="color:#00ff88;">rp ${price.toLocaleString()}</b>
                         `;
                         cont.appendChild(item);
                     }
                 });
-            } catch (e) { cont.innerHTML = 'Gagal memuat.'; }
+            } catch (e) { cont.innerHTML = 'gagal memuat.'; }
         }
 
         async function selectCountry(c, el, price) {
@@ -142,51 +142,78 @@
                         div.classList.add('active');
                         document.getElementById('bottomBar').style.display = 'block';
                         document.getElementById('txtSummary').innerText = `${selApp.service_name} - ${selCountry.name}`;
-                        document.getElementById('txtPrice').innerText = `Rp ${finalPrice.toLocaleString()}`;
+                        document.getElementById('txtPrice').innerText = `rp ${finalPrice.toLocaleString()}`;
                     };
                     div.innerHTML = `<img src="${op.image}"><span>${op.name}</span>`;
                     cont.appendChild(div);
                 });
-            } catch (e) { cont.innerHTML = 'Error.'; }
+            } catch (e) { cont.innerHTML = 'error.'; }
         }
 
         document.getElementById('btnBuy').onclick = async () => {
             const u = auth.currentUser;
             if(!u) return;
 
-            Swal.fire({ title: 'Memproses...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            Swal.fire({ 
+                title: 'memproses...', 
+                background: '#00222d',
+                color: '#fff',
+                allowOutsideClick: false, 
+                didOpen: () => Swal.showLoading() 
+            });
 
             try {
                 const uRef = db.ref(`users/${u.uid}`);
                 const snap = await uRef.once('value');
                 const sal = snap.val().saldo || 0;
 
-                if(sal < finalPrice) return Swal.fire('Gagal', 'Saldo kurang', 'error');
+                if(sal < finalPrice) return Swal.fire({ icon:'error', title:'saldo kurang', background:'#00222d', color:'#fff' });
 
                 const res = await axios.get(`https://www.rumahotp.io/api/v2/orders?number_id=${selCountry.number_id}&provider_id=${selCountry.pricelist[0].provider_id}&operator_id=${selOp.id}`, {
                     headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
                 });
 
                 if(res.data.success) {
+                    const dataPusat = res.data.data;
                     await uRef.update({ saldo: sal - finalPrice });
                     await db.ref(`orders/${u.uid}`).push({
-                        order_id: res.data.data.order_id,
-                        nomor: res.data.data.phone_number,
+                        order_id: dataPusat.order_id,
+                        nomor: dataPusat.phone_number,
                         aplikasi: selApp.service_name,
                         negara: selCountry.name,
                         harga: finalPrice,
                         status: 'PENDING',
                         timestamp: firebase.database.ServerValue.TIMESTAMP
                     });
-                    Swal.fire('Berhasil', 'Nomor aktif!', 'success').then(() => window.location.href = 'riwayat.html');
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'sukses',
+                        html: `<pre style="text-align:left; font-size:10px;">${JSON.stringify(res.data, null, 2)}</pre>`,
+                        background: '#00222d',
+                        color: '#fff'
+                    }).then(() => window.location.href = 'riwayat.html');
                 } else {
-                    Swal.fire('Gagal', res.data.msg || 'Stok tidak valid', 'error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'provider menolak',
+                        html: `<pre style="text-align:left; font-size:10px; color:#ff8888;">${JSON.stringify(res.data, null, 2)}</pre>`,
+                        background: '#00222d',
+                        color: '#fff'
+                    });
                 }
-            } catch(e) { Swal.fire('Error', 'Gagal sistem', 'error'); }
+            } catch(e) { 
+                Swal.fire({
+                    icon: 'error',
+                    title: 'sistem error',
+                    text: e.message,
+                    background: '#00222d',
+                    color: '#fff'
+                });
+            }
         };
 
         init();
     </script>
 </body>
 </html>
-
