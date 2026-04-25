@@ -25,12 +25,9 @@
         .header h1 { font-size: 22px; text-transform: uppercase; letter-spacing: 2px; color: #00acc1; }
         .header h1 span { color: #ff8800; }
 
-        .grid-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
-        @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
-
         .card {
             background: rgba(0, 34, 45, 0.8); border: 1px solid rgba(0, 172, 193, 0.2);
-            border-radius: 24px; padding: 25px; position: relative; overflow: hidden;
+            border-radius: 24px; padding: 25px; position: relative; overflow: hidden; margin-bottom: 20px;
         }
         .card::before {
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
@@ -41,12 +38,12 @@
 
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 11px; color: #00acc1; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
-        .input-group input {
+        .input-group input, .input-group textarea {
             width: 100%; padding: 12px 15px; background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 12px;
             color: #fff; font-size: 15px; outline: none; transition: 0.3s;
         }
-        .input-group input:focus { border-color: #00acc1; box-shadow: 0 0 10px rgba(0, 172, 193, 0.2); }
+        .input-group input:focus, .input-group textarea:focus { border-color: #00acc1; box-shadow: 0 0 10px rgba(0, 172, 193, 0.2); }
 
         .btn-create {
             width: 100%; padding: 15px; background: linear-gradient(45deg, #00acc1, #007c91);
@@ -55,9 +52,8 @@
         }
         .btn-create:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 172, 193, 0.4); }
 
-        .voucher-list { max-height: 400px; overflow-y: auto; padding-right: 5px; }
-        .voucher-list::-webkit-scrollbar { width: 5px; }
-        .voucher-list::-webkit-scrollbar-thumb { background: #00acc1; border-radius: 10px; }
+        .grid-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
 
         .v-item {
             background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
@@ -66,6 +62,7 @@
         }
         .v-info p { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 1px; }
         .v-info span { font-size: 11px; color: #ff8800; font-weight: 700; }
+        
         .btn-delete { background: rgba(255, 68, 68, 0.1); color: #ff4444; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
         .btn-delete:hover { background: #ff4444; color: #fff; }
 
@@ -102,23 +99,35 @@
             </div>
         </div>
 
+        <div class="card">
+            <h2><i class="fas fa-bullhorn"></i> kirim broadcast alert</h2>
+            <div class="input-group">
+                <label>isi pesan broadcast (muncul di dashboard user)</label>
+                <textarea id="bcMessage" rows="3" placeholder="contoh: ada promo deposit 10% hari ini!"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-create" id="btnSendBC" style="flex: 2;">publish broadcast</button>
+                <button id="btnClearBC" style="flex: 1; background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; color: #ff4444; border-radius: 12px; cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 11px;">hapus bc</button>
+            </div>
+        </div>
+
         <div class="grid-layout">
             <div class="card">
                 <h2><i class="fas fa-plus-circle"></i> buat voucher</h2>
                 <div class="input-group">
                     <label>kode voucher</label>
-                    <input type="text" id="vCode" placeholder="contoh: KLM-99K">
+                    <input type="text" id="vCode" placeholder="contoh: DIKA-NEW">
                 </div>
                 <div class="input-group">
                     <label>nominal saldo (angka)</label>
-                    <input type="number" id="vNominal" placeholder="contoh: 10000">
+                    <input type="number" id="vNominal" placeholder="10000">
                 </div>
                 <button class="btn-create" id="btnGenerate">buat & simpan</button>
             </div>
 
             <div class="card">
                 <h2><i class="fas fa-list"></i> daftar voucher aktif</h2>
-                <div class="voucher-list" id="listContainer">
+                <div class="voucher-list" id="listContainer" style="max-height: 300px; overflow-y: auto;">
                 </div>
             </div>
         </div>
@@ -152,12 +161,14 @@
             loadVouchers();
         });
 
+        // LOAD STATS
         function loadStats() {
             db.ref('users').on('value', snap => {
                 document.getElementById('totalUsers').innerText = snap.numChildren();
             });
         }
 
+        // LOAD VOUCHERS
         function loadVouchers() {
             db.ref('vouchers').on('value', snap => {
                 const container = document.getElementById('listContainer');
@@ -184,6 +195,7 @@
             });
         }
 
+        // BUAT VOUCHER
         document.getElementById('btnGenerate').onclick = async () => {
             const code = document.getElementById('vCode').value.trim().toUpperCase();
             const nominal = document.getElementById('vNominal').value;
@@ -203,20 +215,42 @@
             }
         };
 
+        // HAPUS VOUCHER
         function deleteVoucher(key) {
             Swal.fire({
                 title: 'hapus voucher?',
-                text: "kode ini tidak akan bisa digunakan lagi",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ff4444',
                 background: '#00222d', color: '#fff'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    db.ref(`vouchers/${key}`).remove();
-                }
+                if (result.isConfirmed) db.ref(`vouchers/${key}`).remove();
             });
         }
+
+        // KIRIM BROADCAST
+        document.getElementById('btnSendBC').onclick = async () => {
+            const msg = document.getElementById('bcMessage').value.trim();
+            if(!msg) return Swal.fire('isi pesan dulu', '', 'warning');
+
+            try {
+                await db.ref('broadcast').set({
+                    message: msg,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+                Swal.fire({ icon: 'success', title: 'bc berhasil dikirim', background: '#00222d', color: '#fff' });
+                document.getElementById('bcMessage').value = "";
+            } catch (e) {
+                Swal.fire('gagal', e.message, 'error');
+            }
+        };
+
+        // HAPUS BROADCAST
+        document.getElementById('btnClearBC').onclick = () => {
+            db.ref('broadcast').remove().then(() => {
+                Swal.fire({ icon: 'success', title: 'bc dihapus', background: '#00222d', color: '#fff' });
+            });
+        };
 
         function logout() {
             auth.signOut().then(() => window.location.href = "../login.html");
