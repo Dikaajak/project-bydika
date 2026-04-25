@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rooxpedia - redeem saldo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        body { 
+            background: #003344;
+            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            text-transform: lowercase;
+        }
+        .header { display: flex; align-items: center; margin-bottom: 30px; }
+        .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
+        
+        .redeem-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(0, 34, 45, 0.8);
+            border: 1px solid rgba(0, 172, 193, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, #00acc1, #ff8800);
+        }
+
+        h2 { font-size: 18px; color: #ff8800; margin-bottom: 20px; letter-spacing: 1px; text-transform: uppercase; }
+
+        .input-group { text-align: left; margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 11px; color: #00acc1; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 172, 193, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 18px;
+            outline: none;
+            text-align: center;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .btn-redeem {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #00acc1, #007c91);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 172, 193, 0.3);
+        }
+
+        .notice {
+            margin-top: 20px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="redeem-container">
+        <div class="header">
+            <i class="fas fa-chevron-left" onclick="window.location.href='dashboard.html'"></i>
+            <h3 style="font-size: 16px; letter-spacing: 1px; text-transform: uppercase;">redeem voucher</h3>
+        </div>
+
+        <div class="card">
+            <h2>masukkan kode</h2>
+            
+            <div class="input-group">
+                <label>kode voucher</label>
+                <input type="text" id="redeemCode" placeholder="KLM-XXXXXX">
+            </div>
+
+            <button class="btn-redeem" id="btnRedeem">klaim saldo sekarang</button>
+            
+            <div class="notice">
+                kode redeem didapatkan setelah melakukan deposit manual via admin. silakan hubungi admin jika sudah transfer.
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_5LQ6U3DtMf4STbDjLymazm8I_zySbSw",
+            authDomain: "myproject-485415.firebaseapp.com",
+            databaseURL: "https://myproject-485415-default-rtdb.firebaseio.com",
+            projectId: "myproject-485415",
+            storageBucket: "myproject-485415.firebasestorage.app",
+            messagingSenderId: "450623193142",
+            appId: "1:450623193142:web:d7a9caf66e1dff8d495897"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        document.getElementById('btnRedeem').onclick = async () => {
+            const code = document.getElementById('redeemCode').value.trim().toUpperCase();
+            const user = auth.currentUser;
+
+            if (!user) return Swal.fire({ icon: 'error', title: 'error', text: 'silakan login dulu', background: '#00222d', color: '#fff' });
+            if (!code) return Swal.fire({ icon: 'warning', title: 'isi kodenya bos', background: '#00222d', color: '#fff' });
+
+            Swal.fire({ title: 'memvalidasi kode...', background: '#00222d', color: '#fff', didOpen: () => Swal.showLoading() });
+
+            try {
+                const codeRef = db.ref(`vouchers/${code}`);
+                const snapshot = await codeRef.once('value');
+
+                if (!snapshot.exists()) {
+                    return Swal.fire({ icon: 'error', title: 'kode salah', text: 'kode tidak ditemukan atau sudah hangus.', background: '#00222d', color: '#fff' });
+                }
+
+                const voucherData = snapshot.val();
+                const nominal = parseInt(voucherData.nominal);
+
+                const userRef = db.ref(`users/${user.uid}`);
+                const userSnap = await userRef.once('value');
+                const currentSaldo = parseInt(userSnap.val().saldo || 0);
+
+                await userRef.update({ saldo: currentSaldo + nominal });
+
+                const depositsRef = db.ref(`deposits/${user.uid}`);
+                const depoSnap = await depositsRef.orderByChild('status').equalTo('PENDING').limitToLast(1).once('value');
+                
+                if (depoSnap.exists()) {
+                    const key = Object.keys(depoSnap.val())[0];
+                    await db.ref(`deposits/${user.uid}/${key}`).update({
+                        status: 'SUCCESS',
+                        keterangan: 'berhasil redeem: ' + code
+                    });
+                } else {
+                    const newId = "REDEEM-" + Date.now();
+                    await db.ref(`deposits/${user.uid}/${newId}`).set({
+                        order_id: newId,
+                        jumlah: nominal,
+                        status: 'SUCCESS',
+                        metode: 'manual (redeem)',
+                        tanggal: new Date().toLocaleDateString('id-ID'),
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                }
+
+                await codeRef.remove();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'berhasil!',
+                    text: `saldo rp ${nominal.toLocaleString()} sukses ditambahkan.`,
+                    background: '#00222d',
+                    color: '#fff'
+                }).then(() => {
+                    window.location.href = 'dashboard.html';
+                });
+
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'error sistem', text: err.message, background: '#00222d', color: '#fff' });
+            }
+        };
+    </script>
+</body>
+</html>
