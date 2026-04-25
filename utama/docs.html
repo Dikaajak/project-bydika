@@ -1,195 +1,119 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIKA PEDIA - API Documentation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
-        body { 
-            background: #003344;
-            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
-            color: #fff;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .header { display: flex; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(0, 172, 193, 0.2); }
-        .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
-        
-        .container { max-width: 900px; margin: 0 auto; }
-        .doc-card {
-            background: rgba(0, 34, 45, 0.8);
-            border: 1px solid rgba(0, 172, 193, 0.3);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-        }
-        h2 { color: #00acc1; margin-bottom: 15px; letter-spacing: 2px; text-transform: uppercase; }
-        p { color: #b0c4de; line-height: 1.6; margin-bottom: 15px; font-size: 15px; }
-        
-        .method-badge {
-            background: #ff8800;
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-right: 10px;
-        }
+module.exports = async (req, res) => {
+    res.setHeader('Content-Type', 'text/html');
 
-        .code-block {
-            background: #001a22;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #00acc1;
-            font-family: monospace;
-            font-size: 13px;
-            color: #00ffcc;
-            overflow-x: auto;
-            margin: 15px 0;
-        }
+    const quotes = [
+        "coming soon, kaya janji manisnya yang cuma mampir sebentar terus hilang.",
+        "next update, nungguin ini sama capeknya kaya nungguin dia yang gak pernah peka.",
+        "lagi diperbaiki, hati ini juga lagi usaha buat sembuh meski lukanya dalam banget.",
+        "sabar ya, aku udah biasa nunggu kok, apalagi cuma nunggu update-an ini.",
+        "bentar lagi siap, gak kaya hubungan kita yang selesai sebelum sempat dimulai.",
+        "masih diproses, sama kaya aku yang masih proses melupakan semua kenangan kita.",
+        "tunggu aja, tapi jangan terlalu berharap, aku gak mau kamu ngerasain kecewa yang sama.",
+        "error di sistem bisa diperbaiki, tapi kalau hati yang patah butuh waktu yang lama.",
+        "halaman belum tersedia, sama kaya ruang di hatinya yang udah nggak ada buat aku.",
+        "sedang dikerjakan, berusaha profesional padahal hati berantakan.",
+        "belum waktunya rilis, mungkin semesta mau kita belajar ikhlas dulu.",
+        "rehat sejenak, karena pura-pura bahagia itu ternyata melelahkan juga.",
+        "lagi nyusun kode, sambil nyusun kepingan hati yang hancur gara-gara dia.",
+        "coming soon, semoga update ini gak ninggalin luka kaya yang dia lakuin.",
+        "offline sementara, lagi fokus nyari cara biar gak ingat dia lagi.",
+        "sedang memuat data, mohon sabar, rindu ini juga lagi dimuat pelan-pelan.",
+        "jangan ditekan terus, nanti error, sama kaya perasaan aku yang dipaksain.",
+        "update segera tiba, tapi kalau dia yang kembali itu cuma mimpi di siang bolong.",
+        "proses pemulihan sistem, doakan hatiku juga ikut pulih secepatnya.",
+        "masih kosong, persis kaya perasaan aku pas tau dia udah punya yang baru."
+    ];
 
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        th { text-align: left; color: #ff8800; padding: 10px; border-bottom: 1px solid rgba(255,136,0,0.3); font-size: 14px; }
-        td { padding: 10px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 
-        .status-error { color: #ff4444; }
-
-        .note {
-            background: rgba(255, 136, 0, 0.1);
-            border-left: 4px solid #ff8800;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            color: #ffaa44;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="header">
-            <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
-            <h3 style="letter-spacing: 2px; text-transform: uppercase;">DOKUMENTASI API</h3>
-        </div>
-
-        <div class="doc-card">
-            <h2>PENGANTAR</h2>
-            <p>Selamat datang di API DIKA PEDIA. API ini memungkinkan pengembang untuk mengintegrasikan layanan penyedia nomor (OTP) kami ke dalam aplikasi mereka sendiri secara otomatis.</p>
-            <div class="note">
-                <strong>Penting:</strong> Jangan pernah membagikan API Key Anda kepada siapapun. API Key digunakan untuk autentikasi dan memotong saldo akun Anda saat melakukan transaksi.
-            </div>
-        </div>
-
-        <div class="doc-card">
-            <h2>AUTENTIKASI</h2>
-            <p>Gunakan Header berikut pada setiap permintaan API Anda:</p>
-            <div class="code-block">
-                x-api-key: YOUR_API_KEY_HERE
-            </div>
-        </div>
-
-        <div class="doc-card">
-            <h2>1. CEK PROFIL & SALDO</h2>
-            <p><span class="method-badge">GET</span> <code id="api-url-profile">https://api.domain.com/v1/profile</code></p>
-            <table>
-                <tr>
-                    <th>Parameter</th>
-                    <th>Tipe</th>
-                    <th>Keterangan</th>
-                </tr>
-                <tr>
-                    <td>api_key</td>
-                    <td>String</td>
-                    <td>Wajib diisi</td>
-                </tr>
-            </table>
-            <p>Contoh Response Sukses:</p>
-            <div class="code-block">
-{
-  "status": true,
-  "data": {
-    "nama": "Dika",
-    "saldo": 50000,
-    "role": "MEMBER"
-  }
-}
-            </div>
-        </div>
-
-        <div class="doc-card">
-            <h2>2. AMBIL NOMOR (ORDER)</h2>
-            <p><span class="method-badge">POST</span> <code id="api-url-order">https://api.domain.com/v1/order</code></p>
-            <table>
-                <tr>
-                    <th>Parameter</th>
-                    <th>Tipe</th>
-                    <th>Keterangan</th>
-                </tr>
-                <tr>
-                    <td>service_code</td>
-                    <td>String</td>
-                    <td>Kode aplikasi (ex: wa, tg)</td>
-                </tr>
-                <tr>
-                    <td>country_id</td>
-                    <td>Int</td>
-                    <td>ID Negara</td>
-                </tr>
-            </table>
-            <p>Contoh Response Sukses:</p>
-            <div class="code-block">
-{
-  "status": true,
-  "order_id": "99281",
-  "number": "6281818934870",
-  "price": 2500
-}
-            </div>
-        </div>
-
-        <div class="doc-card">
-            <h2>DAFTAR ERROR</h2>
-            <table>
-                <tr>
-                    <th>Kode</th>
-                    <th>Arti</th>
-                </tr>
-                <tr>
-                    <td class="status-error">INVALID_KEY</td>
-                    <td>API Key salah atau tidak ditemukan.</td>
-                </tr>
-                <tr>
-                    <td class="status-error">LOW_BALANCE</td>
-                    <td>Saldo akun tidak mencukupi.</td>
-                </tr>
-                <tr>
-                    <td class="status-error">SERVICE_OFF</td>
-                    <td>Layanan sedang gangguan/maintenance.</td>
-                </tr>
-            </table>
-        </div>
-
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const currentDomain = window.location.origin;
-            const endpoints = {
-                'api-url-profile': '/v1/profile',
-                'api-url-order': '/v1/order'
-            };
-
-            for (const [id, path] of Object.entries(endpoints)) {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.innerText = currentDomain + path;
-                }
+    const html = `
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>coming soon</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #0d0d0d;
+                color: #777;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                text-align: center;
+                overflow: hidden;
             }
-        });
-    </script>
-</body>
-</html>
+            .container {
+                padding: 30px;
+                border: 1px solid #1a1a1a;
+                background: rgba(255, 255, 255, 0.02);
+                border-radius: 15px;
+                backdrop-filter: blur(5px);
+            }
+            h1 {
+                font-size: 1.2rem;
+                letter-spacing: 7px;
+                color: #fff;
+                margin-bottom: 20px;
+                font-weight: 200;
+                text-transform: lowercase;
+            }
+            p {
+                font-size: 0.85rem;
+                line-height: 1.8;
+                max-width: 320px;
+                margin: 0 auto;
+                font-style: italic;
+                font-weight: 300;
+            }
+            .cursor {
+                display: inline-block;
+                width: 8px;
+                height: 2px;
+                background-color: #555;
+                margin-left: 5px;
+                animation: blink 1.2s infinite;
+            }
+            @keyframes blink {
+                0%, 100% { opacity: 0; }
+                50% { opacity: 1; }
+            }
+            .footer {
+                position: absolute;
+                bottom: 30px;
+                font-size: 0.65rem;
+                letter-spacing: 2px;
+                opacity: 0.3;
+                text-transform: lowercase;
+            }
+            .glow {
+                position: absolute;
+                width: 200px;
+                height: 200px;
+                background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%);
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: -1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="glow"></div>
+        <div class="container">
+            <h1>coming soon<span class="cursor"></span></h1>
+            <p>"${randomQuote}"</p>
+        </div>
+        <div class="footer">
+            next update no kapital
+        </div>
+    </body>
+    </html>
+    `;
+
+    return res.status(200).send(html);
+};
