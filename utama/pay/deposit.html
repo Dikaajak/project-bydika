@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rooxpedia - redeem saldo</title>
+    <title>dikapedia - deposit</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -19,9 +19,33 @@
         .header { display: flex; align-items: center; margin-bottom: 30px; }
         .header i { font-size: 20px; margin-right: 15px; cursor: pointer; color: #00acc1; }
         
-        .redeem-container {
+        .deposit-container {
             max-width: 500px;
             margin: 0 auto;
+        }
+
+        .tab-container {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 172, 193, 0.2);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .tab-btn.active {
+            background: #00acc1;
+            color: #fff;
         }
 
         .card {
@@ -32,7 +56,6 @@
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
-            text-align: center;
         }
 
         .card::before {
@@ -42,26 +65,39 @@
             background: linear-gradient(90deg, #00acc1, #ff8800);
         }
 
-        h2 { font-size: 18px; color: #ff8800; margin-bottom: 20px; letter-spacing: 1px; text-transform: uppercase; }
+        h2 { font-size: 18px; color: #ff8800; margin-bottom: 20px; letter-spacing: 1px; text-transform: uppercase; text-align: center; }
+
+        .method-info {
+            background: rgba(0, 172, 193, 0.1);
+            border: 1px solid rgba(0, 172, 193, 0.2);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .method-info i { font-size: 24px; color: #00acc1; }
+        .method-text span { display: block; font-size: 10px; color: #00acc1; font-weight: 700; text-transform: uppercase; }
+        .method-text p { font-size: 14px; font-weight: 700; }
 
         .input-group { text-align: left; margin-bottom: 20px; }
         .input-group label { display: block; font-size: 11px; color: #00acc1; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
-        
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #ff8800; }
         .input-group input {
             width: 100%;
-            padding: 15px;
+            padding: 15px 15px 15px 45px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(0, 172, 193, 0.2);
             border-radius: 12px;
             color: #fff;
-            font-size: 18px;
+            font-size: 16px;
             outline: none;
-            text-align: center;
-            letter-spacing: 3px;
-            text-transform: uppercase;
+            transition: 0.3s;
         }
 
-        .btn-redeem {
+        .btn-pay {
             width: 100%;
             padding: 15px;
             background: linear-gradient(45deg, #00acc1, #007c91);
@@ -76,34 +112,114 @@
             box-shadow: 0 4px 15px rgba(0, 172, 193, 0.3);
         }
 
+        #qrContainer, #manualContainer { display: none; margin-top: 10px; }
+        
+        .qr-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #qrImage, #manualQrImage { width: 100%; max-width: 250px; display: block; margin: 0 auto; }
+
+        .payment-details {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .detail-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; }
+        .label { color: #00acc1; font-weight: 700; font-size: 10px; text-transform: uppercase; }
+        .value { font-weight: 700; }
+        .val-amount { color: #ff8800; font-size: 16px; }
+
         .notice {
             margin-top: 20px;
             font-size: 11px;
             color: rgba(255,255,255,0.4);
             line-height: 1.6;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div class="redeem-container">
+    <div class="deposit-container">
         <div class="header">
-            <i class="fas fa-chevron-left" onclick="window.location.href='dashboard.html'"></i>
-            <h3 style="font-size: 16px; letter-spacing: 1px; text-transform: uppercase;">redeem voucher</h3>
+            <i class="fas fa-chevron-left" id="btnBack"></i>
+            <h3 style="font-size: 16px; letter-spacing: 1px; text-transform: uppercase;">deposit saldo</h3>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-btn active" onclick="switchTab('otomatis')">otomatis (qris)</div>
+            <div class="tab-btn" onclick="switchTab('manual')">manual (admin)</div>
         </div>
 
         <div class="card">
-            <h2>masukkan kode</h2>
-            
-            <div class="input-group">
-                <label>kode voucher</label>
-                <input type="text" id="redeemCode" placeholder="KLM-XXXXXX">
+            <h2 id="cardTitle">qris all payment</h2>
+
+            <div id="orderForm">
+                <div class="method-info">
+                    <i class="fas fa-qrcode" id="methodIcon"></i>
+                    <div class="method-text">
+                        <span id="methodLabel">metode pembayaran</span>
+                        <p id="methodName">qris realtime (otomatis)</p>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>nominal top up</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-wallet"></i>
+                        <input type="number" id="amount" placeholder="min. 10.000" required>
+                    </div>
+                </div>
+
+                <button class="btn-pay" id="btnProses">konfirmasi top up</button>
+                
+                <div class="notice" id="methodNotice">
+                    pastikan nominal sudah benar. saldo akan masuk otomatis setelah status pembayaran berubah menjadi sukses.
+                </div>
             </div>
 
-            <button class="btn-redeem" id="btnRedeem">klaim saldo sekarang</button>
-            
-            <div class="notice">
-                kode redeem didapatkan setelah melakukan deposit manual via admin. silakan hubungi admin jika sudah transfer.
+            <div id="qrContainer">
+                <div class="payment-details">
+                    <div class="detail-item">
+                        <span class="label">order id</span>
+                        <span class="value" id="detailRef">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">total bayar</span>
+                        <span class="value val-amount" id="detailAmount">rp 0</span>
+                    </div>
+                </div>
+                <div class="qr-card">
+                    <img src="" id="qrImage" alt="qris">
+                </div>
+                <div class="notice">menunggu pembayaran... silakan cek status secara berkala.</div>
+            </div>
+
+            <div id="manualContainer">
+                <div class="payment-details">
+                    <div class="detail-item">
+                        <span class="label">order id</span>
+                        <span class="value" id="manualRef">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">nominal transfer</span>
+                        <span class="value val-amount" id="manualAmount">rp 0</span>
+                    </div>
+                </div>
+                <div class="qr-card">
+                    <img src="https://i.ibb.co.com/Sw0tYypx/1763787109759.png" id="manualQrImage" alt="manual qris">
+                </div>
+                <button class="btn-pay" id="btnConfirmWA" style="background: #25d366;">
+                    <i class="fab fa-whatsapp"></i> saya sudah transfer
+                </button>
+                <div class="notice">
+                    silakan scan qris di atas. setelah transfer, klik tombol hijau untuk kirim bukti ke wa admin.
+                </div>
             </div>
         </div>
     </div>
@@ -128,68 +244,93 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
-        document.getElementById('btnRedeem').onclick = async () => {
-            const code = document.getElementById('redeemCode').value.trim().toUpperCase();
-            const user = auth.currentUser;
+        let currentOrderId = null;
+        let activeTab = 'otomatis';
 
-            if (!user) return Swal.fire({ icon: 'error', title: 'error', text: 'silakan login dulu', background: '#00222d', color: '#fff' });
-            if (!code) return Swal.fire({ icon: 'warning', title: 'isi kodenya bos', background: '#00222d', color: '#fff' });
+        function switchTab(type) {
+            activeTab = type;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
 
-            Swal.fire({ title: 'memvalidasi kode...', background: '#00222d', color: '#fff', didOpen: () => Swal.showLoading() });
+            const cardTitle = document.getElementById('cardTitle');
+            const methodName = document.getElementById('methodName');
+            const methodIcon = document.getElementById('methodIcon');
+            const amountInput = document.getElementById('amount');
 
-            try {
-                const codeRef = db.ref(`vouchers/${code}`);
-                const snapshot = await codeRef.once('value');
-
-                if (!snapshot.exists()) {
-                    return Swal.fire({ icon: 'error', title: 'kode salah', text: 'kode tidak ditemukan atau sudah hangus.', background: '#00222d', color: '#fff' });
-                }
-
-                const voucherData = snapshot.val();
-                const nominal = parseInt(voucherData.nominal);
-
-                const userRef = db.ref(`users/${user.uid}`);
-                const userSnap = await userRef.once('value');
-                const currentSaldo = parseInt(userSnap.val().saldo || 0);
-
-                await userRef.update({ saldo: currentSaldo + nominal });
-
-                const depositsRef = db.ref(`deposits/${user.uid}`);
-                const depoSnap = await depositsRef.orderByChild('status').equalTo('PENDING').limitToLast(1).once('value');
-                
-                if (depoSnap.exists()) {
-                    const key = Object.keys(depoSnap.val())[0];
-                    await db.ref(`deposits/${user.uid}/${key}`).update({
-                        status: 'SUCCESS',
-                        keterangan: 'berhasil redeem: ' + code
-                    });
-                } else {
-                    const newId = "REDEEM-" + Date.now();
-                    await db.ref(`deposits/${user.uid}/${newId}`).set({
-                        order_id: newId,
-                        jumlah: nominal,
-                        status: 'SUCCESS',
-                        metode: 'manual (redeem)',
-                        tanggal: new Date().toLocaleDateString('id-ID'),
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
-                    });
-                }
-
-                await codeRef.remove();
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'berhasil!',
-                    text: `saldo rp ${nominal.toLocaleString()} sukses ditambahkan.`,
-                    background: '#00222d',
-                    color: '#fff'
-                }).then(() => {
-                    window.location.href = 'dashboard.html';
-                });
-
-            } catch (err) {
-                Swal.fire({ icon: 'error', title: 'error sistem', text: err.message, background: '#00222d', color: '#fff' });
+            if(type === 'manual') {
+                cardTitle.innerText = "manual transfer";
+                methodName.innerText = "transfer manual (admin)";
+                methodIcon.className = "fas fa-user-cog";
+                amountInput.placeholder = "masukkan nominal bebas";
+            } else {
+                cardTitle.innerText = "qris all payment";
+                methodName.innerText = "qris realtime (otomatis)";
+                methodIcon.className = "fas fa-qrcode";
+                amountInput.placeholder = "min. 10.000";
             }
+        }
+
+        async function syncToHistory(status, method, amount) {
+            const user = auth.currentUser;
+            if (!user || !currentOrderId) return;
+            const dateStr = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+            
+            await db.ref(`deposits/${user.uid}/${currentOrderId}`).update({
+                order_id: currentOrderId,
+                jumlah: amount,
+                status: status,
+                metode: method,
+                tanggal: dateStr,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+        }
+
+        btnProses.onclick = async () => {
+            const amount = document.getElementById('amount').value;
+            if (!amount || amount < 100) return Swal.fire({ icon: 'warning', title: 'nominal tidak valid', background: '#00222d', color: '#fff' });
+
+            if (activeTab === 'otomatis') {
+                if (amount < 10000) return Swal.fire({ icon: 'warning', title: 'minimal rp 10.000', background: '#00222d', color: '#fff' });
+                
+                Swal.fire({ title: 'menyiapkan qris', background: '#00222d', color: '#fff', didOpen: () => Swal.showLoading() });
+                try {
+                    const apiReq = await fetch('/api/deposit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'create', amount: amount })
+                    });
+                    const res = await apiReq.json();
+                    if (res.success) {
+                        Swal.close();
+                        currentOrderId = res.orderId;
+                        await syncToHistory('PENDING', 'qris otomatis', amount);
+                        document.getElementById('orderForm').style.display = 'none';
+                        document.getElementById('qrContainer').style.display = 'block';
+                        document.getElementById('qrImage').src = res.qrUrl;
+                        document.getElementById('detailAmount').innerText = "rp " + new Intl.NumberFormat('id-ID').format(amount);
+                        document.getElementById('detailRef').innerText = res.orderId;
+                    }
+                } catch (err) {
+                    Swal.fire({ icon: 'error', title: 'error', text: err.message, background: '#00222d', color: '#fff' });
+                }
+            } else {
+                currentOrderId = "MANUAL-" + Date.now();
+                await syncToHistory('PENDING', 'manual transfer', amount);
+                
+                document.getElementById('orderForm').style.display = 'none';
+                document.getElementById('manualContainer').style.display = 'block';
+                document.getElementById('manualAmount').innerText = "rp " + new Intl.NumberFormat('id-ID').format(amount);
+                document.getElementById('manualRef').innerText = currentOrderId;
+                
+                document.getElementById('btnConfirmWA').onclick = () => {
+                    const msg = `halo admin, saya sudah transfer manual.%0anominal: rp ${amount}%0aorder id: ${currentOrderId}%0a%0aini bukti transfernya:`;
+                    window.open(`https://wa.me/6281818934870?text=${msg}`, '_blank');
+                };
+            }
+        };
+
+        document.getElementById('btnBack').onclick = () => {
+            window.location.href = '../dashboard.html';
         };
     </script>
 </body>
