@@ -3,26 +3,21 @@ const admin = require('firebase-admin');
 const serviceAccount = {
   projectId: "myproject-485415",
   clientEmail: "firebase-adminsdk-fbsvc@myproject-485415.iam.gserviceaccount.com",
-  privateKey: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCvWt6h1Ag6iU8T\nplsIKWEA+0EmAY5vl0gh6ZaQS5nPB0+Dp+fCDRJoCNSNk6Bj8kHaARI+Cd0LTEN0\nPdpBRzo23U2owt+JiYs4fBiafBQrO9ULumgd6pZvW5F8Vy0jwRRDvhG0avPqsZ6P\nBxuH8NzqOIoPbhuW+bnvQsavRMqyFGEdQfiru4eDuJBzTw4TP0AslVmcsAvpGCMo\nJYxmpRylkj9P1hHUsgZzIJVPAtGwbjlZDcPv6EE5V62La72OgwYrAURrScB2TKq4\n1xxUnONkl/g3K7Pao1G5nw7cqEghhu76lz7qvkwx4ZOZr5odv1PwTpAeXkg8y0ol\n61sp6idFAgMBAAECggEADm5iixvpj3O0a9ARhtLs9kk3O9r972YaXBwetYJbRqP5\n4cJkOt6biK9NWtdu6DrMO5ZB+5QROnhMxti+SQgFHPXKidx7zBRjPkNMPQ6AFGzI\npD3zip6/QaveBccg4mPl+ItAZsI0j7iNbYTuuZnTfH0ps4piv+KOcEflFRCKw+vx\ngCXooWU2KDPsEpxzf8w4E5qiDHB3NMQw3WVHPuhpBWkfTJa1HXhdvbblUciP0N7u\n37IOykXayn54d4TiLS7Vs9IpXyOMHr6NdvIv0cP+45VI1N6GLAAcgDZ6om+iJuvv\nASUvddnmDFMoPbRxnkeTxsf94QxeH/COMUtLnDZqwwKBgQDhDB+QxHAeX0h3rNLK\nREuOZoz6NUuupnURkZxK5smtYjAKDu396Ah/NUt4Jvg5vjHh2nqhn1eZ1FmOvk0+\nLwMU+zg+H2FuV970KTjkNIijzWdXRH2i3jZ3wh/MUjhcn13ktWRK96aTsfCImedm\nVIe2O4kumJ1E9JgIARKkPxbQtwKBgQDHeRYHNCu/1yNbdiB2lWof2ivkg8ZxX88P\n5iCdEszLkQdf6gW7xj2VeiEyrE6U73iQCtXw6YM9+6H4QrImhCpkirXEweh/k3fK\nF705hxwSnTvDYE5gOheIqxqYShwqIqJEn8zBuvj37O8kKXJ3SzCKiYSht2PhEbni\noPFytdqT4wKBgQCg5TEAKGFcZZUC8s11jORT99+c11O3lwyltev+5QeVbViZKFlg\nqW7Bu9GsInhfmCpDphb8zFYuBdLNqiLBbY0PiBiK2Zan9CzTdVFWXnS+X5EdpDsK\noUJh1qkzRClFly7i4AjHTE2M1K/6icYVtCOe1uvaI4R1E0ZKmrHAOdbO+wKBgDPP\n+O/QFlkTScTVDyOeNd2mLuaBcAc86qzniqsiGf36Yt8AC5M1sANmoL7n0NWQylEn\n72BPV16/QNgagunMRLKu8P31nC2fIWtl9Sm/NYSEQOTD3DfUfw5p21OZVG2BZ4LJ\nu0bLCSZk7c0H0wq3hhlGFSRoXVI154G9alnwcKEfAoGBAMzTiU4nG+GypL6e66/D\nj9+7jesiAh1I0MEQ4vTEUvNHdR+2cFoRrRglyEvWjvar8RmGbXZY87YCuA+c0nWK\nH4SMpjLCquTSJU4mH+n+rZGNT4bPGR7lNQfAFjy+M277xT7uY7OR4MfhuNV4SyYf\0V1GLSUBb+dNLadg/p/RRT19\n-----END PRIVATE KEY-----\n"
+  privateKey: "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKgwggSlAgEAAoIBAQCXsdaPxb/MMUP1\neZ4x2yirzgj6bEFOAeO87+GTGmYq/m+nxzKP6uVmM8RgfcW6GoVg24/TleGOSXOs\nr50/Onj0rwpuMHaUGWG/Scwpaurbhm3wiGN1uCeqToKm0FkWnIyraDlz1MlFRJH7\noI1YdpfGAvV7hMw0b3hU40PBDgpxrpx/UEf3Rkz2mA5w1HCD7cPHvRd4LSmPCJcX\ndjPAjIFl1yJevj6qOzo53rYARZweneElDZFMj2gtHHjxddfR6mOnh2ivECUvyL8E\n4Y6RRiyfGKL9atIVKxZNvIVglKQU6I6svZVVzlZMQN20iOscqMEM/OMR6+oi7UKH\nOKcnrMT1AgMBAAECggEAA54dDfaSq5dvDRHCO8lZKEpp3O8FUc+7UzCTM4nTxFRR\n2znuP9Qhdf/WlTeVUOoVzUi7/I50GUdCXEqXEfgE4nD188ktKKMEdTdlmXQQXcpH\nuspffWIlDeL4XmshlueomH3ha4uewj7NdPylWcPNeCOy/fS3M5jte9roLSVlpH/X\nEreq6lLW0heXXwtgycfrc3atHYrIwSKn93LuprgUdDKjTzMXQS7Tgt+9Q9McojoZ\n8uBkMOgJSlTIcvFzZH1flztnZWI+JVpuOkHZHreP1rVOyyEP01GNcph6GVpnWM1J\n4JWUzDsK2v58f7BXjfNIGsmRwtWgODW9EW9liwAuEQKBgQDFXL9Y6PtwEgM3ih9n\nPl09z4QTsE/UsqACrFCjnipkg28JjI2UJ6UiBlCBSAbYcD9h7jv/KCTEGR44gYPR\n4ZVEQAp9YCz+R7wPnKQ5fWGKJln4GZ3auiAKCkzQop/iWaLdLRRVN6sQIRuMzBZM\n0TdA303BZ9Iv2Y6b0luN4vWzFwKBgQDEw6P46CLA1Gsa6e0EDxGcLAbG5pZIjonx\nw6UnTCEfomQ/IcW7aZxbn+nofBTuv04h4zpKQNBmzWsfrfap5V/xF9oXg0uTu3JZ\npBEZwcv5dPmxgEfq+dnfE1Y3CoeTplVfNQ87XaD/59XypJCH8uxAEaFeyr3O6G6a\nWYsE9VS/0wKBgQC8qL8Ex5lq9Nz8X11LfPL2ngKcK4L0SFfqljtzXEMb2APxddj0\nkb0pvC2Cl45roUkFXQ0fCIm0pmocC7oti9z649jjJmd8HqhnqA3YIsF1pNmF7z7V\nEeyEjHoHSh1Z6uNjV69DErbD8VH7ki+S+L8/lPYn9g2WzfmjfD8mb5j8uwKBgQCG\nTPLSpb9y1on0aM56Ar8GVZaalDDnfULyXZOQawoAyZqa7LZF4SPz9gZ1xJuVCcaO\nosXagLq+MF951AeUlxcRPDKD8f3X7A102eNCLWDH9+umF+T+oWLwPAaQswMu6E1F\nGrY20wVdJiSF5YUxBcHzSRVX2hIL8+HqQEv/KmSaOQKBgQC5n5D5NNLNLzzXMUvp\n8QRf1f9APDBJ4CqJui3/QqEg5VF3E+DFcYnVVRXgbQUTqMU5/mIzTcVm3Vyt5C/G\nIUDCps3AD2ArTa1Mh1M6skyPXcTQ/VVYXM1WVMHoWDsQfVFyE8zQ0Z+TTZHhn2pX\nceuM09pF1YR7U7XtET8TLf0Usg==\n-----END PRIVATE KEY-----\n"
 };
 
-const initFirebase = () => {
-    if (!admin.apps.length) {
-        try {
-            admin.initializeApp({
-                credential: admin.credential.cert({
-                    projectId: serviceAccount.projectId,
-                    clientEmail: serviceAccount.clientEmail,
-                    privateKey: serviceAccount.privateKey.replace(/\\n/g, '\n')
-                }),
-                databaseURL: "https://myproject-485415-default-rtdb.firebaseio.com"
-            });
-        } catch (error) {
-            return null;
-        }
-    }
-    return admin.database();
-};
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert({
+            projectId: serviceAccount.projectId,
+            clientEmail: serviceAccount.clientEmail,
+            privateKey: serviceAccount.privateKey.replace(/\\n/g, '\n')
+        }),
+        databaseURL: "https://myproject-485415-default-rtdb.firebaseio.com"
+    });
+}
+
+const db = admin.database();
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -31,18 +26,25 @@ module.exports = async (req, res) => {
 
     if (req.method === 'OPTIONS') return res.status(200).end();
 
-    const db = initFirebase();
-    if (!db) return res.status(500).json({ status: false, msg: 'Firebase Init Failed' });
-
     const { api_key } = req.query;
-    if (!api_key) return res.status(401).json({ status: false, msg: 'API Key diperlukan' });
+
+    if (!api_key) {
+        return res.status(401).json({ status: false, msg: 'API Key diperlukan' });
+    }
 
     try {
-        const snapshot = await db.ref('users').orderByChild('api_key').equalTo(api_key).once('value');
-        if (!snapshot.exists()) return res.status(404).json({ status: false, msg: 'User tidak ditemukan' });
+        const snapshot = await db.ref('users')
+            .orderByChild('api_key')
+            .equalTo(api_key)
+            .once('value');
+
+        if (!snapshot.exists()) {
+            return res.status(404).json({ status: false, msg: 'User tidak ditemukan' });
+        }
 
         const userData = snapshot.val();
-        const user = Object.values(userData)[0];
+        const userKey = Object.keys(userData)[0];
+        const user = userData[userKey];
 
         return res.status(200).json({
             status: true,
