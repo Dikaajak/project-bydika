@@ -3,50 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rooxpedia - One Page Order</title>
+    <title>Rooxpedia - Nokos</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
-        body { background: #003344; color: #fff; padding: 15px; padding-bottom: 100px; }
-        .section-title { font-size: 14px; color: #00acc1; margin: 15px 0 10px; text-transform: uppercase; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        body { background: #003344; color: #fff; padding: 15px; padding-bottom: 120px; min-height: 100vh; }
         
-        .scroll-x { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .section-title { font-size: 13px; color: #00acc1; margin: 20px 0 12px; text-transform: uppercase; font-weight: 700; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; }
+        .section-title::after { content: ""; flex: 1; height: 1px; background: rgba(0, 172, 193, 0.2); }
+
+        .scroll-x { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
         .scroll-x::-webkit-scrollbar { display: none; }
 
-        .card { min-width: 100px; background: rgba(0, 34, 45, 0.8); border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; }
-        .card.active { border-color: #ff8800; background: rgba(255, 136, 0, 0.1); }
-        .card img { width: 40px; height: 40px; border-radius: 8px; margin-bottom: 5px; }
-        .card span { display: block; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card { min-width: 105px; background: rgba(0, 34, 45, 0.6); border: 1px solid rgba(0, 172, 193, 0.15); border-radius: 16px; padding: 12px; text-align: center; cursor: pointer; transition: 0.3s; backdrop-filter: blur(5px); }
+        .card.active { border-color: #ff8800; background: rgba(255, 136, 0, 0.1); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 136, 0, 0.2); }
+        .card img { width: 42px; height: 42px; border-radius: 10px; margin-bottom: 8px; object-fit: cover; }
+        .card span { display: block; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
 
-        .list-v { display: flex; flex-direction: column; gap: 8px; }
-        .item-v { background: rgba(0, 34, 45, 0.8); border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .list-v { display: flex; flex-direction: column; gap: 10px; }
+        .item-v { background: rgba(0, 34, 45, 0.6); border: 1px solid rgba(0, 172, 193, 0.15); border-radius: 14px; padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
+        .item-v:active { transform: scale(0.98); }
         .item-v.active { border-color: #ff8800; background: rgba(255, 136, 0, 0.1); }
-        .item-v img { width: 25px; height: 18px; border-radius: 2px; margin-right: 10px; }
+        .item-v img { width: 28px; height: 20px; border-radius: 3px; margin-right: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .stk-tag { font-size: 10px; color: #00acc1; display: block; margin-top: 2px; }
 
-        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0, 34, 45, 0.95); padding: 15px; border-top: 1px solid rgba(0, 172, 193, 0.3); display: none; z-index: 100; }
-        .btn-buy { width: 100%; padding: 15px; background: #ff8800; border: none; border-radius: 10px; color: #fff; font-weight: 700; cursor: pointer; }
+        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0, 34, 45, 0.98); padding: 20px; border-top: 1px solid rgba(0, 172, 193, 0.2); backdrop-filter: blur(15px); z-index: 1000; display: none; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
+        .btn-buy { width: 100%; padding: 16px; background: linear-gradient(45deg, #ff8800, #ffae42); border: none; border-radius: 14px; color: #fff; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; font-size: 14px; }
+        
+        pre { background: #001a22; padding: 10px; border-radius: 8px; border: 1px solid #333; overflow-x: auto; font-family: monospace; }
     </style>
 </head>
 <body>
 
-    <div class="section-title"><i class="fas fa-th-large"></i> 1. pilih aplikasi</div>
+    <div class="section-title"><i class="fas fa-rocket"></i> 1. pilih aplikasi</div>
     <div id="appList" class="scroll-x"></div>
 
     <div id="sectionNegara" style="display:none;">
-        <div class="section-title"><i class="fas fa-globe"></i> 2. pilih negara</div>
+        <div class="section-title"><i class="fas fa-globe-asia"></i> 2. pilih negara</div>
         <div id="countryList" class="list-v"></div>
     </div>
 
     <div id="sectionOperator" style="display:none;">
-        <div class="section-title"><i class="fas fa-signal"></i> 3. pilih operator</div>
-        <div id="opList" class="scroll-x"></div>
+        <div class="section-title"><i class="fas fa-tower-broadcast"></i> 3. pilih operator</div>
+        <div id="opList" class="scroll-x" style="padding-bottom: 20px;"></div>
     </div>
 
     <div class="bottom-bar" id="bottomBar">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:14px;">
-            <span id="txtSummary">-</span>
-            <b id="txtPrice" style="color:#00ff88;">-</b>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <div>
+                <span id="txtSummary" style="font-size:13px; color:#aaa; display:block;">-</span>
+                <span id="txtOp" style="font-size:11px; color:#00acc1;">-</span>
+            </div>
+            <b id="txtPrice" style="color:#00ff88; font-size:20px;">-</b>
         </div>
         <button class="btn-buy" id="btnBuy">order sekarang</button>
     </div>
@@ -99,7 +108,7 @@
             document.getElementById('bottomBar').style.display = 'none';
             
             const cont = document.getElementById('countryList');
-            cont.innerHTML = '<p style="font-size:12px; opacity:0.5;">memuat negara...</p>';
+            cont.innerHTML = '<p style="font-size:12px; opacity:0.5; padding:20px; text-align:center;">sedang mencari negara...</p>';
 
             try {
                 const res = await axios.get(`https://www.rumahotp.io/api/v2/countries?service_id=${app.service_code}`, { headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP } });
@@ -111,13 +120,13 @@
                         const price = c.pricelist[0].price + 1500;
                         item.onclick = () => selectCountry(c, item, price);
                         item.innerHTML = `
-                            <div style="display:flex; align-items:center;"><img src="${c.img}"><span>${c.name} (stok: ${c.stock_total})</span></div>
+                            <div style="display:flex; align-items:center;"><img src="${c.img}"><div><span>${c.name}</span><span class="stk-tag">stok: ${c.stock_total}</span></div></div>
                             <b style="color:#00ff88;">rp ${price.toLocaleString()}</b>
                         `;
                         cont.appendChild(item);
                     }
                 });
-            } catch (e) { cont.innerHTML = 'gagal memuat.'; }
+            } catch (e) { cont.innerHTML = 'gagal memuat data negara.'; }
         }
 
         async function selectCountry(c, el, price) {
@@ -128,7 +137,7 @@
             document.getElementById('bottomBar').style.display = 'none';
 
             const cont = document.getElementById('opList');
-            cont.innerHTML = '...';
+            cont.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
 
             try {
                 const res = await axios.get(`https://www.rumahotp.io/api/v2/operators?country=${c.name}&provider_id=${c.pricelist[0].provider_id}`, { headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP } });
@@ -141,13 +150,14 @@
                         document.querySelectorAll('#opList .card').forEach(x => x.classList.remove('active'));
                         div.classList.add('active');
                         document.getElementById('bottomBar').style.display = 'block';
-                        document.getElementById('txtSummary').innerText = `${selApp.service_name} - ${selCountry.name}`;
+                        document.getElementById('txtSummary').innerText = `${selApp.service_name} (${selCountry.name})`;
+                        document.getElementById('txtOp').innerText = `operator: ${op.name}`;
                         document.getElementById('txtPrice').innerText = `rp ${finalPrice.toLocaleString()}`;
                     };
                     div.innerHTML = `<img src="${op.image}"><span>${op.name}</span>`;
                     cont.appendChild(div);
                 });
-            } catch (e) { cont.innerHTML = 'error.'; }
+            } catch (e) { cont.innerHTML = 'gagal memuat operator.'; }
         }
 
         document.getElementById('btnBuy').onclick = async () => {
@@ -155,7 +165,7 @@
             if(!u) return;
 
             Swal.fire({ 
-                title: 'memproses...', 
+                title: 'sedang memproses...', 
                 background: '#00222d',
                 color: '#fff',
                 allowOutsideClick: false, 
@@ -165,9 +175,12 @@
             try {
                 const uRef = db.ref(`users/${u.uid}`);
                 const snap = await uRef.once('value');
-                const sal = snap.val().saldo || 0;
+                const userData = snap.val();
+                const sal = (userData && userData.saldo) ? userData.saldo : 0;
 
-                if(sal < finalPrice) return Swal.fire({ icon:'error', title:'saldo kurang', background:'#00222d', color:'#fff' });
+                if(sal < finalPrice) {
+                    return Swal.fire({ icon:'error', title:'saldo kurang', background:'#00222d', color:'#fff', confirmButtonColor: '#ff8800' });
+                }
 
                 const res = await axios.get(`https://www.rumahotp.io/api/v2/orders?number_id=${selCountry.number_id}&provider_id=${selCountry.pricelist[0].provider_id}&operator_id=${selOp.id}`, {
                     headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
@@ -188,18 +201,20 @@
                     
                     Swal.fire({
                         icon: 'success',
-                        title: 'sukses',
-                        html: `<pre style="text-align:left; font-size:10px;">${JSON.stringify(res.data, null, 2)}</pre>`,
+                        title: 'berhasil!',
+                        html: `<pre style="text-align:left; font-size:10px; color:#00ff88;">${JSON.stringify(res.data, null, 2)}</pre>`,
                         background: '#00222d',
-                        color: '#fff'
+                        color: '#fff',
+                        confirmButtonColor: '#ff8800'
                     }).then(() => window.location.href = 'riwayat.html');
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'provider menolak',
+                        title: 'gagal dari pusat',
                         html: `<pre style="text-align:left; font-size:10px; color:#ff8888;">${JSON.stringify(res.data, null, 2)}</pre>`,
                         background: '#00222d',
-                        color: '#fff'
+                        color: '#fff',
+                        confirmButtonColor: '#ff8800'
                     });
                 }
             } catch(e) { 
@@ -208,7 +223,8 @@
                     title: 'sistem error',
                     text: e.message,
                     background: '#00222d',
-                    color: '#fff'
+                    color: '#fff',
+                    confirmButtonColor: '#ff8800'
                 });
             }
         };
