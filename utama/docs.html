@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>coming soon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #0d0d0d;
+            color: #777;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+        .container {
+            padding: 30px;
+            border: 1px solid #1a1a1a;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+        h1 {
+            font-size: 1.2rem;
+            letter-spacing: 7px;
+            color: #fff;
+            margin-bottom: 20px;
+            font-weight: 200;
+            text-transform: lowercase;
+        }
+        p {
+            font-size: 0.85rem;
+            line-height: 1.8;
+            max-width: 320px;
+            margin: 0 auto;
+            font-style: italic;
+            font-weight: 300;
+        }
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 2px;
+            background-color: #555;
+            margin-left: 5px;
+            animation: blink 1.2s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            opacity: 0.3;
+            text-transform: lowercase;
+        }
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+        .btn-back {
+            display: inline-block;
+            margin-top: 25px;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.7rem;
+            border: 1px solid #222;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .btn-back:hover {
+            color: #fff;
+            border-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="glow"></div>
+    <div class="container">
+        <h1>coming soon<span class="cursor"></span></h1>
+        <p id="quote">sedang memuat kenangan...</p>
+        <a href="dashboard.html" class="btn-back">kembali ke dashboard</a>
+    </div>
+    <div class="footer">
+        next update no kapital
+    </div>
+
+    <script>
+        const quotes = [
+            "coming soon, kaya janji manisnya yang cuma mampir sebentar terus hilang.",
+            "next update, nungguin ini sama capeknya kaya nungguin dia yang gak pernah peka.",
+            "lagi diperbaiki, hati ini juga lagi usaha buat sembuh meski lukanya dalam banget.",
+            "sabar ya, aku udah biasa nunggu kok, apalagi cuma nunggu update-an ini.",
+            "bentar lagi siap, gak kaya hubungan kita yang selesai sebelum sempat dimulai.",
+            "masih diproses, sama kaya aku yang masih proses melupakan semua kenangan kita.",
+            "error di sistem bisa diperbaiki, tapi kalau hati yang patah butuh waktu yang lama.",
+            "halaman belum tersedia, sama kaya ruang di hatinya yang udah nggak ada buat aku.",
+            "rehat sejenak, karena pura-pura bahagia itu ternyata melelahkan juga.",
+            "masih kosong, persis kaya perasaan aku pas tau dia udah punya yang baru."
+        ];
+        document.getElementById('quote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+    </script>
+</body>
+</html>
