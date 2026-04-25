@@ -25,7 +25,15 @@ function generateApiKey() {
 }
 
 auth.onAuthStateChanged((user) => {
+    const currentPath = window.location.pathname;
+    const isLoginPage = currentPath.includes('login.html');
+
     if (user) {
+        if (isLoginPage) {
+            window.location.replace('dashboard.html');
+            return;
+        }
+
         db.ref('users/' + user.uid).on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -85,8 +93,8 @@ auth.onAuthStateChanged((user) => {
         });
 
     } else {
-        if (window.location.pathname.includes('dashboard.html')) {
-            window.location.href = 'login.html';
+        if (!isLoginPage) {
+            window.location.replace('login.html');
         }
     }
 });
@@ -136,13 +144,15 @@ document.addEventListener('click', (e) => {
 if (document.getElementById('btnLogout')) {
     document.getElementById('btnLogout').onclick = () => {
         auth.signOut().then(() => {
-            window.location.href = 'login.html';
+            window.location.replace('login.html');
         });
     };
 }
 
 function copyApiKey() {
-    const keyText = document.getElementById('p-api-key').innerText;
+    const keyElement = document.getElementById('p-api-key');
+    if (!keyElement) return;
+    const keyText = keyElement.innerText;
     if (keyText === "-" || !keyText) return;
     navigator.clipboard.writeText(keyText);
     alert("API Key berhasil disalin!");
