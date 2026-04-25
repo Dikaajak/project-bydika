@@ -1,3 +1,3 @@
 const CONFIG_OTP = {
-    API_KEY_OTP: 'rk-dev-R97ZuJ5smvh4DBgJCrf7ztXE9CELFbhn'
+    API_KEY_OTP: 'rk-dev-n0aUO6avppt0Dr15iGbGh0RROo7TOQP6'
 };
