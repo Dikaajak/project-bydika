@@ -1,12 +1,12 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyBkegfgE0pKI35bV7Fu0N6soHNeZP-0p74",
-  authDomain: "lapakdika.firebaseapp.com",
-  databaseURL: "https://lapakdika-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "lapakdika",
-  storageBucket: "lapakdika.firebasestorage.app",
-  messagingSenderId: "910780517029",
-  appId: "1:910780517029:web:8ae964a78f55bb91db5b4c",
-  measurementId: "G-1TS0VPD7KC"
+    apiKey: "AIzaSyBkegfgE0pKI35bV7Fu0N6soHNeZP-0p74",
+    authDomain: "lapakdika.firebaseapp.com",
+    databaseURL: "https://lapakdika-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    projectId: "lapakdika",
+    storageBucket: "lapakdika.firebasestorage.app",
+    messagingSenderId: "910780517029",
+    appId: "1:910780517029:web:8ae964a78f55bb91db5b4c",
+    measurementId: "G-1TS0VPD7KC"
 };
 
 if (!firebase.apps.length) {
@@ -26,19 +26,19 @@ function generateApiKey() {
 }
 
 auth.onAuthStateChanged((user) => {
-    const currentPath = window.location.pathname;
-    const isLoginPage = currentPath.includes('login.html');
-    const isRegisPage = currentPath.includes('regis.html');
+    const currentPath = window.location.pathname.toLowerCase();
+    const isLoginPage = currentPath.includes('login');
+    const isRegisPage = currentPath.includes('regis');
 
     if (user) {
-        if (isLoginPage || isRegisPage) {
-            window.location.replace('dashboard.html');
-            return;
-        }
-
         db.ref('users/' + user.uid).on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
+                if (isLoginPage || isRegisPage) {
+                    window.location.replace('dashboard.html');
+                    return;
+                }
+
                 if (!data.api_key) {
                     const newKey = generateApiKey();
                     db.ref('users/' + user.uid).update({ api_key: newKey });
@@ -56,11 +56,9 @@ auth.onAuthStateChanged((user) => {
 
         db.ref('orders/' + user.uid).on('value', (snapshot) => {
             let berhasil = 0, pending = 0, gagal = 0, batal = 0, totalSpent = 0;
-
             snapshot.forEach((child) => {
                 const order = child.val();
                 const st = (order.status || "").toUpperCase();
-
                 if (st === "SUKSES" || st === "SUCCESS" || st === "BERHASIL") {
                     berhasil++;
                     totalSpent += order.harga || 0;
@@ -72,11 +70,9 @@ auth.onAuthStateChanged((user) => {
                     batal++;
                 }
             });
-
             if (document.getElementById('p-pesanan')) {
                 document.getElementById('p-pesanan').innerText = `${berhasil} / rp ${new Intl.NumberFormat('id-ID').format(totalSpent)}`;
             }
-            
             if (document.getElementById('p-order-success')) document.getElementById('p-order-success').innerText = berhasil;
             if (document.getElementById('p-order-pending')) document.getElementById('p-order-pending').innerText = pending;
             if (document.getElementById('p-order-failed')) document.getElementById('p-order-failed').innerText = gagal;
@@ -93,7 +89,6 @@ auth.onAuthStateChanged((user) => {
                     countDepo++;
                 }
             });
-            
             if (document.getElementById('p-deposit')) {
                 document.getElementById('p-deposit').innerText = `rp ${new Intl.NumberFormat('id-ID').format(totalDepo)} / ${countDepo}`;
             }
@@ -110,7 +105,6 @@ auth.onAuthStateChanged((user) => {
                 }
             });
         });
-
     } else {
         if (!isLoginPage && !isRegisPage) {
             window.location.replace('login.html');
