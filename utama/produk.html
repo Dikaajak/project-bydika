@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rooxpedia - premium otp</title>
+    <title>DIKA PEDIA - PREMIUM OTP</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -13,7 +13,6 @@
         .section-title { font-size: 13px; color: #00acc1; margin: 25px 0 12px; text-transform: uppercase; font-weight: 700; display: flex; align-items: center; gap: 10px; }
         .section-title i { font-size: 16px; }
 
-        /* grid aplikasi agar tidak perlu scroll ke samping */
         .grid-apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         
         .card { background: rgba(0, 34, 45, 0.6); border: 1px solid rgba(0, 172, 193, 0.15); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.3s; }
@@ -26,7 +25,6 @@
         .item-v.active { border-color: #ff8800; background: rgba(255, 136, 0, 0.1); }
         .item-v img { width: 24px; height: 16px; border-radius: 2px; margin-right: 10px; }
 
-        /* grid operator di bawah negara */
         .grid-ops { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
         .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0, 34, 45, 0.98); padding: 20px; border-top: 1px solid rgba(0, 172, 193, 0.3); backdrop-filter: blur(10px); z-index: 1000; display: none; }
@@ -70,15 +68,15 @@
 
     <script>
         const firebaseConfig = {
-  apiKey: "AIzaSyBkegfgE0pKI35bV7Fu0N6soHNeZP-0p74",
-  authDomain: "lapakdika.firebaseapp.com",
-  databaseURL: "https://lapakdika-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "lapakdika",
-  storageBucket: "lapakdika.firebasestorage.app",
-  messagingSenderId: "910780517029",
-  appId: "1:910780517029:web:8ae964a78f55bb91db5b4c",
-  measurementId: "G-1TS0VPD7KC"
-};
+            apiKey: "AIzaSyBkegfgE0pKI35bV7Fu0N6soHNeZP-0p74",
+            authDomain: "lapakdika.firebaseapp.com",
+            databaseURL: "https://lapakdika-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "lapakdika",
+            storageBucket: "lapakdika.firebasestorage.app",
+            messagingSenderId: "910780517029",
+            appId: "1:910780517029:web:8ae964a78f55bb91db5b4c",
+            measurementId: "G-1TS0VPD7KC"
+        };
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -112,7 +110,6 @@
             document.getElementById('sectionOperator').style.display = 'none';
             document.getElementById('bottomBar').style.display = 'none';
             
-            // Auto Scroll ke judul negara
             setTimeout(() => { document.getElementById('targetNegara').scrollIntoView(); }, 100);
 
             const cont = document.getElementById('countryList');
@@ -125,11 +122,11 @@
                     if(c.stock_total > 0) {
                         const item = document.createElement('div');
                         item.className = 'item-v';
-                        const price = c.pricelist[0].price + 1500;
-                        item.onclick = () => selectCountry(c, item, price);
+                        const displayPrice = c.pricelist[0].price + 1500;
+                        item.onclick = () => selectCountry(c, item, displayPrice);
                         item.innerHTML = `
                             <div style="display:flex; align-items:center;"><img src="${c.img}"><span>${c.name}</span></div>
-                            <b style="color:#00ff88;">rp ${price.toLocaleString()}</b>
+                            <b style="color:#00ff88;">rp ${displayPrice.toLocaleString()}</b>
                         `;
                         cont.appendChild(item);
                     }
@@ -137,119 +134,83 @@
             } catch (e) { cont.innerHTML = 'gagal memuat.'; }
         }
 
-        async function selectCountry(c, el) {
-    // Ambil harga asli dari provider
-    const hargaAsli = c.pricelist[0].price;
-    // Tambahkan markup (misal 1500) hanya untuk pengecekan di web kita
-    finalPrice = hargaAsli + 1500; 
+        async function selectCountry(c, el, price) {
+            selCountry = c; 
+            finalPrice = price;
+            document.querySelectorAll('#countryList .item-v').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            
+            document.getElementById('sectionOperator').style.display = 'block';
+            setTimeout(() => { document.getElementById('targetOperator').scrollIntoView(); }, 100);
 
-    selCountry = c; 
-    document.querySelectorAll('#countryList .item-v').forEach(i => i.classList.remove('active'));
-    el.classList.add('active');
-    
-    document.getElementById('sectionOperator').style.display = 'block';
-    setTimeout(() => { document.getElementById('targetOperator').scrollIntoView(); }, 100);
+            const cont = document.getElementById('opList');
+            cont.innerHTML = '...';
 
-    const cont = document.getElementById('opList');
-    cont.innerHTML = '...';
-
-    try {
-        const res = await axios.get(`https://www.rumahotp.io/api/v2/operators?country=${c.name}&provider_id=${c.pricelist[0].provider_id}`, { 
-            headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP } 
-        });
-        cont.innerHTML = '';
-        res.data.data.forEach(op => {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.onclick = () => {
-                selOp = op;
-                document.querySelectorAll('#opList .card').forEach(x => x.classList.remove('active'));
-                div.classList.add('active');
-                document.getElementById('bottomBar').style.display = 'block';
-                document.getElementById('txtSummary').innerText = `${selApp.service_name} (${selCountry.name})`;
-                document.getElementById('txtOp').innerText = `op: ${op.name}`;
-                document.getElementById('txtPrice').innerText = `rp ${finalPrice.toLocaleString()}`;
-            };
-            div.innerHTML = `<img src="${op.image}"><span>${op.name}</span>`;
-            cont.appendChild(div);
-        });
-    } catch (e) {
-        cont.innerHTML = 'gagal memuat operator';
-    }
-}
-
-document.getElementById('btnBuy').onclick = async () => {
-    const u = auth.currentUser;
-    if(!u) return;
-
-    Swal.fire({ 
-        title:'memproses...', 
-        background:'#00222d', 
-        color:'#fff', 
-        didOpen:()=>Swal.showLoading() 
-    });
-
-    try {
-        const uRef = db.ref(`users/${u.uid}`);
-        const snap = await uRef.once('value');
-        const userData = snap.val();
-        const sal = userData.saldo || 0;
-
-        // Validasi: Cek apakah saldo user di web cukup untuk harga yang sudah di-markup
-        if(sal < finalPrice) {
-            return Swal.fire({ 
-                icon:'error', 
-                title:'saldo kurang', 
-                text: `Saldo Anda Rp ${sal.toLocaleString()}, Harga Rp ${finalPrice.toLocaleString()}`,
-                background:'#00222d', 
-                color:'#fff' 
-            });
+            try {
+                const res = await axios.get(`https://www.rumahotp.io/api/v2/operators?country=${c.name}&provider_id=${c.pricelist[0].provider_id}`, { headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP } });
+                cont.innerHTML = '';
+                res.data.data.forEach(op => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.onclick = () => {
+                        selOp = op;
+                        document.querySelectorAll('#opList .card').forEach(x => x.classList.remove('active'));
+                        div.classList.add('active');
+                        document.getElementById('bottomBar').style.display = 'block';
+                        document.getElementById('txtSummary').innerText = `${selApp.service_name} (${selCountry.name})`;
+                        document.getElementById('txtOp').innerText = `op: ${op.name}`;
+                        document.getElementById('txtPrice').innerText = `rp ${finalPrice.toLocaleString()}`;
+                    };
+                    div.innerHTML = `<img src="${op.image}"><span>${op.name}</span>`;
+                    cont.appendChild(div);
+                });
+            } catch (e) {}
         }
 
-        // Tembak API Provider (Tetap pakai ID asli provider)
-        const res = await axios.get(`https://www.rumahotp.io/api/v2/orders?number_id=${selCountry.number_id}&provider_id=${selCountry.pricelist[0].provider_id}&operator_id=${selOp.id}`, {
-            headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
-        });
+        document.getElementById('btnBuy').onclick = async () => {
+            const u = auth.currentUser;
+            if(!u) return;
+            Swal.fire({ title:'memproses...', background:'#00222d', color:'#fff', didOpen:()=>Swal.showLoading() });
 
-        if(res.data.success) {
-            // Potong saldo di database kita sebesar harga + markup
-            await uRef.update({ saldo: sal - finalPrice });
+            try {
+                const uRef = db.ref(`users/${u.uid}`);
+                const snap = await uRef.once('value');
+                const userData = snap.val();
+                const sal = userData.saldo || 0;
 
-            await db.ref(`orders/${u.uid}`).push({
-                order_id: res.data.data.order_id,
-                nomor: res.data.data.phone_number,
-                aplikasi: selApp.service_name,
-                negara: selCountry.name,
-                harga: finalPrice,
-                status: 'PENDING',
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
+                if(sal < finalPrice) {
+                    return Swal.fire({ 
+                        icon:'error', 
+                        title:'saldo kurang', 
+                        text: `Saldo Anda Rp ${sal.toLocaleString()}, Harga Rp ${finalPrice.toLocaleString()}`,
+                        background:'#00222d', 
+                        color:'#fff' 
+                    });
+                }
 
-            Swal.fire({ 
-                icon:'success', 
-                title:'berhasil', 
-                background:'#00222d', 
-                color:'#fff' 
-            }).then(() => window.location.href='riwayat.html');
-        } else {
-            Swal.fire({ 
-                icon:'error', 
-                title:'gagal provider', 
-                text: res.data.message || 'stok mungkin habis',
-                background:'#00222d', 
-                color:'#fff' 
-            });
-        }
-    } catch(e) { 
-        Swal.fire({ 
-            icon:'error', 
-            title:'error sistem', 
-            text:e.message, 
-            background:'#00222d', 
-            color:'#fff' 
-        }); 
-    }
-};
+                const res = await axios.get(`https://www.rumahotp.io/api/v2/orders?number_id=${selCountry.number_id}&provider_id=${selCountry.pricelist[0].provider_id}&operator_id=${selOp.id}`, {
+                    headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
+                });
+
+                if(res.data.success) {
+                    await uRef.update({ saldo: sal - finalPrice });
+                    await db.ref(`orders/${u.uid}`).push({
+                        order_id: res.data.data.order_id,
+                        nomor: res.data.data.phone_number,
+                        aplikasi: selApp.service_name,
+                        negara: selCountry.name,
+                        harga: finalPrice,
+                        status: 'PENDING',
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                    Swal.fire({ icon:'success', title:'berhasil', background:'#00222d', color:'#fff' }).then(() => window.location.href='riwayat.html');
+                } else {
+                    Swal.fire({ icon:'error', title:'gagal provider', text: res.data.message || 'stok habis', background:'#00222d', color:'#fff' });
+                }
+            } catch(e) { 
+                Swal.fire({ icon:'error', title:'error sistem', text:e.message, background:'#00222d', color:'#fff' }); 
+            }
+        };
 
         init();
     </script>
