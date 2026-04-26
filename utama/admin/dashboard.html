@@ -3,86 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rooxpedia - admin panel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <title>DIKA PEDIA - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
         body { 
             background: #001a22;
-            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
-            color: #fff; min-height: 100vh; padding: 20px; text-transform: lowercase;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 172, 193, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 136, 0, 0.1) 0%, transparent 40%);
+            color: #fff; 
+            min-height: 100vh; 
+            padding: 25px;
         }
 
-        .admin-container { max-width: 900px; margin: 0 auto; }
+        .admin-container { max-width: 900px; margin: 0 auto; animation: fadeIn 0.8s ease-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 30px; padding: 20px;
-            background: rgba(0, 172, 193, 0.1); border-radius: 20px;
-            border: 1px solid rgba(0, 172, 193, 0.3); backdrop-filter: blur(10px);
+            margin-bottom: 30px; padding: 25px;
+            background: rgba(0, 172, 193, 0.05); 
+            border-radius: 20px;
+            border: 2px solid rgba(0, 172, 193, 0.5); 
+            backdrop-filter: blur(10px);
         }
-        .header h1 { font-size: 22px; text-transform: uppercase; letter-spacing: 2px; color: #00acc1; }
+        
+        .header h1 { 
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 26px; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            color: #fff;
+            text-shadow: 0 0 15px rgba(0, 172, 193, 0.5);
+        }
+        
         .header h1 span { color: #ff8800; }
 
+        .btn-logout {
+            background: rgba(255, 68, 68, 0.1); 
+            border: 1px solid rgba(255, 68, 68, 0.4); 
+            color: #ff4444; 
+            padding: 10px 15px;
+            border-radius: 12px;
+            cursor: pointer; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            font-size: 11px;
+            transition: 0.3s;
+        }
+        
+        .btn-logout:hover { background: #ff4444; color: #fff; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        
+        .stat-box {
+            background: rgba(0, 34, 45, 0.6); 
+            border: 2px solid rgba(0, 172, 193, 0.4);
+            padding: 20px; 
+            border-radius: 20px; 
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .stat-box i { font-size: 24px; color: #00acc1; margin-bottom: 10px; }
+        
+        .stat-box p { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 5px; }
+        
+        .stat-box span { font-size: 10px; text-transform: uppercase; color: #ff8800; letter-spacing: 1px; font-weight: 700; }
+
         .card {
-            background: rgba(0, 34, 45, 0.8); border: 1px solid rgba(0, 172, 193, 0.2);
-            border-radius: 24px; padding: 25px; position: relative; overflow: hidden; margin-bottom: 20px;
-        }
-        .card::before {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-            background: linear-gradient(90deg, #00acc1, #ff8800);
+            background: rgba(0, 34, 45, 0.6); 
+            border: 2px solid rgba(0, 172, 193, 0.4);
+            border-radius: 24px; 
+            padding: 30px; 
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
         }
 
-        h2 { font-size: 16px; text-transform: uppercase; color: #ff8800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        h2 { 
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px; 
+            text-transform: uppercase; 
+            color: #fff; 
+            margin-bottom: 25px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            letter-spacing: 2px;
+        }
+        
+        h2 i { color: #ff8800; }
 
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 11px; color: #00acc1; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
+        .input-group { margin-bottom: 20px; }
+        
+        .input-group label { 
+            display: block; 
+            font-size: 11px; 
+            color: #00acc1; 
+            margin-bottom: 10px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+        
         .input-group input, .input-group textarea {
-            width: 100%; padding: 12px 15px; background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 172, 193, 0.2); border-radius: 12px;
-            color: #fff; font-size: 15px; outline: none; transition: 0.3s;
+            width: 100%; 
+            padding: 15px; 
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 172, 193, 0.3); 
+            border-radius: 14px;
+            color: #fff; 
+            font-size: 14px; 
+            outline: none; 
+            transition: 0.3s;
         }
-        .input-group input:focus, .input-group textarea:focus { border-color: #00acc1; box-shadow: 0 0 10px rgba(0, 172, 193, 0.2); }
-
-        .btn-create {
-            width: 100%; padding: 15px; background: linear-gradient(45deg, #00acc1, #007c91);
-            border: none; border-radius: 12px; color: #fff; font-weight: 700;
-            cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+        
+        .input-group input:focus, .input-group textarea:focus { 
+            border-color: #00acc1; 
+            background: rgba(0, 172, 193, 0.05);
+            box-shadow: 0 0 15px rgba(0, 172, 193, 0.2); 
         }
-        .btn-create:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 172, 193, 0.4); }
 
-        .grid-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        .btn-action {
+            width: 100%; 
+            padding: 16px; 
+            background: #00acc1;
+            border: 2px solid #00acc1; 
+            border-radius: 14px; 
+            color: #001a22; 
+            font-weight: 800;
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            transition: 0.3s;
+            font-size: 13px;
+        }
+        
+        .btn-action:hover { 
+            background: transparent; 
+            color: #00acc1; 
+            transform: translateY(-2px); 
+        }
+
+        .grid-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; }
+        
         @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
 
         .v-item {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 15px; border-radius: 15px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(0, 172, 193, 0.2);
+            padding: 15px 20px; 
+            border-radius: 15px; 
+            margin-bottom: 12px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            transition: 0.3s;
         }
-        .v-info p { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 1px; }
-        .v-info span { font-size: 11px; color: #ff8800; font-weight: 700; }
         
-        .btn-delete { background: rgba(255, 68, 68, 0.1); color: #ff4444; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .v-item:hover { border-color: #00acc1; background: rgba(0, 172, 193, 0.05); }
+        
+        .v-info p { font-size: 15px; font-weight: 800; color: #fff; letter-spacing: 1px; }
+        
+        .v-info span { font-size: 12px; color: #ff8800; font-weight: 700; }
+        
+        .btn-delete { 
+            background: rgba(255, 68, 68, 0.1); 
+            color: #ff4444; 
+            border: 1px solid rgba(255, 68, 68, 0.2); 
+            padding: 10px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+        }
+        
         .btn-delete:hover { background: #ff4444; color: #fff; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-box {
-            background: rgba(0, 172, 193, 0.05); border: 1px solid rgba(0, 172, 193, 0.1);
-            padding: 15px; border-radius: 15px; text-align: center;
+        .btn-clear-bc {
+            background: transparent;
+            border: 1px solid rgba(255, 68, 68, 0.4);
+            color: #ff4444;
+            border-radius: 14px;
+            padding: 0 20px;
+            cursor: pointer;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 11px;
+            transition: 0.3s;
         }
-        .stat-box i { font-size: 20px; color: #00acc1; margin-bottom: 5px; }
-        .stat-box p { font-size: 18px; font-weight: 700; }
-        .stat-box span { font-size: 9px; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+        
+        .btn-clear-bc:hover { background: rgba(255, 68, 68, 0.1); border-color: #ff4444; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 172, 193, 0.3); border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <div class="admin-container">
         <div class="header">
-            <h1>admin <span>panel</span></h1>
-            <button onclick="logout()" style="background:none; border:none; color:#ff4444; cursor:pointer; font-weight:700; text-transform:uppercase; font-size:12px;">
-                <i class="fas fa-sign-out-alt"></i> keluar
+            <h1>DIKA <span>PEDIA</span></h1>
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Keluar
             </button>
         </div>
 
@@ -90,44 +220,44 @@
             <div class="stat-box">
                 <i class="fas fa-ticket-alt"></i>
                 <p id="totalVouchers">0</p>
-                <span>voucher aktif</span>
+                <span>Voucher Aktif</span>
             </div>
             <div class="stat-box">
                 <i class="fas fa-users"></i>
                 <p id="totalUsers">0</p>
-                <span>total member</span>
+                <span>Total Member</span>
             </div>
         </div>
 
         <div class="card">
-            <h2><i class="fas fa-bullhorn"></i> kirim broadcast alert</h2>
+            <h2><i class="fas fa-bullhorn"></i> Broadcast Dashboard</h2>
             <div class="input-group">
-                <label>isi pesan broadcast (muncul di dashboard user)</label>
-                <textarea id="bcMessage" rows="3" placeholder="contoh: ada promo deposit 10% hari ini!"></textarea>
+                <label>Pesan Broadcast</label>
+                <textarea id="bcMessage" rows="3" placeholder="Tulis pengumuman untuk semua user..."></textarea>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn-create" id="btnSendBC" style="flex: 2;">publish broadcast</button>
-                <button id="btnClearBC" style="flex: 1; background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; color: #ff4444; border-radius: 12px; cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 11px;">hapus bc</button>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-action" id="btnSendBC" style="flex: 2.5;">Publish Update</button>
+                <button class="btn-clear-bc" id="btnClearBC" style="flex: 1;">Hapus BC</button>
             </div>
         </div>
 
         <div class="grid-layout">
             <div class="card">
-                <h2><i class="fas fa-plus-circle"></i> buat voucher</h2>
+                <h2><i class="fas fa-plus-square"></i> Buat Voucher</h2>
                 <div class="input-group">
-                    <label>kode voucher</label>
-                    <input type="text" id="vCode" placeholder="contoh: DIKA-NEW">
+                    <label>Kode Unik</label>
+                    <input type="text" id="vCode" placeholder="Contoh: DIKA-SPECIAL">
                 </div>
                 <div class="input-group">
-                    <label>nominal saldo (angka)</label>
+                    <label>Nominal Saldo</label>
                     <input type="number" id="vNominal" placeholder="10000">
                 </div>
-                <button class="btn-create" id="btnGenerate">buat & simpan</button>
+                <button class="btn-action" id="btnGenerate">Generate Voucher</button>
             </div>
 
             <div class="card">
-                <h2><i class="fas fa-list"></i> daftar voucher aktif</h2>
-                <div class="voucher-list" id="listContainer" style="max-height: 300px; overflow-y: auto;">
+                <h2><i class="fas fa-list-ul"></i> List Voucher</h2>
+                <div class="voucher-list" id="listContainer" style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
                 </div>
             </div>
         </div>
@@ -140,17 +270,17 @@
 
     <script>
         const firebaseConfig = {
-  apiKey: "AIzaSyBkegfgE0pKI35bV7Fu0N6soHNeZP-0p74",
-  authDomain: "lapakdika.firebaseapp.com",
-  databaseURL: "https://lapakdika-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "lapakdika",
-  storageBucket: "lapakdika.firebasestorage.app",
-  messagingSenderId: "910780517029",
-  appId: "1:910780517029:web:8ae964a78f55bb91db5b4c",
-  measurementId: "G-1TS0VPD7KC"
-};
+            apiKey: "AIzaSyBkegfgE0pKI35bV7Fu0N6soHNeZP-0p74",
+            authDomain: "lapakdika.firebaseapp.com",
+            databaseURL: "https://lapakdika-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "lapakdika",
+            storageBucket: "lapakdika.firebasestorage.app",
+            messagingSenderId: "910780517029",
+            appId: "1:910780517029:web:8ae964a78f55bb91db5b4c",
+            measurementId: "G-1TS0VPD7KC"
+        };
 
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
 
@@ -162,14 +292,12 @@
             loadVouchers();
         });
 
-        // LOAD STATS
         function loadStats() {
             db.ref('users').on('value', snap => {
                 document.getElementById('totalUsers').innerText = snap.numChildren();
             });
         }
 
-        // LOAD VOUCHERS
         function loadVouchers() {
             db.ref('vouchers').on('value', snap => {
                 const container = document.getElementById('listContainer');
@@ -183,10 +311,10 @@
                         <div class="v-item">
                             <div class="v-info">
                                 <p>${child.key}</p>
-                                <span>rp ${parseInt(data.nominal).toLocaleString()}</span>
+                                <span>Rp ${parseInt(data.nominal).toLocaleString()}</span>
                             </div>
                             <button class="btn-delete" onclick="deleteVoucher('${child.key}')">
-                                <i class="fas fa-trash"></i>
+                                <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
                     `;
@@ -196,30 +324,29 @@
             });
         }
 
-        // BUAT VOUCHER
         document.getElementById('btnGenerate').onclick = async () => {
             const code = document.getElementById('vCode').value.trim().toUpperCase();
             const nominal = document.getElementById('vNominal').value;
 
-            if(!code || !nominal) return Swal.fire('isi semua field', '', 'warning');
+            if(!code || !nominal) return Swal.fire({ text: 'Isi semua data voucher!', icon: 'warning', background: '#00222d', color: '#fff' });
 
             try {
                 await db.ref(`vouchers/${code}`).set({
                     nominal: parseInt(nominal),
                     createdAt: firebase.database.ServerValue.TIMESTAMP
                 });
-                Swal.fire({ icon: 'success', title: 'voucher dibuat', background: '#00222d', color: '#fff' });
+                Swal.fire({ icon: 'success', title: 'Voucher Berhasil Dibuat', background: '#00222d', color: '#fff' });
                 document.getElementById('vCode').value = "";
                 document.getElementById('vNominal').value = "";
             } catch (e) {
-                Swal.fire('gagal', e.message, 'error');
+                Swal.fire('Error', e.message, 'error');
             }
         };
 
-        // HAPUS VOUCHER
         function deleteVoucher(key) {
             Swal.fire({
-                title: 'hapus voucher?',
+                title: 'Hapus Voucher?',
+                text: "Kode " + key + " akan dihapus selamanya",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ff4444',
@@ -229,27 +356,25 @@
             });
         }
 
-        // KIRIM BROADCAST
         document.getElementById('btnSendBC').onclick = async () => {
             const msg = document.getElementById('bcMessage').value.trim();
-            if(!msg) return Swal.fire('isi pesan dulu', '', 'warning');
+            if(!msg) return Swal.fire({ text: 'Isi pesan broadcast!', icon: 'warning', background: '#00222d', color: '#fff' });
 
             try {
                 await db.ref('broadcast').set({
                     message: msg,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
                 });
-                Swal.fire({ icon: 'success', title: 'bc berhasil dikirim', background: '#00222d', color: '#fff' });
+                Swal.fire({ icon: 'success', title: 'Update Terkirim', background: '#00222d', color: '#fff' });
                 document.getElementById('bcMessage').value = "";
             } catch (e) {
-                Swal.fire('gagal', e.message, 'error');
+                Swal.fire('Error', e.message, 'error');
             }
         };
 
-        // HAPUS BROADCAST
         document.getElementById('btnClearBC').onclick = () => {
             db.ref('broadcast').remove().then(() => {
-                Swal.fire({ icon: 'success', title: 'bc dihapus', background: '#00222d', color: '#fff' });
+                Swal.fire({ icon: 'success', title: 'Broadcast Dihapus', background: '#00222d', color: '#fff' });
             });
         };
 
