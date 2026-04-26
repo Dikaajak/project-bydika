@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dika Pedia - Digital Marketplace & Jasa Sosmed</title>
+    <title>DIKA PEDIA - Digital Marketplace</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -14,60 +14,57 @@
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(0, 172, 193, 0.15) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, rgba(255, 136, 0, 0.1) 0%, transparent 40%);
-            color: #fff; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            padding: 20px;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             overflow-x: hidden;
+            padding-bottom: 50px;
         }
 
-        .container { 
-            background: rgba(0, 34, 45, 0.6); 
-            padding: 40px 25px; 
-            border-radius: 30px; 
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(0, 172, 193, 0.2);
-            max-width: 550px; 
-            width: 100%; 
-            text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-
-        .banner-box {
-            position: relative;
-            margin-bottom: 25px;
+        .hero-section {
             width: 100%;
+            max-width: 500px;
+            margin-top: 30px;
+            text-align: center;
         }
 
-        .banner-box img {
-            /* Rasio 16:9 Kotak Lebar */
+        .banner-wrapper {
             width: 100%;
             aspect-ratio: 16 / 9;
-            border-radius: 18px; 
+            overflow: hidden;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            position: relative;
             border: 2px solid rgba(0, 172, 193, 0.5);
-            background: #001a22;
-            box-shadow: 0 0 20px rgba(0, 172, 193, 0.3);
+            box-shadow: 0 0 15px rgba(0, 172, 193, 0.2);
+        }
+
+        .banner-wrapper img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         h1 { 
             font-family: 'Rajdhani', sans-serif;
             font-size: 42px; 
             font-weight: 800;
-            letter-spacing: 3px;
-            margin-bottom: 5px;
+            letter-spacing: 5px;
             color: #fff;
             text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 172, 193, 0.5);
+            margin-bottom: 5px;
         }
 
-        .typing-container {
-            font-size: 16px;
+        .typing-box {
+            font-size: 14px;
             color: #ff8800;
             font-weight: 700;
             margin-bottom: 35px;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             height: 20px;
             text-transform: uppercase;
         }
@@ -76,132 +73,142 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            margin-bottom: 35px;
+            margin-bottom: 40px;
+            padding: 0 5px;
         }
 
-        .service-card {
+        .service-item {
             background: rgba(0, 172, 193, 0.05);
-            border: 1px solid rgba(0, 172, 193, 0.1);
             padding: 15px 5px;
             border-radius: 15px;
+            border: 1px solid rgba(0, 172, 193, 0.3);
             transition: 0.3s;
         }
 
-        .service-card:hover {
-            background: rgba(0, 172, 193, 0.15);
+        .service-item:hover {
             border-color: #00acc1;
-            transform: translateY(-3px);
+            background: rgba(0, 172, 193, 0.1);
+            transform: translateY(-2px);
         }
 
-        .service-card i {
-            font-size: 22px;
+        .service-item i {
+            font-size: 20px;
             color: #00acc1;
             margin-bottom: 8px;
             display: block;
         }
 
-        .service-card span {
-            font-size: 10px;
+        .service-item span {
+            font-size: 9px;
             font-weight: 800;
             text-transform: uppercase;
+            color: rgba(255,255,255,0.8);
             letter-spacing: 0.5px;
-            color: rgba(255,255,255,0.9);
         }
 
-        .btn-wrapper { 
-            display: flex; 
+        .btn-group {
+            display: flex;
             flex-direction: column;
-            gap: 12px; 
+            gap: 12px;
+            padding: 0 5px;
         }
 
-        .btn { 
+        .btn-pedia {
             width: 100%;
-            padding: 16px; 
-            border-radius: 14px; 
-            text-decoration: none; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            transition: 0.3s; 
+            padding: 16px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 800;
+            text-transform: uppercase;
             font-size: 14px;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            transition: 0.3s;
+            border: 2px solid transparent;
         }
 
-        .btn-main { 
+        .btn-primary {
             background: #00acc1;
-            color: #001a22; 
-            box-shadow: 0 8px 15px rgba(0, 172, 193, 0.2);
+            color: #001a22;
+            border-color: #00acc1;
+            box-shadow: 0 8px 20px rgba(0, 172, 193, 0.2);
         }
 
-        .btn-main:hover { 
-            background: #00d4ed;
+        .btn-primary:hover {
+            background: transparent;
+            color: #00acc1;
             transform: translateY(-2px);
         }
 
-        .btn-sec { 
-            background: rgba(255, 255, 255, 0.03); 
-            color: #fff; 
-            border: 1px solid rgba(0, 172, 193, 0.3);
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            border-color: rgba(0, 172, 193, 0.5);
         }
 
-        .btn-sec:hover { 
-            background: rgba(0, 172, 193, 0.1);
+        .btn-outline:hover {
             border-color: #ff8800;
             color: #ff8800;
+            background: rgba(255, 136, 0, 0.05);
+            transform: translateY(-2px);
         }
 
         @media (max-width: 480px) {
+            .hero-section { 
+                max-width: 100%;
+                padding: 0 20px;
+            }
+            h1 { font-size: 36px; }
             .services-grid { grid-template-columns: repeat(2, 1fr); }
-            h1 { font-size: 34px; }
-            .container { padding: 30px 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="banner-box">
+
+    <div class="hero-section">
+        <div class="banner-wrapper">
             <img src="https://i.ibb.co.com/zVykFCrG/wkcfhd.jpg" alt="Dika Pedia Banner">
         </div>
-        
+
         <h1>DIKA PEDIA</h1>
-        <div class="typing-container" id="typewriter"></div>
-        
+        <div class="typing-box" id="typewriter"></div>
+
         <div class="services-grid">
-            <div class="service-card">
+            <div class="service-item">
                 <i class="fas fa-users"></i>
                 <span>Suntik Sosmed</span>
             </div>
-            <div class="service-card">
+            <div class="service-item">
                 <i class="fas fa-shopping-bag"></i>
                 <span>Jual Beli Akun</span>
             </div>
-            <div class="service-card">
+            <div class="service-item">
                 <i class="fas fa-mobile-alt"></i>
                 <span>Nokos OTP</span>
             </div>
-            <div class="service-card">
+            <div class="service-item">
                 <i class="fab fa-whatsapp"></i>
                 <span>Jasa Post WA</span>
             </div>
-            <div class="service-card">
+            <div class="service-item">
                 <i class="fas fa-share-alt"></i>
                 <span>Jasher</span>
             </div>
-            <div class="service-card">
-                <i class="fas fa-check-circle"></i>
-                <span>Terpercaya</span>
+            <div class="service-item">
+                <i class="fas fa-bolt"></i>
+                <span>Fast Respon</span>
             </div>
         </div>
 
-        <div class="btn-wrapper">
-            <a href="utama/regis" class="btn btn-main">
-                <i class="fas fa-user-plus"></i> Daftar Sekarang
+        <div class="btn-group">
+            <a href="utama/regis" class="btn btn-pedia btn-primary">
+                <i class="fas fa-paper-plane"></i> Mulai Sekarang
             </a>
-            <a href="utama/login" class="btn btn-sec">
-                <i class="fas fa-sign-in-alt"></i> Masuk Dashboard
+            <a href="utama/login" class="btn btn-pedia btn-outline">
+                <i class="fas fa-sign-in-alt"></i> Masuk Ke Akun
             </a>
         </div>
     </div>
@@ -210,7 +217,7 @@
         const texts = [
             "Solusi Digital Terlengkap",
             "Suntik Sosmed & Followers",
-            "Penyedia Nokos OTP Murah",
+            "Penyedia Nokos Terpercaya",
             "Jasa Post WA & Jasher"
         ];
         let count = 0;
@@ -219,9 +226,7 @@
         let letter = "";
 
         function type() {
-            if (count === texts.length) {
-                count = 0;
-            }
+            if (count === texts.length) count = 0;
             currentText = texts[count];
             letter = currentText.slice(0, ++index);
 
