@@ -32,12 +32,19 @@
             animation: pageIn 0.8s ease-out forwards;
         }
 
-        .banner-login {
+        .banner-wrapper {
             width: 100%;
             aspect-ratio: 16 / 9;
+            overflow: hidden;
             border-radius: 20px 20px 0 0;
-            border: 1px solid rgba(0, 172, 193, 0.3);
+            border: 2px solid rgba(0, 172, 193, 0.5);
             border-bottom: none;
+            box-shadow: 0 0 15px rgba(0, 172, 193, 0.2);
+        }
+
+        .banner-wrapper img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             display: block;
         }
@@ -46,7 +53,7 @@
             background: rgba(0, 34, 45, 0.7); 
             padding: 40px 30px; 
             border-radius: 0 0 30px 30px; 
-            border: 1px solid rgba(0, 172, 193, 0.2);
+            border: 2px solid rgba(0, 172, 193, 0.5);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             backdrop-filter: blur(15px);
         }
@@ -86,7 +93,7 @@
             width: 100%; 
             padding: 16px 20px; 
             background: rgba(0, 26, 34, 0.6); 
-            border: 1px solid rgba(0, 172, 193, 0.2); 
+            border: 1px solid rgba(0, 172, 193, 0.3); 
             border-radius: 14px; 
             color: #fff;
             outline: none;
@@ -105,7 +112,7 @@
             padding: 18px; 
             background: #00acc1; 
             color: #001a22; 
-            border: none; 
+            border: 2px solid #00acc1; 
             border-radius: 14px; 
             font-weight: 800; 
             text-transform: uppercase;
@@ -117,7 +124,8 @@
         }
 
         .btn-auth:hover { 
-            background: #00d4ed;
+            background: transparent;
+            color: #00acc1;
             transform: translateY(-2px); 
             box-shadow: 0 10px 20px rgba(0, 172, 193, 0.3); 
         }
@@ -146,7 +154,9 @@
 </head>
 <body>
     <div class="container">
-        <img src="https://i.ibb.co.com/zVykFCrG/wkcfhd.jpg" alt="Dika Pedia Banner" class="banner-login">
+        <div class="banner-wrapper">
+            <img src="https://i.ibb.co.com/zVykFCrG/wkcfhd.jpg" alt="Dika Pedia Banner">
+        </div>
         
         <div class="form-card">
             <h2>LOGIN</h2>
@@ -165,7 +175,7 @@
             </form>
             
             <div class="footer">
-                Belum punya akun? <a href="regis">Daftar Disini</a>
+                Belum punya akun? <a href="regis.html">Daftar Disini</a>
             </div>
         </div>
     </div>
@@ -218,10 +228,10 @@
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    window.location.href = 'admin/dashboard';
+                    window.location.href = 'admin/dashboard.html';
                 });
             } else {
-                window.location.href = 'dashboard';
+                window.location.href = 'dashboard.html';
             }
 
         } catch (error) {
