@@ -3,108 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DikaPedia- Masuk Akun</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <title>Dika Pedia - Masuk Akun</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
         @keyframes pageIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
         body { 
-            background: #003344;
-            background-image: radial-gradient(circle at 50% -20%, #00acc144, transparent);
+            background: #001a22;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 172, 193, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 136, 0, 0.1) 0%, transparent 40%);
             color: #fff;
             display: flex; 
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
             padding: 20px; 
-            text-transform: lowercase;
         }
+
         .container { 
             width: 100%; 
-            max-width: 420px; 
-            text-align: center;
+            max-width: 450px; 
             animation: pageIn 0.8s ease-out forwards;
         }
-        .logo-big {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 25px;
-            border-radius: 25px;
-            border: 2px solid #00acc1;
-            box-shadow: 0 0 25px rgba(0, 172, 193, 0.4);
+
+        .banner-login {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 20px 20px 0 0;
+            border: 1px solid rgba(0, 172, 193, 0.3);
+            border-bottom: none;
+            object-fit: cover;
+            display: block;
         }
+
         .form-card {
-            background: rgba(0, 34, 45, 0.8); 
-            padding: 40px; 
-            border-radius: 30px; 
+            background: rgba(0, 34, 45, 0.7); 
+            padding: 40px 30px; 
+            border-radius: 0 0 30px 30px; 
             border: 1px solid rgba(0, 172, 193, 0.2);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px);
         }
-        h2 { font-size: 32px; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 5px; }
-        .desc { color: #00acc1; font-size: 14px; margin-bottom: 30px; text-transform: uppercase; font-weight: 700; }
-        .input-box { margin-bottom: 20px; text-align: left; }
+
+        h2 { 
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 36px; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .desc { 
+            color: #00acc1; 
+            font-size: 12px; 
+            margin-bottom: 35px; 
+            text-transform: uppercase; 
+            font-weight: 800; 
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .input-box { margin-bottom: 22px; }
+
         .input-box label { 
             display: block; 
-            font-size: 13px; 
+            font-size: 11px; 
             color: #ff8800; 
             margin-bottom: 8px; 
             text-transform: uppercase;
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: 1px;
         }
+
         input { 
             width: 100%; 
-            padding: 15px 20px; 
-            background: rgba(0, 26, 34, 0.8); 
-            border: 1px solid rgba(0, 172, 193, 0.3); 
-            border-radius: 15px; 
+            padding: 16px 20px; 
+            background: rgba(0, 26, 34, 0.6); 
+            border: 1px solid rgba(0, 172, 193, 0.2); 
+            border-radius: 14px; 
             color: #fff;
             outline: none;
-            font-size: 16px;
+            font-size: 15px;
             transition: 0.3s;
         }
-        input:focus { border-color: #00acc1; background: #001a22; box-shadow: 0 0 15px rgba(0, 172, 193, 0.2); }
+
+        input:focus { 
+            border-color: #00acc1; 
+            background: rgba(0, 172, 193, 0.05); 
+            box-shadow: 0 0 15px rgba(0, 172, 193, 0.2); 
+        }
+
         .btn-auth { 
             width: 100%; 
             padding: 18px; 
-            background: linear-gradient(45deg, #00acc1, #007c91); 
-            color: #fff; 
+            background: #00acc1; 
+            color: #001a22; 
             border: none; 
-            border-radius: 15px; 
-            font-weight: 700; 
+            border-radius: 14px; 
+            font-weight: 800; 
             text-transform: uppercase;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             letter-spacing: 2px;
-            transition: 0.4s;
+            transition: 0.3s;
+            margin-top: 10px;
         }
-        .btn-auth:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0, 172, 193, 0.3); }
-        .footer { margin-top: 30px; font-size: 14px; color: #668899; }
-        .footer a { color: #ff8800; text-decoration: none; font-weight: 700; }
+
+        .btn-auth:hover { 
+            background: #00d4ed;
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 20px rgba(0, 172, 193, 0.3); 
+        }
+
+        .footer { 
+            margin-top: 25px; 
+            font-size: 13px; 
+            color: rgba(255,255,255,0.6); 
+            text-align: center;
+        }
+
+        .footer a { 
+            color: #ff8800; 
+            text-decoration: none; 
+            font-weight: 800; 
+            text-transform: uppercase;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        @media (max-width: 480px) {
+            .form-card { padding: 30px 20px; }
+            h2 { font-size: 28px; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="https://i.ibb.co.com/rRYyNP25/20260420-202909.jpg" alt="Logo" class="logo-big">
+        <img src="https://i.ibb.co.com/zVykFCrG/wkcfhd.jpg" alt="Dika Pedia Banner" class="banner-login">
+        
         <div class="form-card">
             <h2>LOGIN</h2>
-            <p class="desc">masuk ke dashboard rooxpedia</p>
+            <p class="desc">Selamat Datang di Dika Pedia</p>
+            
             <form id="loginForm">
                 <div class="input-box">
-                    <label>email address</label>
-                    <input type="email" id="email" placeholder="email@gmail.com" required>
+                    <label>Alamat Email</label>
+                    <input type="email" id="email" placeholder="Masukkan email anda" required>
                 </div>
                 <div class="input-box">
-                    <label>password</label>
-                    <input type="password" id="pw" placeholder="••••••••" required>
+                    <label>Kata Sandi</label>
+                    <input type="password" id="pw" placeholder="Masukkan kata sandi" required>
                 </div>
-                <button type="submit" class="btn-auth">masuk sekarang</button>
+                <button type="submit" class="btn-auth">Masuk Sekarang</button>
             </form>
+            
             <div class="footer">
-                belum punya akun? <a href="regis.html">daftar</a>
+                Belum punya akun? <a href="regis">Daftar Disini</a>
             </div>
         </div>
     </div>
@@ -116,15 +177,15 @@
 
 <script>
     const firebaseConfig = {
-  apiKey: "AIzaSyBkegfgE0pKI35bV7Fu0N6soHNeZP-0p74",
-  authDomain: "lapakdika.firebaseapp.com",
-  databaseURL: "https://lapakdika-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "lapakdika",
-  storageBucket: "lapakdika.firebasestorage.app",
-  messagingSenderId: "910780517029",
-  appId: "1:910780517029:web:8ae964a78f55bb91db5b4c",
-  measurementId: "G-1TS0VPD7KC"
-};
+        apiKey: "AIzaSyBkegfgE0pKI35bV7Fu0N6soHNeZP-0p74",
+        authDomain: "lapakdika.firebaseapp.com",
+        databaseURL: "https://lapakdika-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        projectId: "lapakdika",
+        storageBucket: "lapakdika.firebasestorage.app",
+        messagingSenderId: "910780517029",
+        appId: "1:910780517029:web:8ae964a78f55bb91db5b4c",
+        measurementId: "G-1TS0VPD7KC"
+    };
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -136,7 +197,7 @@
         const password = document.getElementById('pw').value;
 
         Swal.fire({
-            title: 'mohon tunggu...',
+            title: 'Memproses...',
             background: '#00222d',
             color: '#fff',
             allowOutsideClick: false,
@@ -150,27 +211,27 @@
             if (email === "dikaadmin@gmail.com") {
                 Swal.fire({
                     icon: 'success',
-                    title: 'halo admin!',
-                    text: 'mengarahkan ke dashboard admin...',
+                    title: 'Halo Admin!',
+                    text: 'Mengarahkan ke dashboard admin...',
                     background: '#00222d',
                     color: '#fff',
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    window.location.href = 'admin/dashboard.html';
+                    window.location.href = 'admin/dashboard';
                 });
             } else {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'dashboard';
             }
 
         } catch (error) {
             let errorMsg = error.message;
-            if (error.code === 'auth/wrong-password') errorMsg = "password salah bos";
-            if (error.code === 'auth/user-not-found') errorMsg = "email tidak terdaftar";
+            if (error.code === 'auth/wrong-password') errorMsg = "Kata sandi salah";
+            if (error.code === 'auth/user-not-found') errorMsg = "Email tidak terdaftar";
 
             Swal.fire({
                 icon: 'error',
-                title: 'gagal masuk',
+                title: 'Gagal Masuk',
                 text: errorMsg,
                 background: '#00222d',
                 color: '#fff'
