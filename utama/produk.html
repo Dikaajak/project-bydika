@@ -137,72 +137,119 @@
             } catch (e) { cont.innerHTML = 'gagal memuat.'; }
         }
 
-        async function selectCountry(c, el, price) {
-            selCountry = c; finalPrice = price;
-            document.querySelectorAll('#countryList .item-v').forEach(i => i.classList.remove('active'));
-            el.classList.add('active');
-            
-            document.getElementById('sectionOperator').style.display = 'block';
-            
-            // Auto Scroll ke judul operator
-            setTimeout(() => { document.getElementById('targetOperator').scrollIntoView(); }, 100);
+        async function selectCountry(c, el) {
+    // Ambil harga asli dari provider
+    const hargaAsli = c.pricelist[0].price;
+    // Tambahkan markup (misal 1500) hanya untuk pengecekan di web kita
+    finalPrice = hargaAsli + 1500; 
 
-            const cont = document.getElementById('opList');
-            cont.innerHTML = '...';
+    selCountry = c; 
+    document.querySelectorAll('#countryList .item-v').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    
+    document.getElementById('sectionOperator').style.display = 'block';
+    setTimeout(() => { document.getElementById('targetOperator').scrollIntoView(); }, 100);
 
-            try {
-                const res = await axios.get(`https://www.rumahotp.io/api/v2/operators?country=${c.name}&provider_id=${c.pricelist[0].provider_id}`, { headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP } });
-                cont.innerHTML = '';
-                res.data.data.forEach(op => {
-                    const div = document.createElement('div');
-                    div.className = 'card';
-                    div.onclick = () => {
-                        selOp = op;
-                        document.querySelectorAll('#opList .card').forEach(x => x.classList.remove('active'));
-                        div.classList.add('active');
-                        document.getElementById('bottomBar').style.display = 'block';
-                        document.getElementById('txtSummary').innerText = `${selApp.service_name} (${selCountry.name})`;
-                        document.getElementById('txtOp').innerText = `op: ${op.name}`;
-                        document.getElementById('txtPrice').innerText = `rp ${finalPrice.toLocaleString()}`;
-                    };
-                    div.innerHTML = `<img src="${op.image}"><span>${op.name}</span>`;
-                    cont.appendChild(div);
-                });
-            } catch (e) {}
+    const cont = document.getElementById('opList');
+    cont.innerHTML = '...';
+
+    try {
+        const res = await axios.get(`https://www.rumahotp.io/api/v2/operators?country=${c.name}&provider_id=${c.pricelist[0].provider_id}`, { 
+            headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP } 
+        });
+        cont.innerHTML = '';
+        res.data.data.forEach(op => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.onclick = () => {
+                selOp = op;
+                document.querySelectorAll('#opList .card').forEach(x => x.classList.remove('active'));
+                div.classList.add('active');
+                document.getElementById('bottomBar').style.display = 'block';
+                document.getElementById('txtSummary').innerText = `${selApp.service_name} (${selCountry.name})`;
+                document.getElementById('txtOp').innerText = `op: ${op.name}`;
+                document.getElementById('txtPrice').innerText = `rp ${finalPrice.toLocaleString()}`;
+            };
+            div.innerHTML = `<img src="${op.image}"><span>${op.name}</span>`;
+            cont.appendChild(div);
+        });
+    } catch (e) {
+        cont.innerHTML = 'gagal memuat operator';
+    }
+}
+
+document.getElementById('btnBuy').onclick = async () => {
+    const u = auth.currentUser;
+    if(!u) return;
+
+    Swal.fire({ 
+        title:'memproses...', 
+        background:'#00222d', 
+        color:'#fff', 
+        didOpen:()=>Swal.showLoading() 
+    });
+
+    try {
+        const uRef = db.ref(`users/${u.uid}`);
+        const snap = await uRef.once('value');
+        const userData = snap.val();
+        const sal = userData.saldo || 0;
+
+        // Validasi: Cek apakah saldo user di web cukup untuk harga yang sudah di-markup
+        if(sal < finalPrice) {
+            return Swal.fire({ 
+                icon:'error', 
+                title:'saldo kurang', 
+                text: `Saldo Anda Rp ${sal.toLocaleString()}, Harga Rp ${finalPrice.toLocaleString()}`,
+                background:'#00222d', 
+                color:'#fff' 
+            });
         }
 
-        document.getElementById('btnBuy').onclick = async () => {
-            const u = auth.currentUser;
-            if(!u) return;
-            Swal.fire({ title:'memproses...', background:'#00222d', color:'#fff', didOpen:()=>Swal.showLoading() });
+        // Tembak API Provider (Tetap pakai ID asli provider)
+        const res = await axios.get(`https://www.rumahotp.io/api/v2/orders?number_id=${selCountry.number_id}&provider_id=${selCountry.pricelist[0].provider_id}&operator_id=${selOp.id}`, {
+            headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
+        });
 
-            try {
-                const uRef = db.ref(`users/${u.uid}`);
-                const snap = await uRef.once('value');
-                const sal = snap.val().saldo || 0;
-                if(sal < finalPrice) return Swal.fire({ icon:'error', title:'saldo kurang', background:'#00222d', color:'#fff' });
+        if(res.data.success) {
+            // Potong saldo di database kita sebesar harga + markup
+            await uRef.update({ saldo: sal - finalPrice });
 
-                const res = await axios.get(`https://www.rumahotp.io/api/v2/orders?number_id=${selCountry.number_id}&provider_id=${selCountry.pricelist[0].provider_id}&operator_id=${selOp.id}`, {
-                    headers: { 'x-apikey': CONFIG_OTP.API_KEY_OTP }
-                });
+            await db.ref(`orders/${u.uid}`).push({
+                order_id: res.data.data.order_id,
+                nomor: res.data.data.phone_number,
+                aplikasi: selApp.service_name,
+                negara: selCountry.name,
+                harga: finalPrice,
+                status: 'PENDING',
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
 
-                if(res.data.success) {
-                    await uRef.update({ saldo: sal - finalPrice });
-                    await db.ref(`orders/${u.uid}`).push({
-                        order_id: res.data.data.order_id,
-                        nomor: res.data.data.phone_number,
-                        aplikasi: selApp.service_name,
-                        negara: selCountry.name,
-                        harga: finalPrice,
-                        status: 'PENDING',
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
-                    });
-                    Swal.fire({ icon:'success', title:'berhasil', html:`<pre>${JSON.stringify(res.data, null, 2)}</pre>`, background:'#00222d', color:'#fff' }).then(() => window.location.href='riwayat.html');
-                } else {
-                    Swal.fire({ icon:'error', title:'gagal', html:`<pre>${JSON.stringify(res.data, null, 2)}</pre>`, background:'#00222d', color:'#fff' });
-                }
-            } catch(e) { Swal.fire({ icon:'error', title:'error', text:e.message, background:'#00222d', color:'#fff' }); }
-        };
+            Swal.fire({ 
+                icon:'success', 
+                title:'berhasil', 
+                background:'#00222d', 
+                color:'#fff' 
+            }).then(() => window.location.href='riwayat.html');
+        } else {
+            Swal.fire({ 
+                icon:'error', 
+                title:'gagal provider', 
+                text: res.data.message || 'stok mungkin habis',
+                background:'#00222d', 
+                color:'#fff' 
+            });
+        }
+    } catch(e) { 
+        Swal.fire({ 
+            icon:'error', 
+            title:'error sistem', 
+            text:e.message, 
+            background:'#00222d', 
+            color:'#fff' 
+        }); 
+    }
+};
 
         init();
     </script>
